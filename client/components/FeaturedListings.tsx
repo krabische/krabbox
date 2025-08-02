@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { MapPin, Star, Clock } from "lucide-react";
+import { BookingModal } from "./BookingModal";
+import { ContactSellerModal } from "./ContactSellerModal";
+import { LuggageListing } from "@/contexts/ListingsContext";
+import { MapPin, Star, Clock, Calendar, Users } from "lucide-react";
 
 const featuredListings = [
   {

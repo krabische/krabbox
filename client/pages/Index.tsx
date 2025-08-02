@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { SearchSection } from "@/components/SearchSection";
 import { FeaturedListings } from "@/components/FeaturedListings";
 import { HowItWorks } from "@/components/HowItWorks";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Plane, Shield, Clock, Users } from "lucide-react";
 
 export default function Index() {

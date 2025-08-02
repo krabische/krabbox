@@ -310,49 +310,64 @@ export function CreateListingForm() {
           <CardContent className="space-y-6">
             <div className="space-y-4">
               <Label>Dimensions *</Label>
-              <div className="grid grid-cols-4 gap-4">
-                <div>
-                  <Label className="text-sm">Height</Label>
-                  <Input
-                    type="number"
-                    placeholder="56"
-                    value={formData.height}
-                    onChange={(e) => handleInputChange("height", e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm">Width</Label>
-                  <Input
-                    type="number"
-                    placeholder="35"
-                    value={formData.width}
-                    onChange={(e) => handleInputChange("width", e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm">Depth</Label>
-                  <Input
-                    type="number"
-                    placeholder="23"
-                    value={formData.depth}
-                    onChange={(e) => handleInputChange("depth", e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm">Unit</Label>
-                  <Select value={formData.unit} onValueChange={(value) => handleInputChange("unit", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cm">cm</SelectItem>
-                      <SelectItem value="inches">inches</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-4">
+                <Select value={formData.unit} onValueChange={(value) => handleInputChange("unit", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select measurement type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cm">Height x Width x Depth (cm)</SelectItem>
+                    <SelectItem value="inches">Height x Width x Depth (inches)</SelectItem>
+                    <SelectItem value="sqm">Square Meters</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {formData.unit === "sqm" ? (
+                  <div>
+                    <Label className="text-sm">Total Square Meters</Label>
+                    <Input
+                      type="number"
+                      placeholder="25.5"
+                      step="0.1"
+                      value={formData.squareMeters}
+                      onChange={(e) => handleInputChange("squareMeters", e.target.value)}
+                      required
+                    />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-sm">Height</Label>
+                      <Input
+                        type="number"
+                        placeholder="56"
+                        value={formData.height}
+                        onChange={(e) => handleInputChange("height", e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm">Width</Label>
+                      <Input
+                        type="number"
+                        placeholder="35"
+                        value={formData.width}
+                        onChange={(e) => handleInputChange("width", e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm">Depth</Label>
+                      <Input
+                        type="number"
+                        placeholder="23"
+                        value={formData.depth}
+                        onChange={(e) => handleInputChange("depth", e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -604,7 +604,7 @@ export function CreateListingForm() {
             onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
             disabled={
               (currentStep === 1 && (!formData.title || !formData.description || !formData.category || !formData.type || !formData.condition)) ||
-              (currentStep === 2 && (!formData.height || !formData.width || !formData.depth || !formData.weight)) ||
+              (currentStep === 2 && (!formData.height || !formData.width || !formData.depth)) ||
               (currentStep === 3 && (!formData.address || !formData.city || !formData.state || !formData.zipCode))
             }
           >

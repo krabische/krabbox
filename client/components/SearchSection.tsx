@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { CalendarDays, MapPin, Search } from "lucide-react";
 
 export function SearchSection() {

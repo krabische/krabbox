@@ -114,15 +114,34 @@ export default function Browse() {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search by luggage type, location, or features..."
+                placeholder="Search by storage type, location, or features..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
-            <Button onClick={handleSearch}>
-              Search
-            </Button>
+            <div className="flex gap-2">
+              <Input
+                type="date"
+                placeholder="Start date"
+                className="w-40"
+              />
+              <Select defaultValue="1month">
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1month">1 Month</SelectItem>
+                  <SelectItem value="3months">3 Months</SelectItem>
+                  <SelectItem value="6months">6 Months</SelectItem>
+                  <SelectItem value="1year">1 Year</SelectItem>
+                  <SelectItem value="more">More</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={handleSearch}>
+                Search
+              </Button>
+            </div>
           </div>
 
           {/* Filters */}

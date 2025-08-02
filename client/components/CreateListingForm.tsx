@@ -603,32 +603,7 @@ export function CreateListingForm() {
               </div>
             )}
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label>Rental Rules</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addRule}>
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Rule
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {formData.rules.map((rule, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Badge variant="outline" className="flex-1 justify-start">
-                      {rule}
-                    </Badge>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeRule(index)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
+
           </CardContent>
         </Card>
       )}

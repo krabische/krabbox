@@ -134,9 +134,19 @@ export function FeaturedListings() {
                   </div>
 
                   <div className="pt-2 border-t">
-                    <p className="text-sm text-muted-foreground">
-                      Hosted by <span className="font-medium">{listing.host}</span>
-                    </p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">
+                        Hosted by <span className="font-medium">{listing.host}</span>
+                      </p>
+                      <div className="text-right">
+                        <div className="text-xs text-muted-foreground">
+                          {listing.size.height}×{listing.size.width}×{listing.size.depth} cm
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {calculateSquareMeters(listing.size.height, listing.size.width)} m²
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>

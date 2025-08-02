@@ -40,7 +40,6 @@ export function CreateListingForm() {
     width: "",
     depth: "",
     unit: "cm" as "cm" | "inches",
-    weight: "",
     condition: "",
     features: [] as string[],
     address: "",
@@ -55,8 +54,7 @@ export function CreateListingForm() {
     isForSale: false,
     isForRent: true,
     minRentalDays: "1",
-    maxRentalDays: "30",
-    rules: [] as string[]
+    maxRentalDays: "30"
   });
 
   const availableFeatures = [

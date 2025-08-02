@@ -133,13 +133,12 @@ export default function Browse() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="carry-on">Carry-On</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="large">Large</SelectItem>
-                <SelectItem value="extra-large">Extra Large</SelectItem>
-                <SelectItem value="backpack">Backpack</SelectItem>
-                <SelectItem value="duffel">Duffel Bag</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="garage">Garage</SelectItem>
+                <SelectItem value="shed">Shed</SelectItem>
+                <SelectItem value="pantry">Pantry</SelectItem>
+                <SelectItem value="cell">Storage Cell</SelectItem>
+                <SelectItem value="container">Container</SelectItem>
+                <SelectItem value="large-space">Large Space</SelectItem>
               </SelectContent>
             </Select>
 

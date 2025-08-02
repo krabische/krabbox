@@ -131,23 +131,23 @@ export function Header() {
               </>
             ) : (
               <>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
                   onClick={() => handleAuthClick("login")}
                 >
-                  Log in
+                  {t('header.login')}
                 </Button>
-                <Button 
+                <Button
                   size="sm"
                   onClick={() => handleAuthClick("signup")}
                 >
-                  Sign up
+                  {t('header.signup')}
                 </Button>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/host">
                     <User className="h-4 w-4 mr-2" />
-                    Host
+                    {t('header.host')}
                   </Link>
                 </Button>
               </>

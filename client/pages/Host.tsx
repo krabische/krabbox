@@ -4,15 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateListingForm } from "@/components/CreateListingForm";
 import { AuthModal } from "@/components/AuthModal";
 import { useState } from "react";
-import { 
-  TrendingUp, 
-  Shield, 
-  Clock, 
-  DollarSign, 
-  Users, 
+import {
+  TrendingUp,
+  Shield,
+  Clock,
+  DollarSign,
+  Users,
   Star,
   Package,
-  Calculator
+  Calculator,
+  Plus
 } from "lucide-react";
 
 export default function Host() {

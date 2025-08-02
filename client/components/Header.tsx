@@ -186,13 +186,15 @@ export function Header() {
               >
                 How it Works
               </Link>
-              <Link
-                to="/support"
-                className="block text-sm font-medium transition-colors hover:text-primary"
-                onClick={() => setIsMenuOpen(false)}
+              <button
+                onClick={() => {
+                  setSupportModalOpen(true);
+                  setIsMenuOpen(false);
+                }}
+                className="block text-sm font-medium transition-colors hover:text-primary text-left w-full"
               >
                 Support
-              </Link>
+              </button>
               
               <div className="pt-4 space-y-2">
                 {isAuthenticated && user ? (

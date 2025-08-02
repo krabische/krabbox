@@ -375,18 +375,7 @@ export function CreateListingForm() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="weight">Weight (kg) *</Label>
-              <Input
-                id="weight"
-                type="number"
-                placeholder="3.2"
-                step="0.1"
-                value={formData.weight}
-                onChange={(e) => handleInputChange("weight", e.target.value)}
-                required
-              />
-            </div>
+
 
             <div className="space-y-3">
               <Label>Features</Label>

@@ -113,7 +113,6 @@ export function CreateListingForm() {
           depth: parseFloat(formData.depth),
           unit: formData.unit
         },
-        weight: parseFloat(formData.weight),
         features: formData.features,
         condition: formData.condition as any,
         location: {

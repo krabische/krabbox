@@ -181,7 +181,7 @@ export function FeaturedListings() {
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t">
+                  <div className="pt-2 border-t space-y-3">
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-muted-foreground">
                         Hosted by <span className="font-medium">{listing.host}</span>
@@ -195,6 +195,14 @@ export function FeaturedListings() {
                         </div>
                       </div>
                     </div>
+                    <Button
+                      className="w-full"
+                      size="sm"
+                      onClick={() => handleBookListing(listing)}
+                    >
+                      <Calendar className="h-3 w-3 mr-1" />
+                      Book Now
+                    </Button>
                   </div>
                 </div>
               </CardContent>

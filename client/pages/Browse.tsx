@@ -299,15 +299,24 @@ export default function Browse() {
 
                     <div className="flex gap-2">
                       {listing.pricing.isForRent && (
-                        <Button className="flex-1" size="sm">
+                        <Button
+                          className="flex-1"
+                          size="sm"
+                          onClick={() => handleBookListing(listing)}
+                        >
                           <Calendar className="h-3 w-3 mr-1" />
-                          Rent
+                          Book
                         </Button>
                       )}
                       {listing.pricing.isForSale && (
-                        <Button variant="outline" className="flex-1" size="sm">
-                          <Package className="h-3 w-3 mr-1" />
-                          Buy
+                        <Button
+                          variant="outline"
+                          className="flex-1"
+                          size="sm"
+                          onClick={() => handleContactSeller(listing)}
+                        >
+                          <Users className="h-3 w-3 mr-1" />
+                          Contact
                         </Button>
                       )}
                     </div>

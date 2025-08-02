@@ -461,6 +461,18 @@ export function CreateListingForm() {
                   />
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Contact Phone Number *</Label>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  placeholder="+1 (555) 123-4567"
+                  value={formData.phoneNumber}
+                  onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                  required
+                />
+              </div>
             </div>
           </CardContent>
         </Card>

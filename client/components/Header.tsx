@@ -18,6 +18,7 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "signup">("login");
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
   
   const { user, isAuthenticated, logout } = useAuth();
 

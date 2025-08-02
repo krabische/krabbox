@@ -232,12 +232,17 @@ export default function Browse() {
                       </Badge>
                     </div>
 
-                    <div className="pt-2 border-t flex items-center justify-between">
-                      <div className="text-sm text-muted-foreground">
-                        <span className="font-medium">{listing.hostName}</span>
+                    <div className="pt-2 border-t">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-sm text-muted-foreground">
+                          <span className="font-medium">{listing.hostName}</span>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {listing.size.height}×{listing.size.width}×{listing.size.depth} {listing.size.unit}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {listing.size.height}×{listing.size.width}×{listing.size.depth} {listing.size.unit}
+                      <div className="text-xs text-muted-foreground text-right">
+                        {calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit)} m²
                       </div>
                     </div>
 

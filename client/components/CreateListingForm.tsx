@@ -134,8 +134,7 @@ export function CreateListingForm() {
           sellPrice: formData.sellPrice ? parseFloat(formData.sellPrice) : undefined,
           isForSale: formData.isForSale,
           isForRent: formData.isForRent
-        },
-        rules: formData.rules
+        }
       };
 
       addListing(listingData);

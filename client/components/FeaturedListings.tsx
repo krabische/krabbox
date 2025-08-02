@@ -29,7 +29,8 @@ const featuredListings = [
     image: "/placeholder.svg",
     tags: ["Duffel", "Waterproof", "Large"],
     host: "Mike R.",
-    responseTime: "< 30 mins"
+    responseTime: "< 30 mins",
+    size: { height: 40, width: 70, depth: 30 }
   },
   {
     id: 3,
@@ -42,7 +43,8 @@ const featuredListings = [
     image: "/placeholder.svg",
     tags: ["Large", "Spinner", "Premium"],
     host: "Emma L.",
-    responseTime: "< 15 mins"
+    responseTime: "< 15 mins",
+    size: { height: 76, width: 48, depth: 30 }
   },
   {
     id: 4,
@@ -55,7 +57,8 @@ const featuredListings = [
     image: "/placeholder.svg",
     tags: ["Backpack", "Lightweight", "Compact"],
     host: "James K.",
-    responseTime: "< 2 hours"
+    responseTime: "< 2 hours",
+    size: { height: 45, width: 30, depth: 20 }
   }
 ];
 

@@ -617,7 +617,7 @@ export function CreateListingForm() {
             disabled={
               (currentStep === 1 && (!formData.title || !formData.description || !formData.category || !formData.type || !formData.condition)) ||
               (currentStep === 2 && (!formData.height || !formData.width || !formData.depth)) ||
-              (currentStep === 3 && (!formData.address || !formData.city || !formData.state || !formData.zipCode))
+              (currentStep === 3 && (!formData.address || !formData.city || !formData.state || !formData.zipCode || !formData.phoneNumber))
             }
           >
             Next

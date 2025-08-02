@@ -6,6 +6,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Plane, Shield, Clock, Users } from "lucide-react";
 
 export default function Index() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}

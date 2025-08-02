@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Luggage, Menu, User, LogOut, Settings, Calendar } from "lucide-react";
 import { useState } from "react";
 import { AuthModal } from "./AuthModal";
+import { SupportModal } from "./SupportModal";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,

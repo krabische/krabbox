@@ -156,6 +156,7 @@ export function CreateListingForm() {
         width: "",
         depth: "",
         unit: "cm",
+        squareMeters: "",
         condition: "",
         features: [],
         address: "",

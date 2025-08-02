@@ -22,6 +22,7 @@ import {
 
 export default function Account() {
   const { user, isAuthenticated, logout } = useAuth();
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;

@@ -33,19 +33,11 @@ export default function Browse() {
   const [sortBy, setSortBy] = useState("featured");
   const [priceRangeSlider, setPriceRangeSlider] = useState([0, 100]);
   const [sizeRangeSlider, setSizeRangeSlider] = useState([0, 1.0]);
-  const [periodValue, setPeriodValue] = useState([0]);
   const [selectedListing, setSelectedListing] = useState<LuggageListing | null>(
     null,
   );
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
-
-  const periodOptions = [
-    { value: 0, label: "1 Month", months: 1 },
-    { value: 1, label: "3 Months", months: 3 },
-    { value: 2, label: "6 Months", months: 6 },
-    { value: 3, label: "1 Year", months: 12 },
-  ];
 
   const calculateSquareMeters = (
     height: number,

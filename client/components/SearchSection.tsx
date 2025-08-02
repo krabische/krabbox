@@ -4,6 +4,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { CalendarDays, MapPin, Search } from "lucide-react";
 
 export function SearchSection() {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="bg-white rounded-2xl shadow-xl border p-6 md:p-8">
@@ -12,10 +14,10 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <MapPin className="h-4 w-4 mr-2" />
-              Where
+              {t('search.where')}
             </label>
             <Input
-              placeholder="Address, city, area..."
+              placeholder={t('search.placeholder')}
               className="border-gray-200 focus:border-primary"
             />
           </div>
@@ -24,7 +26,7 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <CalendarDays className="h-4 w-4 mr-2" />
-              Start Date
+              {t('search.startDate')}
             </label>
             <Input
               type="date"
@@ -36,7 +38,7 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <CalendarDays className="h-4 w-4 mr-2" />
-              End Date
+              {t('search.endDate')}
             </label>
             <Input
               type="date"
@@ -47,27 +49,34 @@ export function SearchSection() {
           {/* Search Button */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 opacity-0">
-              Search
+              {t('search.search')}
             </label>
             <Button className="w-full h-10 bg-primary hover:bg-primary/90">
               <Search className="h-4 w-4 mr-2" />
-              Search
+              {t('search.search')}
             </Button>
           </div>
         </div>
 
         {/* Quick filters */}
         <div className="mt-6 pt-6 border-t">
-          <p className="text-sm font-medium text-gray-700 mb-3">Popular storage types:</p>
+          <p className="text-sm font-medium text-gray-700 mb-3">{t('filters.popularTypes')}</p>
           <div className="flex flex-wrap gap-2">
-            {["Garage", "Shed", "Pantry", "Storage Cell", "Container", "Large Space"].map((type) => (
+            {[
+              { key: 'garage', label: t('category.garage') },
+              { key: 'shed', label: t('category.shed') },
+              { key: 'pantry', label: t('category.pantry') },
+              { key: 'cell', label: t('category.cell') },
+              { key: 'container', label: t('category.container') },
+              { key: 'largeSpace', label: t('category.largeSpace') }
+            ].map((type) => (
               <Button
-                key={type}
+                key={type.key}
                 variant="outline"
                 size="sm"
                 className="rounded-full border-gray-200 hover:border-primary hover:text-primary"
               >
-                {type}
+                {type.label}
               </Button>
             ))}
           </div>

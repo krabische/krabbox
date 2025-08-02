@@ -164,18 +164,125 @@ export default function Account() {
           </TabsContent>
 
           <TabsContent value="listings" className="space-y-6">
-            <Card>
-              <CardContent className="p-12 text-center">
-                <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Listings Yet</h3>
-                <p className="text-muted-foreground mb-6">
-                  Start earning money by listing your luggage for rent.
-                </p>
-                <Button asChild>
-                  <Link to="/host">Create Your First Listing</Link>
-                </Button>
-              </CardContent>
-            </Card>
+            {userListings.length > 0 ? (
+              <>
+                {/* Earnings Dashboard */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
+                      <Package className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{userListings.length}</div>
+                      <p className="text-xs text-muted-foreground">
+                        All listings active
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Monthly Earnings</CardTitle>
+                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">${monthlyEarnings[monthlyEarnings.length - 1]}</div>
+                      <p className="text-xs text-muted-foreground">
+                        +23% from last month
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Earned</CardTitle>
+                      <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">${totalEarnings}</div>
+                      <Button variant="outline" size="sm" className="mt-2">
+                        Withdraw
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Earnings Graph */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Earnings Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 flex items-end justify-between gap-2">
+                      {monthlyEarnings.map((amount, index) => (
+                        <div key={index} className="flex flex-col items-center flex-1">
+                          <div
+                            className="bg-primary rounded-t-sm w-full"
+                            style={{ height: `${(amount / Math.max(...monthlyEarnings)) * 200}px` }}
+                          />
+                          <span className="text-xs text-muted-foreground mt-2">
+                            {new Date(2024, index + 6).toLocaleDateString('en', { month: 'short' })}
+                          </span>
+                          <span className="text-xs font-medium">${amount}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* User's Listings */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Your Listings</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {userListings.map((listing) => (
+                      <Card key={listing.id}>
+                        <div className="relative">
+                          <img
+                            src={listing.images[0]}
+                            alt={listing.title}
+                            className="w-full h-32 object-cover rounded-t-lg"
+                          />
+                          <Badge variant="secondary" className="absolute top-2 right-2">
+                            ${listing.pricing.dailyRate}/day
+                          </Badge>
+                        </div>
+                        <CardContent className="p-4">
+                          <h4 className="font-semibold line-clamp-1">{listing.title}</h4>
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {listing.description}
+                          </p>
+                          <div className="flex items-center justify-between mt-3">
+                            <Badge variant="outline" className="text-xs">
+                              {listing.condition}
+                            </Badge>
+                            <div className="flex items-center">
+                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
+                              <span className="text-xs">
+                                {listing.rating > 0 ? listing.rating.toFixed(1) : 'New'}
+                              </span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No Listings Yet</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Start earning money by listing your storage space for rent.
+                  </p>
+                  <Button asChild>
+                    <Link to="/host">Create Your First Listing</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-6">

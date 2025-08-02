@@ -46,11 +46,18 @@ export default function Browse() {
 
   const filteredListings = listings.filter(listing => {
     if (selectedCategory !== "all" && listing.category !== selectedCategory) return false;
-    if (searchTerm && !listing.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
+    if (searchTerm && !listing.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !listing.location.city.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-    
+
+    // Price range filter
+    const price = listing.pricing.dailyRate;
+    if (price < priceRangeSlider[0] || price > priceRangeSlider[1]) return false;
+
+    // Size range filter (square meters)
+    const squareMeters = calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit);
+    if (squareMeters < sizeRangeSlider[0] || squareMeters > sizeRangeSlider[1]) return false;
+
     if (priceRange !== "all") {
-      const price = listing.pricing.dailyRate;
       switch (priceRange) {
         case "under-10":
           if (price >= 10) return false;
@@ -66,7 +73,7 @@ export default function Browse() {
           break;
       }
     }
-    
+
     return true;
   });
 

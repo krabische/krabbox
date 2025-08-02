@@ -23,11 +23,19 @@ import {
 
 export default function Account() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { listings } = useListings();
   const [editProfileOpen, setEditProfileOpen] = useState(false);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
   }
+
+  // Get user's listings
+  const userListings = listings.filter(listing => listing.hostId === user.id);
+
+  // Mock earnings data
+  const totalEarnings = userListings.length * 450; // Mock calculation
+  const monthlyEarnings = [120, 380, 290, 450, 670, 820]; // Mock data for last 6 months
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();

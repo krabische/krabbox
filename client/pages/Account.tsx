@@ -172,7 +172,9 @@ export default function Account() {
                 <p className="text-muted-foreground mb-6">
                   Start earning money by listing your luggage for rent.
                 </p>
-                <Button>Create Your First Listing</Button>
+                <Button asChild>
+                  <Link to="/host">Create Your First Listing</Link>
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>

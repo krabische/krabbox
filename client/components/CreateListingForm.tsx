@@ -168,8 +168,7 @@ export function CreateListingForm() {
         isForSale: false,
         isForRent: true,
         minRentalDays: "1",
-        maxRentalDays: "30",
-        rules: []
+        maxRentalDays: "30"
       });
       setImages([]);
       setCurrentStep(1);

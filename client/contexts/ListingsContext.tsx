@@ -38,7 +38,6 @@ export interface LuggageListing {
     isForSale: boolean;
     isForRent: boolean;
   };
-  rules: string[];
   rating: number;
   reviewCount: number;
   createdAt: string;

@@ -216,6 +216,13 @@ export function FeaturedListings() {
           </Button>
         </div>
       </div>
+
+      {/* Modals */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+        listing={selectedListing}
+      />
     </section>
   );
 }

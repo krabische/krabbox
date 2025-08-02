@@ -59,6 +59,13 @@ const featuredListings = [
 ];
 
 export function FeaturedListings() {
+  const calculateSquareMeters = (height: number, width: number, unit: 'cm' | 'inches' = 'cm') => {
+    const heightInM = unit === 'cm' ? height / 100 : height * 0.0254;
+    const widthInM = unit === 'cm' ? width / 100 : width * 0.0254;
+    const squareMeters = heightInM * widthInM;
+    return Math.round(squareMeters * 10) / 10;
+  };
+
   return (
     <section className="py-16">
       <div className="container">

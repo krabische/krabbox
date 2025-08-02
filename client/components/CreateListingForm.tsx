@@ -91,22 +91,7 @@ export function CreateListingForm() {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  const addRule = () => {
-    const rule = prompt("Enter a rule for your luggage rental:");
-    if (rule && rule.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        rules: [...prev.rules, rule.trim()]
-      }));
-    }
-  };
 
-  const removeRule = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      rules: prev.rules.filter((_, i) => i !== index)
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

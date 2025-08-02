@@ -28,6 +28,7 @@ import {
 
 export default function Browse() {
   const { listings, searchListings } = useListings();
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState("all");

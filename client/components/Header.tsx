@@ -267,10 +267,14 @@ export function Header() {
         )}
       </header>
 
-      <AuthModal 
-        isOpen={authModalOpen} 
+      <AuthModal
+        isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         defaultTab={authModalTab}
+      />
+      <SupportModal
+        isOpen={supportModalOpen}
+        onClose={() => setSupportModalOpen(false)}
       />
     </>
   );

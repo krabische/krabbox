@@ -15,7 +15,8 @@ const featuredListings = [
     image: "/placeholder.svg",
     tags: ["Carry-On", "Hardside", "TSA Lock"],
     host: "Sarah M.",
-    responseTime: "< 1 hour"
+    responseTime: "< 1 hour",
+    size: { height: 56, width: 35, depth: 23 }
   },
   {
     id: 2,

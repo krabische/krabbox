@@ -60,12 +60,12 @@ export function Header() {
             >
               How it Works
             </Link>
-            <Link
-              to="/support"
+            <button
+              onClick={() => setSupportModalOpen(true)}
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Support
-            </Link>
+            </button>
           </nav>
 
           {/* Desktop Actions */}

@@ -169,26 +169,29 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden border-t bg-background">
             <div className="container py-4 space-y-4">
+              <div className="mb-4">
+                <LanguageSelector />
+              </div>
               <Link
                 to="/browse"
                 className="block text-sm font-medium transition-colors hover:text-primary"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Browse Luggage
+                {t('header.browseLuggage')}
               </Link>
               <Link
                 to="/host"
                 className="block text-sm font-medium transition-colors hover:text-primary"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Become a Host
+                {t('header.becomeHost')}
               </Link>
               <Link
                 to="/how-it-works"
                 className="block text-sm font-medium transition-colors hover:text-primary"
                 onClick={() => setIsMenuOpen(false)}
               >
-                How it Works
+                {t('header.howItWorks')}
               </Link>
               <button
                 onClick={() => {
@@ -197,7 +200,7 @@ export function Header() {
                 }}
                 className="block text-sm font-medium transition-colors hover:text-primary text-left w-full"
               >
-                Support
+                {t('header.support')}
               </button>
               
               <div className="pt-4 space-y-2">

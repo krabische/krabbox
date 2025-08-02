@@ -154,7 +154,6 @@ export function CreateListingForm() {
         width: "",
         depth: "",
         unit: "cm",
-        weight: "",
         condition: "",
         features: [],
         address: "",

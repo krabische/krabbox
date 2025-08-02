@@ -4,7 +4,9 @@ import { Luggage, Menu, User, LogOut, Settings, Calendar } from "lucide-react";
 import { useState } from "react";
 import { AuthModal } from "./AuthModal";
 import { SupportModal } from "./SupportModal";
+import { LanguageSelector } from "./LanguageSelector";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   DropdownMenu,
   DropdownMenuContent,

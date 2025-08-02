@@ -193,12 +193,20 @@ export default function Account() {
                   <p className="text-muted-foreground">{user.email}</p>
                 </div>
                 <div>
+                  <label className="text-sm font-medium">Mobile Number</label>
+                  <p className="text-muted-foreground">{user.phoneNumber || "Not provided"}</p>
+                </div>
+                <div>
                   <label className="text-sm font-medium">Member Since</label>
                   <p className="text-muted-foreground">
                     {new Date(user.joinDate).toLocaleDateString()}
                   </p>
                 </div>
-                <Button variant="outline" className="mt-4">
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => setEditProfileOpen(true)}
+                >
                   Edit Profile
                 </Button>
               </CardContent>

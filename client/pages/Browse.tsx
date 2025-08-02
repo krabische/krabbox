@@ -148,35 +148,8 @@ export default function Browse() {
               </div>
               <div className="flex gap-2">
                 <Input type="date" placeholder="Start date" className="w-40" />
+                <Input type="date" placeholder="End date" className="w-40" />
                 <Button onClick={handleSearch}>Search</Button>
-              </div>
-            </div>
-
-            {/* Period Slider */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-gray-700">
-                  Storage Period
-                </label>
-                <Badge variant="secondary" className="px-3 py-1">
-                  {periodOptions[periodValue[0]].label}
-                </Badge>
-              </div>
-
-              <div className="px-3">
-                <Slider
-                  value={periodValue}
-                  onValueChange={setPeriodValue}
-                  max={3}
-                  min={0}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                  {periodOptions.map((option) => (
-                    <span key={option.value}>{option.label}</span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

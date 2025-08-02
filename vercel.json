@@ -1,13 +1,16 @@
 {
   "buildCommand": "npm run build:client",
   "outputDirectory": "dist/spa",
-  "framework": "vite",
   "functions": {
     "api/**/*.ts": {
       "runtime": "nodejs18.x"
     }
   },
   "rewrites": [
+    {
+      "source": "/api/health",
+      "destination": "/api/health"
+    },
     {
       "source": "/api/(.*)",
       "destination": "/api/index"

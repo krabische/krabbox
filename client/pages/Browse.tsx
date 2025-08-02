@@ -23,6 +23,14 @@ export default function Browse() {
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
 
+  const calculateSquareMeters = (height: number, width: number, unit: 'cm' | 'inches') => {
+    // Convert to meters if needed
+    const heightInM = unit === 'cm' ? height / 100 : height * 0.0254;
+    const widthInM = unit === 'cm' ? width / 100 : width * 0.0254;
+    const squareMeters = heightInM * widthInM;
+    return Math.round(squareMeters * 10) / 10; // Round to 1 decimal place
+  };
+
   const handleSearch = () => {
     // Implement search functionality
     console.log("Searching for:", searchTerm);

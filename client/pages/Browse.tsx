@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useListings, LuggageListing } from "@/contexts/ListingsContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";

@@ -25,6 +25,11 @@ export default function Browse() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
+  const [priceRangeSlider, setPriceRangeSlider] = useState([0, 100]);
+  const [sizeRangeSlider, setSizeRangeSlider] = useState([0, 1.0]);
+  const [selectedListing, setSelectedListing] = useState<LuggageListing | null>(null);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
 
   const calculateSquareMeters = (height: number, width: number, unit: 'cm' | 'inches') => {
     // Convert to meters if needed

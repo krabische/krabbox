@@ -49,25 +49,25 @@ export function Header() {
               to="/browse"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Browse Luggage
+              {t('header.browseLuggage')}
             </Link>
             <Link
               to="/host"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Become a Host
+              {t('header.becomeHost')}
             </Link>
             <Link
               to="/how-it-works"
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              How it Works
+              {t('header.howItWorks')}
             </Link>
             <button
               onClick={() => setSupportModalOpen(true)}
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Support
+              {t('header.support')}
             </button>
           </nav>
 

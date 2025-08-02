@@ -174,6 +174,32 @@ export default function Browse() {
               More Filters
             </Button>
           </div>
+
+          {/* Range Sliders */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t">
+            <div className="space-y-3">
+              <label className="text-sm font-medium">Price Range: ${priceRangeSlider[0]} - ${priceRangeSlider[1]} per day</label>
+              <Slider
+                value={priceRangeSlider}
+                onValueChange={setPriceRangeSlider}
+                max={100}
+                min={0}
+                step={5}
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-3">
+              <label className="text-sm font-medium">Size Range: {sizeRangeSlider[0]} - {sizeRangeSlider[1]} m²</label>
+              <Slider
+                value={sizeRangeSlider}
+                onValueChange={setSizeRangeSlider}
+                max={1.0}
+                min={0}
+                step={0.1}
+                className="w-full"
+              />
+            </div>
+          </div>
         </div>
       </div>
 

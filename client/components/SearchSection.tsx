@@ -14,10 +14,10 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <MapPin className="h-4 w-4 mr-2" />
-              {t('search.where')}
+              {t("search.where")}
             </label>
             <Input
-              placeholder={t('search.placeholder')}
+              placeholder={t("search.placeholder")}
               className="border-gray-200 focus:border-primary"
             />
           </div>
@@ -26,7 +26,7 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <CalendarDays className="h-4 w-4 mr-2" />
-              {t('search.startDate')}
+              {t("search.startDate")}
             </label>
             <Input
               type="date"
@@ -38,7 +38,7 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <CalendarDays className="h-4 w-4 mr-2" />
-              {t('search.endDate')}
+              {t("search.endDate")}
             </label>
             <Input
               type="date"
@@ -49,26 +49,28 @@ export function SearchSection() {
           {/* Search Button */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 opacity-0">
-              {t('search.search')}
+              {t("search.search")}
             </label>
             <Button className="w-full h-10 bg-primary hover:bg-primary/90">
               <Search className="h-4 w-4 mr-2" />
-              {t('search.search')}
+              {t("search.search")}
             </Button>
           </div>
         </div>
 
         {/* Quick filters */}
         <div className="mt-6 pt-6 border-t">
-          <p className="text-sm font-medium text-gray-700 mb-3">{t('filters.popularTypes')}</p>
+          <p className="text-sm font-medium text-gray-700 mb-3">
+            {t("filters.popularTypes")}
+          </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { key: 'garage', label: t('category.garage') },
-              { key: 'shed', label: t('category.shed') },
-              { key: 'pantry', label: t('category.pantry') },
-              { key: 'cell', label: t('category.cell') },
-              { key: 'container', label: t('category.container') },
-              { key: 'largeSpace', label: t('category.largeSpace') }
+              { key: "garage", label: t("category.garage") },
+              { key: "shed", label: t("category.shed") },
+              { key: "pantry", label: t("category.pantry") },
+              { key: "cell", label: t("category.cell") },
+              { key: "container", label: t("category.container") },
+              { key: "largeSpace", label: t("category.largeSpace") },
             ].map((type) => (
               <Button
                 key={type.key}

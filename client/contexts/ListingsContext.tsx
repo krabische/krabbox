@@ -78,7 +78,6 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       category: 'carry-on',
       type: 'hardside',
       size: { height: 56, width: 35, depth: 23, unit: 'cm' },
-      weight: 3.2,
       features: ['TSA Lock', '4 Wheels', 'Hard Shell', 'Expandable'],
       condition: 'excellent',
       location: {

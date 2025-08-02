@@ -99,7 +99,6 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         isForSale: false,
         isForRent: true
       },
-      rules: ['No smoking', 'Return in same condition', 'Report any damage immediately'],
       rating: 4.9,
       reviewCount: 127,
       createdAt: new Date().toISOString(),

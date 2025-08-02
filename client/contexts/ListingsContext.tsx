@@ -15,7 +15,6 @@ export interface LuggageListing {
     depth: number;
     unit: 'cm' | 'inches';
   };
-  weight: number;
   features: string[];
   condition: 'new' | 'excellent' | 'good' | 'fair';
   location: {

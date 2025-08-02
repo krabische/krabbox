@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useListings } from "@/contexts/ListingsContext";
+import { useListings, LuggageListing } from "@/contexts/ListingsContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { BookingModal } from "@/components/BookingModal";
+import { ContactSellerModal } from "@/components/ContactSellerModal";
 import { 
   Search, 
   MapPin, 

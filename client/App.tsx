@@ -27,26 +27,26 @@ const App = () => (
       <LanguageProvider>
         <AuthProvider>
           <ListingsProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-1">
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/browse" element={<Browse />} />
-                  <Route path="/host" element={<Host />} />
-                  <Route path="/how-it-works" element={<HowItWorksPage />} />
-                  <Route path="/support" element={<Support />} />
-                  <Route path="/account" element={<Account />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
-          </BrowserRouter>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-1">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/browse" element={<Browse />} />
+                    <Route path="/host" element={<Host />} />
+                    <Route path="/how-it-works" element={<HowItWorksPage />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/account" element={<Account />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </div>
+            </BrowserRouter>
           </ListingsProvider>
         </AuthProvider>
       </LanguageProvider>

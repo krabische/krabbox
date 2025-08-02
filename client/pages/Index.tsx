@@ -25,10 +25,10 @@ export default function Index() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="text-lg px-8 py-3 h-auto">
                 <Plane className="mr-2 h-5 w-5" />
-                Start Your Journey
+                {t('home.hero.findStorage')}
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-3 h-auto">
-                Become a Host
+                {t('home.hero.listStorage')}
               </Button>
             </div>
           </div>

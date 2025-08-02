@@ -338,6 +338,18 @@ export default function Browse() {
           </div>
         )}
       </div>
+
+      {/* Modals */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+        listing={selectedListing}
+      />
+      <ContactSellerModal
+        isOpen={contactModalOpen}
+        onClose={() => setContactModalOpen(false)}
+        listing={selectedListing}
+      />
     </div>
   );
 }

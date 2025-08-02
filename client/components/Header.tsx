@@ -23,6 +23,7 @@ export function Header() {
   const [supportModalOpen, setSupportModalOpen] = useState(false);
   
   const { user, isAuthenticated, logout } = useAuth();
+  const { t } = useLanguage();
 
   const handleAuthClick = (tab: "login" | "signup") => {
     setAuthModalTab(tab);

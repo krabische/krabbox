@@ -16,13 +16,11 @@ export default function Index() {
         
         <div className="container relative">
           <div className="text-center max-w-4xl mx-auto mb-16">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-purple-700 to-indigo-700 bg-clip-text text-transparent">
-              Travel Light.
-              <br />
-              Pack Smart.
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-purple-700 to-indigo-700 bg-clip-text text-transparent whitespace-pre-line">
+              {t('home.hero.title')}
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-              Rent premium luggage at your destination. Skip the airline fees, avoid dragging heavy bags, and travel with confidence.
+              {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="text-lg px-8 py-3 h-auto">

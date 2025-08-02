@@ -126,7 +126,7 @@ export default function Index() {
             <Button size="lg" variant="secondary" className="text-lg px-8 py-3 h-auto">
               Find Luggage
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-3 h-auto border-white text-white hover:bg-white hover:text-primary">
+            <Button size="lg" variant="outline" className="text-lg px-8 py-3 h-auto border-primary text-primary bg-white hover:bg-primary hover:text-white">
               List Your Luggage
             </Button>
           </div>

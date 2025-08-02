@@ -19,12 +19,12 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
     email: user?.email || "",
-    phoneNumber: user?.phoneNumber || ""
+    phoneNumber: user?.phoneNumber || "",
   });
   const { toast } = useToast();
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,8 +33,8 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
 
     try {
       // Simulate API call to update profile
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // In a real app, this would update the user in the auth context
       toast({
         title: "Profile Updated!",
@@ -111,7 +111,12 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting} className="flex-1">

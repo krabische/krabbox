@@ -9,7 +9,7 @@ const periodOptions = [
   { value: 0, label: "1 Month", months: 1 },
   { value: 1, label: "3 Months", months: 3 },
   { value: 2, label: "6 Months", months: 6 },
-  { value: 3, label: "1 Year", months: 12 }
+  { value: 3, label: "1 Year", months: 12 },
 ];
 
 export function SearchSection() {
@@ -67,7 +67,7 @@ export function SearchSection() {
                 {currentPeriod.label}
               </Badge>
             </div>
-            
+
             <div className="px-3">
               <Slider
                 value={periodValue}
@@ -88,9 +88,18 @@ export function SearchSection() {
 
         {/* Quick filters */}
         <div className="mt-6 pt-6 border-t">
-          <p className="text-sm font-medium text-gray-700 mb-3">Popular storage types:</p>
+          <p className="text-sm font-medium text-gray-700 mb-3">
+            Popular storage types:
+          </p>
           <div className="flex flex-wrap gap-2">
-            {["Garage", "Shed", "Pantry", "Storage Cell", "Container", "Large Space"].map((type) => (
+            {[
+              "Garage",
+              "Shed",
+              "Pantry",
+              "Storage Cell",
+              "Container",
+              "Large Space",
+            ].map((type) => (
               <Button
                 key={type}
                 variant="outline"

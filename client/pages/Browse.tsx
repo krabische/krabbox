@@ -4,19 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { BookingModal } from "@/components/BookingModal";
 import { ContactSellerModal } from "@/components/ContactSellerModal";
-import { 
-  Search, 
-  MapPin, 
-  Star, 
+import {
+  Search,
+  MapPin,
+  Star,
   Filter,
   SlidersHorizontal,
   Calendar,
   Users,
-  Package
+  Package,
 } from "lucide-react";
 
 export default function Browse() {
@@ -28,7 +34,9 @@ export default function Browse() {
   const [priceRangeSlider, setPriceRangeSlider] = useState([0, 100]);
   const [sizeRangeSlider, setSizeRangeSlider] = useState([0, 1.0]);
   const [periodValue, setPeriodValue] = useState([0]);
-  const [selectedListing, setSelectedListing] = useState<LuggageListing | null>(null);
+  const [selectedListing, setSelectedListing] = useState<LuggageListing | null>(
+    null,
+  );
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
 
@@ -36,13 +44,17 @@ export default function Browse() {
     { value: 0, label: "1 Month", months: 1 },
     { value: 1, label: "3 Months", months: 3 },
     { value: 2, label: "6 Months", months: 6 },
-    { value: 3, label: "1 Year", months: 12 }
+    { value: 3, label: "1 Year", months: 12 },
   ];
 
-  const calculateSquareMeters = (height: number, width: number, unit: 'cm' | 'inches') => {
+  const calculateSquareMeters = (
+    height: number,
+    width: number,
+    unit: "cm" | "inches",
+  ) => {
     // Convert to meters if needed
-    const heightInM = unit === 'cm' ? height / 100 : height * 0.0254;
-    const widthInM = unit === 'cm' ? width / 100 : width * 0.0254;
+    const heightInM = unit === "cm" ? height / 100 : height * 0.0254;
+    const widthInM = unit === "cm" ? width / 100 : width * 0.0254;
     const squareMeters = heightInM * widthInM;
     return Math.round(squareMeters * 10) / 10; // Round to 1 decimal place
   };
@@ -52,18 +64,29 @@ export default function Browse() {
     console.log("Searching for:", searchTerm);
   };
 
-  const filteredListings = listings.filter(listing => {
-    if (selectedCategory !== "all" && listing.category !== selectedCategory) return false;
-    if (searchTerm && !listing.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !listing.location.city.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+  const filteredListings = listings.filter((listing) => {
+    if (selectedCategory !== "all" && listing.category !== selectedCategory)
+      return false;
+    if (
+      searchTerm &&
+      !listing.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !listing.location.city.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+      return false;
 
     // Price range filter
     const price = listing.pricing.dailyRate;
-    if (price < priceRangeSlider[0] || price > priceRangeSlider[1]) return false;
+    if (price < priceRangeSlider[0] || price > priceRangeSlider[1])
+      return false;
 
     // Size range filter (square meters)
-    const squareMeters = calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit);
-    if (squareMeters < sizeRangeSlider[0] || squareMeters > sizeRangeSlider[1]) return false;
+    const squareMeters = calculateSquareMeters(
+      listing.size.height,
+      listing.size.width,
+      listing.size.unit,
+    );
+    if (squareMeters < sizeRangeSlider[0] || squareMeters > sizeRangeSlider[1])
+      return false;
 
     if (priceRange !== "all") {
       switch (priceRange) {
@@ -94,7 +117,9 @@ export default function Browse() {
       case "rating":
         return b.rating - a.rating;
       case "newest":
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       default:
         return 0;
     }
@@ -116,7 +141,7 @@ export default function Browse() {
       <div className="bg-white border-b">
         <div className="container py-6">
           <h1 className="text-3xl font-bold mb-6">Browse Luggage</h1>
-          
+
           {/* Search Bar */}
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -130,14 +155,8 @@ export default function Browse() {
                 />
               </div>
               <div className="flex gap-2">
-                <Input
-                  type="date"
-                  placeholder="Start date"
-                  className="w-40"
-                />
-                <Button onClick={handleSearch}>
-                  Search
-                </Button>
+                <Input type="date" placeholder="Start date" className="w-40" />
+                <Button onClick={handleSearch}>Search</Button>
               </div>
             </div>
 
@@ -172,7 +191,10 @@ export default function Browse() {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-4">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
@@ -222,7 +244,10 @@ export default function Browse() {
           {/* Range Sliders */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t">
             <div className="space-y-3">
-              <label className="text-sm font-medium">Price Range: ${priceRangeSlider[0]} - ${priceRangeSlider[1]} per day</label>
+              <label className="text-sm font-medium">
+                Price Range: ${priceRangeSlider[0]} - ${priceRangeSlider[1]} per
+                day
+              </label>
               <Slider
                 value={priceRangeSlider}
                 onValueChange={setPriceRangeSlider}
@@ -233,7 +258,9 @@ export default function Browse() {
               />
             </div>
             <div className="space-y-3">
-              <label className="text-sm font-medium">Size Range: {sizeRangeSlider[0]} - {sizeRangeSlider[1]} m²</label>
+              <label className="text-sm font-medium">
+                Size Range: {sizeRangeSlider[0]} - {sizeRangeSlider[1]} m²
+              </label>
               <Slider
                 value={sizeRangeSlider}
                 onValueChange={setSizeRangeSlider}
@@ -258,7 +285,10 @@ export default function Browse() {
         {sortedListings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {sortedListings.map((listing) => (
-              <Card key={listing.id} className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md overflow-hidden">
+              <Card
+                key={listing.id}
+                className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md overflow-hidden"
+              >
                 <div className="relative">
                   <img
                     src={listing.images[0]}
@@ -266,22 +296,31 @@ export default function Browse() {
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 right-3 flex flex-col gap-2">
-                    <Badge variant="secondary" className="bg-white/90 text-gray-800">
+                    <Badge
+                      variant="secondary"
+                      className="bg-white/90 text-gray-800"
+                    >
                       ${listing.pricing.dailyRate}/day
                     </Badge>
                     {listing.pricing.isForSale && (
-                      <Badge variant="outline" className="bg-white/90 text-green-700 border-green-300">
+                      <Badge
+                        variant="outline"
+                        className="bg-white/90 text-green-700 border-green-300"
+                      >
                         For Sale: ${listing.pricing.sellPrice}
                       </Badge>
                     )}
                   </div>
                   <div className="absolute top-3 left-3">
-                    <Badge variant="outline" className="bg-white/90 text-gray-800 capitalize">
-                      {listing.category.replace('-', ' ')}
+                    <Badge
+                      variant="outline"
+                      className="bg-white/90 text-gray-800 capitalize"
+                    >
+                      {listing.category.replace("-", " ")}
                     </Badge>
                   </div>
                 </div>
-                
+
                 <CardContent className="p-4">
                   <div className="space-y-3">
                     <div>
@@ -296,7 +335,11 @@ export default function Browse() {
 
                     <div className="flex flex-wrap gap-1">
                       {listing.features.slice(0, 3).map((feature) => (
-                        <Badge key={feature} variant="outline" className="text-xs">
+                        <Badge
+                          key={feature}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {feature}
                         </Badge>
                       ))}
@@ -311,7 +354,9 @@ export default function Browse() {
                       <div className="flex items-center space-x-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="text-sm font-medium">
-                          {listing.rating > 0 ? listing.rating.toFixed(1) : 'New'}
+                          {listing.rating > 0
+                            ? listing.rating.toFixed(1)
+                            : "New"}
                         </span>
                         {listing.reviewCount > 0 && (
                           <span className="text-sm text-muted-foreground">
@@ -319,8 +364,10 @@ export default function Browse() {
                           </span>
                         )}
                       </div>
-                      <Badge 
-                        variant={listing.condition === 'new' ? 'default' : 'secondary'}
+                      <Badge
+                        variant={
+                          listing.condition === "new" ? "default" : "secondary"
+                        }
                         className="text-xs"
                       >
                         {listing.condition}
@@ -330,14 +377,22 @@ export default function Browse() {
                     <div className="pt-2 border-t">
                       <div className="flex items-center justify-between mb-1">
                         <div className="text-sm text-muted-foreground">
-                          <span className="font-medium">{listing.hostName}</span>
+                          <span className="font-medium">
+                            {listing.hostName}
+                          </span>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {listing.size.height}×{listing.size.width}×{listing.size.depth} {listing.size.unit}
+                          {listing.size.height}×{listing.size.width}×
+                          {listing.size.depth} {listing.size.unit}
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground text-right">
-                        {calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit)} m²
+                        {calculateSquareMeters(
+                          listing.size.height,
+                          listing.size.width,
+                          listing.size.unit,
+                        )}{" "}
+                        m²
                       </div>
                     </div>
 
@@ -374,11 +429,10 @@ export default function Browse() {
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">No listings found</h3>
             <p className="text-muted-foreground mb-6">
-              Try adjusting your search criteria or check back later for new listings.
+              Try adjusting your search criteria or check back later for new
+              listings.
             </p>
-            <Button variant="outline">
-              Clear Filters
-            </Button>
+            <Button variant="outline">Clear Filters</Button>
           </div>
         )}
       </div>

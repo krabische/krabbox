@@ -8,17 +8,17 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Navigate, Link } from "react-router-dom";
 import { EditProfileModal } from "@/components/EditProfileModal";
-import { 
-  User, 
-  Settings, 
-  Calendar, 
-  CreditCard, 
-  Star, 
-  MapPin, 
+import {
+  User,
+  Settings,
+  Calendar,
+  CreditCard,
+  Star,
+  MapPin,
   Clock,
   Package,
   TrendingUp,
-  Shield
+  Shield,
 } from "lucide-react";
 
 export default function Account() {
@@ -31,7 +31,7 @@ export default function Account() {
   }
 
   // Get user's listings
-  const userListings = listings.filter(listing => listing.hostId === user.id);
+  const userListings = listings.filter((listing) => listing.hostId === user.id);
 
   // Mock earnings data
   const totalEarnings = userListings.length * 450; // Mock calculation
@@ -48,16 +48,16 @@ export default function Account() {
       location: "JFK Airport",
       dates: "Dec 15-20, 2024",
       status: "upcoming",
-      price: 60
+      price: 60,
     },
     {
-      id: "2", 
+      id: "2",
       luggage: "Travel Duffel Bag",
       location: "Times Square Hotel",
       dates: "Nov 10-15, 2024",
       status: "completed",
-      price: 40
-    }
+      price: 40,
+    },
   ];
 
   return (
@@ -67,13 +67,17 @@ export default function Account() {
         <div className="bg-gradient-to-r from-primary to-purple-600 rounded-lg p-8 text-white mb-8">
           <div className="flex items-center gap-6">
             <Avatar className="h-20 w-20 bg-white text-primary text-xl font-bold">
-              <AvatarFallback>{getInitials(user.firstName, user.lastName)}</AvatarFallback>
+              <AvatarFallback>
+                {getInitials(user.firstName, user.lastName)}
+              </AvatarFallback>
             </Avatar>
             <div>
               <h1 className="text-3xl font-bold mb-2">
                 {user.firstName} {user.lastName}
               </h1>
-              <p className="text-white/80 mb-2">Member since {new Date(user.joinDate).getFullYear()}</p>
+              <p className="text-white/80 mb-2">
+                Member since {new Date(user.joinDate).getFullYear()}
+              </p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -99,7 +103,9 @@ export default function Account() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Total Bookings
+                  </CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -112,7 +118,9 @@ export default function Account() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Next Trip</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Next Trip
+                  </CardTitle>
                   <MapPin className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -150,8 +158,12 @@ export default function Account() {
                       </div>
                       <div className="text-right">
                         <div className="font-semibold">${booking.price}</div>
-                        <Badge 
-                          variant={booking.status === "upcoming" ? "default" : "secondary"}
+                        <Badge
+                          variant={
+                            booking.status === "upcoming"
+                              ? "default"
+                              : "secondary"
+                          }
                         >
                           {booking.status}
                         </Badge>
@@ -170,11 +182,15 @@ export default function Account() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Active Listings
+                      </CardTitle>
                       <Package className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{userListings.length}</div>
+                      <div className="text-2xl font-bold">
+                        {userListings.length}
+                      </div>
                       <p className="text-xs text-muted-foreground">
                         All listings active
                       </p>
@@ -183,11 +199,15 @@ export default function Account() {
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Monthly Earnings</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Monthly Earnings
+                      </CardTitle>
                       <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">${monthlyEarnings[monthlyEarnings.length - 1]}</div>
+                      <div className="text-2xl font-bold">
+                        ${monthlyEarnings[monthlyEarnings.length - 1]}
+                      </div>
                       <p className="text-xs text-muted-foreground">
                         +23% from last month
                       </p>
@@ -196,7 +216,9 @@ export default function Account() {
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Total Earned</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Total Earned
+                      </CardTitle>
                       <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -216,13 +238,21 @@ export default function Account() {
                   <CardContent>
                     <div className="h-64 flex items-end justify-between gap-2">
                       {monthlyEarnings.map((amount, index) => (
-                        <div key={index} className="flex flex-col items-center flex-1">
+                        <div
+                          key={index}
+                          className="flex flex-col items-center flex-1"
+                        >
                           <div
                             className="bg-primary rounded-t-sm w-full"
-                            style={{ height: `${(amount / Math.max(...monthlyEarnings)) * 200}px` }}
+                            style={{
+                              height: `${(amount / Math.max(...monthlyEarnings)) * 200}px`,
+                            }}
                           />
                           <span className="text-xs text-muted-foreground mt-2">
-                            {new Date(2024, index + 6).toLocaleDateString('en', { month: 'short' })}
+                            {new Date(2024, index + 6).toLocaleDateString(
+                              "en",
+                              { month: "short" },
+                            )}
                           </span>
                           <span className="text-xs font-medium">${amount}</span>
                         </div>
@@ -243,12 +273,17 @@ export default function Account() {
                             alt={listing.title}
                             className="w-full h-32 object-cover rounded-t-lg"
                           />
-                          <Badge variant="secondary" className="absolute top-2 right-2">
+                          <Badge
+                            variant="secondary"
+                            className="absolute top-2 right-2"
+                          >
                             ${listing.pricing.dailyRate}/day
                           </Badge>
                         </div>
                         <CardContent className="p-4">
-                          <h4 className="font-semibold line-clamp-1">{listing.title}</h4>
+                          <h4 className="font-semibold line-clamp-1">
+                            {listing.title}
+                          </h4>
                           <p className="text-sm text-muted-foreground line-clamp-2">
                             {listing.description}
                           </p>
@@ -259,7 +294,9 @@ export default function Account() {
                             <div className="flex items-center">
                               <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
                               <span className="text-xs">
-                                {listing.rating > 0 ? listing.rating.toFixed(1) : 'New'}
+                                {listing.rating > 0
+                                  ? listing.rating.toFixed(1)
+                                  : "New"}
                               </span>
                             </div>
                           </div>
@@ -273,7 +310,9 @@ export default function Account() {
               <Card>
                 <CardContent className="p-12 text-center">
                   <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Listings Yet</h3>
+                  <h3 className="text-lg font-semibold mb-2">
+                    No Listings Yet
+                  </h3>
                   <p className="text-muted-foreground mb-6">
                     Start earning money by listing your storage space for rent.
                   </p>
@@ -310,7 +349,9 @@ export default function Account() {
                 </div>
                 <div>
                   <label className="text-sm font-medium">Mobile Number</label>
-                  <p className="text-muted-foreground">{user.phoneNumber || "Not provided"}</p>
+                  <p className="text-muted-foreground">
+                    {user.phoneNumber || "Not provided"}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">Member Since</label>
@@ -349,7 +390,7 @@ export default function Account() {
                     Manage
                   </Button>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">Privacy Settings</h4>

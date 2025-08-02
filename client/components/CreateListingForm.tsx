@@ -6,28 +6,34 @@ import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Checkbox } from "./ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { useListings, LuggageListing } from "@/contexts/ListingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "./ui/badge";
-import { 
-  Upload, 
-  X, 
-  Plus, 
-  MapPin, 
-  DollarSign, 
-  Package, 
+import {
+  Upload,
+  X,
+  Plus,
+  MapPin,
+  DollarSign,
+  Package,
   Info,
   Camera,
-  Loader2
+  Loader2,
 } from "lucide-react";
 
 export function CreateListingForm() {
   const { user } = useAuth();
   const { addListing } = useListings();
   const { toast } = useToast();
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [images, setImages] = useState<string[]>([]);
@@ -56,26 +62,36 @@ export function CreateListingForm() {
     isForSale: false,
     isForRent: true,
     minRentalDays: "1",
-    maxRentalDays: "30"
+    maxRentalDays: "30",
   });
 
   const availableFeatures = [
-    "TSA Lock", "4 Wheels", "2 Wheels", "Hard Shell", "Soft Shell", 
-    "Expandable", "Lightweight", "Waterproof", "Compression Zippers",
-    "Multiple Compartments", "Laptop Compartment", "USB Port",
-    "Anti-Theft Zippers", "Warranty Included"
+    "TSA Lock",
+    "4 Wheels",
+    "2 Wheels",
+    "Hard Shell",
+    "Soft Shell",
+    "Expandable",
+    "Lightweight",
+    "Waterproof",
+    "Compression Zippers",
+    "Multiple Compartments",
+    "Laptop Compartment",
+    "USB Port",
+    "Anti-Theft Zippers",
+    "Warranty Included",
   ];
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleFeatureToggle = (feature: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       features: prev.features.includes(feature)
-        ? prev.features.filter(f => f !== feature)
-        : [...prev.features, feature]
+        ? prev.features.filter((f) => f !== feature)
+        : [...prev.features, feature],
     }));
   };
 
@@ -84,16 +100,16 @@ export function CreateListingForm() {
     if (files) {
       // In a real app, you'd upload to a file service here
       // For now, we'll use placeholder URLs
-      const newImages = Array.from(files).map(() => `/placeholder.svg?${Math.random()}`);
-      setImages(prev => [...prev, ...newImages].slice(0, 5)); // Max 5 images
+      const newImages = Array.from(files).map(
+        () => `/placeholder.svg?${Math.random()}`,
+      );
+      setImages((prev) => [...prev, ...newImages].slice(0, 5)); // Max 5 images
     }
   };
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
-
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,19 +117,22 @@ export function CreateListingForm() {
 
     setIsSubmitting(true);
     try {
-      const listingData: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'> = {
+      const listingData: Omit<
+        LuggageListing,
+        "id" | "createdAt" | "updatedAt" | "rating" | "reviewCount"
+      > = {
         hostId: user.id,
         hostName: `${user.firstName} ${user.lastName}`,
         title: formData.title,
         description: formData.description,
-        images: images.length > 0 ? images : ['/placeholder.svg'],
+        images: images.length > 0 ? images : ["/placeholder.svg"],
         category: formData.category as any,
         type: formData.type as any,
         size: {
           height: parseFloat(formData.height),
           width: parseFloat(formData.width),
           depth: parseFloat(formData.depth),
-          unit: formData.unit
+          unit: formData.unit,
         },
         features: formData.features,
         condition: formData.condition as any,
@@ -121,26 +140,32 @@ export function CreateListingForm() {
           address: formData.address,
           city: formData.city,
           state: formData.state,
-          zipCode: formData.zipCode
+          zipCode: formData.zipCode,
         },
         availability: {
           available: true,
           minRentalDays: parseInt(formData.minRentalDays),
-          maxRentalDays: parseInt(formData.maxRentalDays)
+          maxRentalDays: parseInt(formData.maxRentalDays),
         },
         pricing: {
           dailyRate: parseFloat(formData.dailyRate),
-          weeklyRate: formData.weeklyRate ? parseFloat(formData.weeklyRate) : undefined,
-          monthlyRate: formData.monthlyRate ? parseFloat(formData.monthlyRate) : undefined,
+          weeklyRate: formData.weeklyRate
+            ? parseFloat(formData.weeklyRate)
+            : undefined,
+          monthlyRate: formData.monthlyRate
+            ? parseFloat(formData.monthlyRate)
+            : undefined,
           securityDeposit: parseFloat(formData.securityDeposit),
-          sellPrice: formData.sellPrice ? parseFloat(formData.sellPrice) : undefined,
+          sellPrice: formData.sellPrice
+            ? parseFloat(formData.sellPrice)
+            : undefined,
           isForSale: formData.isForSale,
-          isForRent: formData.isForRent
-        }
+          isForRent: formData.isForRent,
+        },
       };
 
       addListing(listingData);
-      
+
       toast({
         title: "Listing Created!",
         description: "Your luggage listing has been posted successfully.",
@@ -172,11 +197,10 @@ export function CreateListingForm() {
         isForSale: false,
         isForRent: true,
         minRentalDays: "1",
-        maxRentalDays: "30"
+        maxRentalDays: "30",
       });
       setImages([]);
       setCurrentStep(1);
-      
     } catch (error) {
       toast({
         title: "Error",
@@ -194,12 +218,20 @@ export function CreateListingForm() {
       <div className="flex items-center justify-center space-x-2 mb-8">
         {[1, 2, 3, 4].map((step) => (
           <div key={step} className="flex items-center">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              currentStep >= step ? 'bg-primary text-white' : 'bg-gray-200 text-gray-600'
-            }`}>
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep >= step
+                  ? "bg-primary text-white"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
               {step}
             </div>
-            {step < 4 && <div className={`w-12 h-0.5 ${currentStep > step ? 'bg-primary' : 'bg-gray-200'}`} />}
+            {step < 4 && (
+              <div
+                className={`w-12 h-0.5 ${currentStep > step ? "bg-primary" : "bg-gray-200"}`}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -231,7 +263,9 @@ export function CreateListingForm() {
                 id="description"
                 placeholder="Describe your luggage in detail..."
                 value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
                 rows={4}
                 required
               />
@@ -240,7 +274,12 @@ export function CreateListingForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Category *</Label>
-                <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) =>
+                    handleInputChange("category", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
@@ -257,7 +296,10 @@ export function CreateListingForm() {
 
               <div className="space-y-2">
                 <Label>Type *</Label>
-                <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
+                <Select
+                  value={formData.type}
+                  onValueChange={(value) => handleInputChange("type", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -272,8 +314,8 @@ export function CreateListingForm() {
 
             <div className="space-y-2">
               <Label>Condition *</Label>
-              <RadioGroup 
-                value={formData.condition} 
+              <RadioGroup
+                value={formData.condition}
                 onValueChange={(value) => handleInputChange("condition", value)}
                 className="flex flex-wrap gap-4"
               >
@@ -312,13 +354,20 @@ export function CreateListingForm() {
             <div className="space-y-4">
               <Label>Dimensions *</Label>
               <div className="space-y-4">
-                <Select value={formData.unit} onValueChange={(value) => handleInputChange("unit", value)}>
+                <Select
+                  value={formData.unit}
+                  onValueChange={(value) => handleInputChange("unit", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select measurement type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="cm">Height x Width x Depth (cm)</SelectItem>
-                    <SelectItem value="inches">Height x Width x Depth (inches)</SelectItem>
+                    <SelectItem value="cm">
+                      Height x Width x Depth (cm)
+                    </SelectItem>
+                    <SelectItem value="inches">
+                      Height x Width x Depth (inches)
+                    </SelectItem>
                     <SelectItem value="sqm">Square Meters</SelectItem>
                   </SelectContent>
                 </Select>
@@ -331,7 +380,9 @@ export function CreateListingForm() {
                       placeholder="25.5"
                       step="0.1"
                       value={formData.squareMeters}
-                      onChange={(e) => handleInputChange("squareMeters", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("squareMeters", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -343,7 +394,9 @@ export function CreateListingForm() {
                         type="number"
                         placeholder="56"
                         value={formData.height}
-                        onChange={(e) => handleInputChange("height", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("height", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -353,7 +406,9 @@ export function CreateListingForm() {
                         type="number"
                         placeholder="35"
                         value={formData.width}
-                        onChange={(e) => handleInputChange("width", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("width", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -363,7 +418,9 @@ export function CreateListingForm() {
                         type="number"
                         placeholder="23"
                         value={formData.depth}
-                        onChange={(e) => handleInputChange("depth", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("depth", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -371,8 +428,6 @@ export function CreateListingForm() {
                 )}
               </div>
             </div>
-
-
 
             <div className="space-y-3">
               <Label>Features</Label>
@@ -384,7 +439,9 @@ export function CreateListingForm() {
                       checked={formData.features.includes(feature)}
                       onCheckedChange={() => handleFeatureToggle(feature)}
                     />
-                    <Label htmlFor={feature} className="text-sm">{feature}</Label>
+                    <Label htmlFor={feature} className="text-sm">
+                      {feature}
+                    </Label>
                   </div>
                 ))}
               </div>
@@ -474,7 +531,9 @@ export function CreateListingForm() {
                   <Input
                     placeholder="ZIP Code"
                     value={formData.zipCode}
-                    onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("zipCode", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -487,7 +546,9 @@ export function CreateListingForm() {
                   type="tel"
                   placeholder="+1 (555) 123-4567"
                   value={formData.phoneNumber}
-                  onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("phoneNumber", e.target.value)
+                  }
                   required
                 />
               </div>
@@ -513,7 +574,9 @@ export function CreateListingForm() {
                   <Checkbox
                     id="forRent"
                     checked={formData.isForRent}
-                    onCheckedChange={(checked) => handleInputChange("isForRent", checked)}
+                    onCheckedChange={(checked) =>
+                      handleInputChange("isForRent", checked)
+                    }
                   />
                   <Label htmlFor="forRent">Available for Rent</Label>
                 </div>
@@ -521,7 +584,9 @@ export function CreateListingForm() {
                   <Checkbox
                     id="forSale"
                     checked={formData.isForSale}
-                    onCheckedChange={(checked) => handleInputChange("isForSale", checked)}
+                    onCheckedChange={(checked) =>
+                      handleInputChange("isForSale", checked)
+                    }
                   />
                   <Label htmlFor="forSale">Available for Sale</Label>
                 </div>
@@ -539,7 +604,9 @@ export function CreateListingForm() {
                       placeholder="12.00"
                       step="0.01"
                       value={formData.dailyRate}
-                      onChange={(e) => handleInputChange("dailyRate", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("dailyRate", e.target.value)
+                      }
                       required={formData.isForRent}
                     />
                   </div>
@@ -550,7 +617,9 @@ export function CreateListingForm() {
                       placeholder="70.00"
                       step="0.01"
                       value={formData.weeklyRate}
-                      onChange={(e) => handleInputChange("weeklyRate", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("weeklyRate", e.target.value)
+                      }
                     />
                   </div>
                   <div>
@@ -560,7 +629,9 @@ export function CreateListingForm() {
                       placeholder="250.00"
                       step="0.01"
                       value={formData.monthlyRate}
-                      onChange={(e) => handleInputChange("monthlyRate", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("monthlyRate", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -573,7 +644,9 @@ export function CreateListingForm() {
                       placeholder="100.00"
                       step="0.01"
                       value={formData.securityDeposit}
-                      onChange={(e) => handleInputChange("securityDeposit", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("securityDeposit", e.target.value)
+                      }
                       required={formData.isForRent}
                     />
                   </div>
@@ -582,7 +655,9 @@ export function CreateListingForm() {
                     <Input
                       type="number"
                       value={formData.minRentalDays}
-                      onChange={(e) => handleInputChange("minRentalDays", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("minRentalDays", e.target.value)
+                      }
                     />
                   </div>
                   <div>
@@ -590,7 +665,9 @@ export function CreateListingForm() {
                     <Input
                       type="number"
                       value={formData.maxRentalDays}
-                      onChange={(e) => handleInputChange("maxRentalDays", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("maxRentalDays", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -606,13 +683,13 @@ export function CreateListingForm() {
                   placeholder="150.00"
                   step="0.01"
                   value={formData.sellPrice}
-                  onChange={(e) => handleInputChange("sellPrice", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("sellPrice", e.target.value)
+                  }
                   required={formData.isForSale}
                 />
               </div>
             )}
-
-
           </CardContent>
         </Card>
       )}
@@ -627,23 +704,38 @@ export function CreateListingForm() {
         >
           Previous
         </Button>
-        
+
         {currentStep < 4 ? (
           <Button
             type="button"
             onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
             disabled={
-              (currentStep === 1 && (!formData.title || !formData.description || !formData.category || !formData.type || !formData.condition)) ||
-              (currentStep === 2 && (formData.unit === "sqm" ? !formData.squareMeters : (!formData.height || !formData.width || !formData.depth))) ||
-              (currentStep === 3 && (!formData.address || !formData.city || !formData.state || !formData.zipCode || !formData.phoneNumber))
+              (currentStep === 1 &&
+                (!formData.title ||
+                  !formData.description ||
+                  !formData.category ||
+                  !formData.type ||
+                  !formData.condition)) ||
+              (currentStep === 2 &&
+                (formData.unit === "sqm"
+                  ? !formData.squareMeters
+                  : !formData.height || !formData.width || !formData.depth)) ||
+              (currentStep === 3 &&
+                (!formData.address ||
+                  !formData.city ||
+                  !formData.state ||
+                  !formData.zipCode ||
+                  !formData.phoneNumber))
             }
           >
             Next
           </Button>
         ) : (
-          <Button 
-            type="submit" 
-            disabled={isSubmitting || (!formData.isForRent && !formData.isForSale)}
+          <Button
+            type="submit"
+            disabled={
+              isSubmitting || (!formData.isForRent && !formData.isForSale)
+            }
           >
             {isSubmitting ? (
               <>

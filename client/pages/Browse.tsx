@@ -92,6 +92,16 @@ export default function Browse() {
     }
   });
 
+  const handleBookListing = (listing: LuggageListing) => {
+    setSelectedListing(listing);
+    setBookingModalOpen(true);
+  };
+
+  const handleContactSeller = (listing: LuggageListing) => {
+    setSelectedListing(listing);
+    setContactModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Search Header */}

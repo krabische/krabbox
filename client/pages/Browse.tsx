@@ -134,7 +134,7 @@ export default function Browse() {
       {/* Search Header */}
       <div className="bg-white border-b">
         <div className="container py-6">
-          <h1 className="text-3xl font-bold mb-6">Browse Luggage</h1>
+          <h1 className="text-3xl font-bold mb-6">{t('browse.title')}</h1>
 
           {/* Search Bar */}
           <div className="space-y-6">
@@ -142,7 +142,7 @@ export default function Browse() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Search by storage type, location, or features..."
+                  placeholder={t('browse.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"

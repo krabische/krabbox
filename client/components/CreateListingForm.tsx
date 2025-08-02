@@ -161,6 +161,7 @@ export function CreateListingForm() {
         city: "",
         state: "",
         zipCode: "",
+        phoneNumber: "",
         dailyRate: "",
         weeklyRate: "",
         monthlyRate: "",

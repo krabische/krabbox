@@ -118,37 +118,55 @@ export default function Browse() {
           <h1 className="text-3xl font-bold mb-6">Browse Luggage</h1>
           
           {/* Search Bar */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search by storage type, location, or features..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search by storage type, location, or features..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  type="date"
+                  placeholder="Start date"
+                  className="w-40"
+                />
+                <Button onClick={handleSearch}>
+                  Search
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Input
-                type="date"
-                placeholder="Start date"
-                className="w-40"
-              />
-              <Select defaultValue="1month">
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1month">1 Month</SelectItem>
-                  <SelectItem value="3months">3 Months</SelectItem>
-                  <SelectItem value="6months">6 Months</SelectItem>
-                  <SelectItem value="1year">1 Year</SelectItem>
-                  <SelectItem value="more">More</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={handleSearch}>
-                Search
-              </Button>
+
+            {/* Period Slider */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium text-gray-700">
+                  Storage Period
+                </label>
+                <Badge variant="secondary" className="px-3 py-1">
+                  {periodOptions[periodValue[0]].label}
+                </Badge>
+              </div>
+
+              <div className="px-3">
+                <Slider
+                  value={periodValue}
+                  onValueChange={setPeriodValue}
+                  max={3}
+                  min={0}
+                  step={1}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                  {periodOptions.map((option) => (
+                    <span key={option.value}>{option.label}</span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 

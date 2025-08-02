@@ -11,11 +11,11 @@ interface Translations {
 const translations: Translations = {
   // Header
   'header.browseLuggage': {
-    en: 'Browse Luggage',
-    de: 'Gepäck durchsuchen',
-    it: 'Sfoglia Bagagli',
-    es: 'Explorar Equipaje',
-    ru: 'Просмотр багажа'
+    en: 'Browse Storage',
+    de: 'Lagerräume durchsuchen',
+    it: 'Sfoglia Depositi',
+    es: 'Explorar Almacenamiento',
+    ru: 'Просмотр хранилищ'
   },
   'header.becomeHost': {
     en: 'Become a Host',
@@ -64,16 +64,37 @@ const translations: Translations = {
   'home.hero.title': {
     en: 'Travel Light.\nPack Smart.',
     de: 'Reise leicht.\nPacke klug.',
-    it: 'Viaggia Leggero.\nPacked Smart.',
+    it: 'Viaggia Leggero.\nImballa Smart.',
     es: 'Viaja Ligero.\nEmpaca Inteligente.',
     ru: 'Путешествуй налегке.\nУпаковывайся умно.'
   },
   'home.hero.subtitle': {
-    en: 'Rent premium luggage storage at your destination. Skip the airline fees, avoid dragging heavy bags, and travel with confidence.',
-    de: 'Mieten Sie Premium-Gepäckaufbewahrung an Ihrem Zielort. Überspringen Sie Fluggesellschaftsgebühren, vermeiden Sie schwere Taschen und reisen Sie mit Vertrauen.',
-    it: 'Affitta deposito bagagli premium alla tua destinazione. Salta le tariffe aeree, evita di trascinare borse pesanti e viaggia con fiducia.',
-    es: 'Alquila almacenamiento de equipaje premium en tu destino. Omite las tarifas de aerolíneas, evita arrastrar bolsas pesadas y viaja con confianza.',
-    ru: 'Арендуйте премиум хранение багажа в месте назначения. Избегайте авиационных сборов, не таскайте тяжелые сумки и путешествуйте с уверенностью.'
+    en: 'Rent premium storage space at your destination. Skip the airline fees, avoid dragging heavy bags, and travel with confidence.',
+    de: 'Mieten Sie Premium-Lagerräume an Ihrem Zielort. Überspringen Sie Fluggesellschaftsgebühren, vermeiden Sie schwere Taschen und reisen Sie mit Vertrauen.',
+    it: 'Affitta spazio di deposito premium alla tua destinazione. Salta le tariffe aeree, evita di trascinare borse pesanti e viaggia con fiducia.',
+    es: 'Alquila espacio de almacenamiento premium en tu destino. Omite las tarifas de aerolíneas, evita arrastrar bolsas pesadas y viaja con confianza.',
+    ru: 'Арендуйте премиум хранение в месте назначения. Избегайте авиационных сборов, не таскайте тяжелые сумки и путешествуйте с уверенностью.'
+  },
+  'home.hero.startJourney': {
+    en: 'Start Your Journey',
+    de: 'Beginnen Sie Ihre Reise',
+    it: 'Inizia il tuo Viaggio',
+    es: 'Comienza tu Viaje',
+    ru: 'Начните путешествие'
+  },
+  'home.hero.findStorage': {
+    en: 'Find Storage',
+    de: 'Lagerraum finden',
+    it: 'Trova Deposito',
+    es: 'Encontrar Almacenamiento',
+    ru: 'Найти хранилище'
+  },
+  'home.hero.listStorage': {
+    en: 'List Your Storage',
+    de: 'Ihren Lagerraum anbieten',
+    it: 'Elenca il tuo Deposito',
+    es: 'Lista tu Almacenamiento',
+    ru: 'Разместить хранилище'
   },
   
   // Search
@@ -84,19 +105,19 @@ const translations: Translations = {
     es: 'Dónde',
     ru: 'Где'
   },
-  'search.pickup': {
-    en: 'Pickup',
-    de: 'Abholung',
-    it: 'Ritiro',
-    es: 'Recogida',
-    ru: 'Получение'
+  'search.startDate': {
+    en: 'Start Date',
+    de: 'Startdatum',
+    it: 'Data Inizio',
+    es: 'Fecha de Inicio',
+    ru: 'Дата начала'
   },
-  'search.return': {
-    en: 'Return',
-    de: 'Rückgabe',
-    it: 'Ritorno',
-    es: 'Devolución',
-    ru: 'Возврат'
+  'search.endDate': {
+    en: 'End Date',
+    de: 'Enddatum',
+    it: 'Data Fine',
+    es: 'Fecha Final',
+    ru: 'Дата окончания'
   },
   'search.search': {
     en: 'Search',
@@ -104,6 +125,13 @@ const translations: Translations = {
     it: 'Cerca',
     es: 'Buscar',
     ru: 'Поиск'
+  },
+  'search.placeholder': {
+    en: 'Address, city, area...',
+    de: 'Adresse, Stadt, Gebiet...',
+    it: 'Indirizzo, città, zona...',
+    es: 'Dirección, ciudad, área...',
+    ru: 'Адрес, город, район...'
   },
   
   // Categories
@@ -150,41 +178,55 @@ const translations: Translations = {
     ru: 'Большое пространство'
   },
   
-  // Time periods
-  'period.1month': {
-    en: '1 Month',
-    de: '1 Monat',
-    it: '1 Mese',
-    es: '1 Mes',
-    ru: '1 месяц'
+  // Browse page
+  'browse.title': {
+    en: 'Browse Storage',
+    de: 'Lagerräume durchsuchen',
+    it: 'Sfoglia Depositi',
+    es: 'Explorar Almacenamiento',
+    ru: 'Просмотр хранилищ'
   },
-  'period.3months': {
-    en: '3 Months',
-    de: '3 Monate',
-    it: '3 Mesi',
-    es: '3 Meses',
-    ru: '3 месяца'
+  'browse.searchPlaceholder': {
+    en: 'Search by storage type, location, or features...',
+    de: 'Suchen nach Lagertyp, Standort oder Eigenschaften...',
+    it: 'Cerca per tipo di deposito, posizione o caratteristiche...',
+    es: 'Buscar por tipo de almacenamiento, ubicación o características...',
+    ru: 'Поиск по типу хранилища, местоположению или характеристикам...'
   },
-  'period.6months': {
-    en: '6 Months',
-    de: '6 Monate',
-    it: '6 Mesi',
-    es: '6 Meses',
-    ru: '6 месяцев'
+  'browse.allCategories': {
+    en: 'All Categories',
+    de: 'Alle Kategorien',
+    it: 'Tutte le Categorie',
+    es: 'Todas las Categorías',
+    ru: 'Все категории'
   },
-  'period.1year': {
-    en: '1 Year',
-    de: '1 Jahr',
-    it: '1 Anno',
-    es: '1 Año',
-    ru: '1 год'
+  'browse.priceRange': {
+    en: 'Price Range',
+    de: 'Preisspanne',
+    it: 'Fascia di Prezzo',
+    es: 'Rango de Precios',
+    ru: 'Диапазон цен'
   },
-  'period.more': {
-    en: 'More',
-    de: 'Mehr',
-    it: 'Più',
-    es: 'Más',
-    ru: 'Больше'
+  'browse.sizeRange': {
+    en: 'Size Range',
+    de: 'Größenbereich',
+    it: 'Gamma di Dimensioni',
+    es: 'Rango de Tamaños',
+    ru: 'Диапазон размеров'
+  },
+  'browse.perDay': {
+    en: 'per day',
+    de: 'pro Tag',
+    it: 'al giorno',
+    es: 'por día',
+    ru: 'в день'
+  },
+  'browse.optionsAvailable': {
+    en: 'storage options available',
+    de: 'Lageroptionen verfügbar',
+    it: 'opzioni di deposito disponibili',
+    es: 'opciones de almacenamiento disponibles',
+    ru: 'вариантов хранения доступно'
   },
   
   // Common
@@ -215,6 +257,73 @@ const translations: Translations = {
     it: 'Paga',
     es: 'Pagar',
     ru: 'Платить'
+  },
+  'common.new': {
+    en: 'New',
+    de: 'Neu',
+    it: 'Nuovo',
+    es: 'Nuevo',
+    ru: 'Новый'
+  },
+  'common.excellent': {
+    en: 'Excellent',
+    de: 'Ausgezeichnet',
+    it: 'Eccellente',
+    es: 'Excelente',
+    ru: 'Отличный'
+  },
+  'common.good': {
+    en: 'Good',
+    de: 'Gut',
+    it: 'Buono',
+    es: 'Bueno',
+    ru: 'Хороший'
+  },
+  'common.fair': {
+    en: 'Fair',
+    de: 'Ausreichend',
+    it: 'Discreto',
+    es: 'Regular',
+    ru: 'Удовлетворительный'
+  },
+
+  // Quick filters
+  'filters.popularTypes': {
+    en: 'Popular storage types:',
+    de: 'Beliebte Lagertypen:',
+    it: 'Tipi di deposito popolari:',
+    es: 'Tipos de almacenamiento populares:',
+    ru: 'Популярные типы хранилищ:'
+  },
+
+  // Stats
+  'stats.happyTravelers': {
+    en: 'Happy Travelers',
+    de: 'Zufriedene Reisende',
+    it: 'Viaggiatori Felici',
+    es: 'Viajeros Felices',
+    ru: 'Довольных путешественников'
+  },
+  'stats.citiesWorldwide': {
+    en: 'Cities Worldwide',
+    de: 'Städte weltweit',
+    it: 'Città nel Mondo',
+    es: 'Ciudades Mundiales',
+    ru: 'Городов по всему миру'
+  },
+  'stats.storageOptions': {
+    en: 'Storage Options',
+    de: 'Lageroptionen',
+    it: 'Opzioni di Deposito',
+    es: 'Opciones de Almacenamiento',
+    ru: 'Вариантов хранения'
+  },
+  'stats.averageRating': {
+    en: 'Average Rating',
+    de: 'Durchschnittsbewertung',
+    it: 'Valutazione Media',
+    es: 'Calificación Promedio',
+    ru: 'Средняя оценка'
   }
 };
 

@@ -67,11 +67,55 @@ const featuredListings = [
 ];
 
 export function FeaturedListings() {
+  const [selectedListing, setSelectedListing] = useState<any>(null);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+
   const calculateSquareMeters = (height: number, width: number, unit: 'cm' | 'inches' = 'cm') => {
     const heightInM = unit === 'cm' ? height / 100 : height * 0.0254;
     const widthInM = unit === 'cm' ? width / 100 : width * 0.0254;
     const squareMeters = heightInM * widthInM;
     return Math.round(squareMeters * 10) / 10;
+  };
+
+  const handleBookListing = (listing: any) => {
+    // Convert mock listing to LuggageListing format
+    const convertedListing: LuggageListing = {
+      id: listing.id.toString(),
+      hostId: 'mock-host',
+      hostName: listing.host,
+      title: listing.title,
+      description: `Premium ${listing.title.toLowerCase()} available for rent`,
+      images: [listing.image],
+      category: listing.tags[0].toLowerCase().replace(' ', '-') as any,
+      type: 'hardside' as any,
+      size: { ...listing.size, unit: 'cm' as const },
+      features: listing.tags,
+      condition: 'excellent' as any,
+      location: {
+        address: listing.location,
+        city: listing.location.split(' ')[0],
+        state: 'NY',
+        zipCode: '10001'
+      },
+      availability: {
+        available: true,
+        minRentalDays: 1,
+        maxRentalDays: 30
+      },
+      pricing: {
+        dailyRate: listing.price,
+        securityDeposit: listing.price * 5,
+        isForSale: false,
+        isForRent: true
+      },
+      rating: listing.rating,
+      reviewCount: listing.reviews,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    setSelectedListing(convertedListing);
+    setBookingModalOpen(true);
   };
 
   return (

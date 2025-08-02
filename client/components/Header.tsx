@@ -241,29 +241,29 @@ export function Header() {
                   </>
                 ) : (
                   <>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="w-full"
                       onClick={() => {
                         handleAuthClick("login");
                         setIsMenuOpen(false);
                       }}
                     >
-                      Log in
+                      {t('header.login')}
                     </Button>
-                    <Button 
+                    <Button
                       className="w-full"
                       onClick={() => {
                         handleAuthClick("signup");
                         setIsMenuOpen(false);
                       }}
                     >
-                      Sign up
+                      {t('header.signup')}
                     </Button>
                     <Button variant="secondary" className="w-full" asChild>
                       <Link to="/host" onClick={() => setIsMenuOpen(false)}>
                         <User className="h-4 w-4 mr-2" />
-                        Become a Host
+                        {t('header.becomeHost')}
                       </Link>
                     </Button>
                   </>

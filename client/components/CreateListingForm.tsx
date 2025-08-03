@@ -113,7 +113,24 @@ export function CreateListingForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to create a listing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.title || !formData.description || !formData.category || !formData.type) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -202,9 +219,10 @@ export function CreateListingForm() {
       setImages([]);
       setCurrentStep(1);
     } catch (error) {
+      console.error('Error creating listing:', error);
       toast({
         title: "Error",
-        description: "Failed to create listing. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create listing. Please try again.",
         variant: "destructive",
       });
     } finally {

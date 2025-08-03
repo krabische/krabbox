@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateListingForm } from "@/components/CreateListingForm";
 import { AuthModal } from "@/components/AuthModal";
+import { TestListing } from "@/components/TestListing";
 import { useState } from "react";
 import {
   TrendingUp,
@@ -303,6 +304,9 @@ export default function Host() {
               >
                 Cancel
               </Button>
+            </div>
+            <div className="mb-8">
+              <TestListing />
             </div>
             <CreateListingForm />
           </div>

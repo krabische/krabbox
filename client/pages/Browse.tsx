@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 export default function Browse() {
-  const { listings, searchListings } = useListings();
+  const { listings, searchListings, isLoading } = useListings();
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -250,11 +250,24 @@ export default function Browse() {
       <div className="container py-8">
         <div className="flex justify-between items-center mb-6">
           <p className="text-muted-foreground">
-            {sortedListings.length} luggage options available
+            {isLoading ? "Loading..." : `${sortedListings.length} luggage options available`}
           </p>
         </div>
 
-        {sortedListings.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <Card key={i} className="animate-pulse">
+                <div className="h-48 bg-gray-200"></div>
+                <CardContent className="p-4 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                  <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : sortedListings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {sortedListings.map((listing) => (
               <Card

@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { useAuth } from "./AuthContext";
 
 export interface LuggageListing {
   id: string;
@@ -65,11 +67,12 @@ interface ListingsContextType {
       LuggageListing,
       "id" | "createdAt" | "updatedAt" | "rating" | "reviewCount"
     >,
-  ) => void;
-  updateListing: (id: string, updates: Partial<LuggageListing>) => void;
-  deleteListing: (id: string) => void;
+  ) => Promise<void>;
+  updateListing: (id: string, updates: Partial<LuggageListing>) => Promise<void>;
+  deleteListing: (id: string) => Promise<void>;
   getListingById: (id: string) => LuggageListing | undefined;
   searchListings: (filters: SearchFilters) => LuggageListing[];
+  isLoading: boolean;
 }
 
 interface SearchFilters {
@@ -86,287 +89,175 @@ const ListingsContext = createContext<ListingsContextType | undefined>(
 );
 
 export function ListingsProvider({ children }: { children: ReactNode }) {
-  const [listings, setListings] = useState<LuggageListing[]>([
-    // Mock featured listings for initial display
-    {
-      id: "1",
-      hostId: "host1",
-      hostName: "Sarah M.",
-      title: "Spacious Garage Storage",
-      description:
-        "Large secure garage with 24/7 access. Perfect for long-term storage of luggage and belongings.",
-      images: ["/placeholder.svg"],
-      category: "garage",
-      type: "hardside",
-      size: { height: 300, width: 500, depth: 400, unit: "cm" },
-      features: [
-        "24/7 Access",
-        "Security Camera",
-        "Climate Controlled",
-        "Locked",
-      ],
-      condition: "excellent",
-      location: {
-        address: "123 Downtown St",
-        city: "New York",
-        state: "NY",
-        zipCode: "10001",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-        maxRentalDays: 365,
-      },
-      pricing: {
-        dailyRate: 25,
-        weeklyRate: 150,
-        monthlyRate: 500,
-        securityDeposit: 200,
-        isForSale: false,
-        isForRent: true,
-      },
-      rating: 4.9,
-      reviewCount: 127,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "2",
-      hostId: "host2",
-      hostName: "Mike R.",
-      title: "Cozy Storage Shed",
-      description:
-        "Small but secure wooden shed in quiet neighborhood. Great for temporary storage.",
-      images: ["/placeholder.svg"],
-      category: "shed",
-      type: "softside",
-      size: { height: 200, width: 300, depth: 250, unit: "cm" },
-      features: ["Waterproof", "Padlock", "Easy Access", "Clean"],
-      condition: "good",
-      location: {
-        address: "456 Suburban Ave",
-        city: "Brooklyn",
-        state: "NY",
-        zipCode: "11201",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-        maxRentalDays: 90,
-      },
-      pricing: {
-        dailyRate: 15,
-        weeklyRate: 90,
-        monthlyRate: 300,
-        securityDeposit: 100,
-        isForSale: false,
-        isForRent: true,
-      },
-      rating: 4.7,
-      reviewCount: 89,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "3",
-      hostId: "host3",
-      hostName: "Emma L.",
-      title: "Modern Storage Container",
-      description:
-        "Industrial-grade storage container with advanced security systems. Perfect for valuable items.",
-      images: ["/placeholder.svg"],
-      category: "container",
-      type: "hardside",
-      size: { height: 250, width: 600, depth: 240, unit: "cm" },
-      features: [
-        "Steel Construction",
-        "Digital Lock",
-        "Insurance Included",
-        "Fire Resistant",
-      ],
-      condition: "new",
-      location: {
-        address: "789 Industrial Blvd",
-        city: "Queens",
-        state: "NY",
-        zipCode: "11373",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 7,
-        maxRentalDays: 365,
-      },
-      pricing: {
-        dailyRate: 35,
-        weeklyRate: 220,
-        monthlyRate: 800,
-        securityDeposit: 300,
-        isForSale: true,
-        sellPrice: 1500,
-        isForRent: true,
-      },
-      rating: 5.0,
-      reviewCount: 203,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "4",
-      hostId: "host4",
-      hostName: "James K.",
-      title: "Basement Storage Cell",
-      description:
-        "Private basement storage with individual access. Clean, dry, and secure environment.",
-      images: ["/placeholder.svg"],
-      category: "cell",
-      type: "hybrid",
-      size: { height: 220, width: 200, depth: 300, unit: "cm" },
-      features: ["Individual Access", "Dehumidifier", "Security Guard", "CCTV"],
-      condition: "excellent",
-      location: {
-        address: "321 Storage Way",
-        city: "Manhattan",
-        state: "NY",
-        zipCode: "10016",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-        maxRentalDays: 180,
-      },
-      pricing: {
-        dailyRate: 18,
-        weeklyRate: 110,
-        monthlyRate: 400,
-        securityDeposit: 150,
-        isForSale: false,
-        isForRent: true,
-      },
-      rating: 4.8,
-      reviewCount: 156,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "5",
-      hostId: "host5",
-      hostName: "Lisa P.",
-      title: "Large Warehouse Space",
-      description:
-        "Huge warehouse space perfect for multiple luggage items or large storage needs.",
-      images: ["/placeholder.svg"],
-      category: "large-space",
-      type: "hardside",
-      size: { height: 400, width: 1000, depth: 800, unit: "cm" },
-      features: [
-        "Forklift Access",
-        "Loading Dock",
-        "24/7 Security",
-        "Climate Control",
-      ],
-      condition: "excellent",
-      location: {
-        address: "555 Warehouse District",
-        city: "Bronx",
-        state: "NY",
-        zipCode: "10451",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 7,
-        maxRentalDays: 365,
-      },
-      pricing: {
-        dailyRate: 75,
-        weeklyRate: 450,
-        monthlyRate: 1800,
-        securityDeposit: 500,
-        isForSale: false,
-        isForRent: true,
-      },
-      rating: 4.9,
-      reviewCount: 95,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: "6",
-      hostId: "host6",
-      hostName: "David H.",
-      title: "Walk-in Pantry Storage",
-      description:
-        "Clean pantry space converted for storage. Temperature controlled and very secure.",
-      images: ["/placeholder.svg"],
-      category: "pantry",
-      type: "softside",
-      size: { height: 250, width: 150, depth: 200, unit: "cm" },
-      features: [
-        "Temperature Control",
-        "Shelving Available",
-        "Private Key",
-        "Organized Space",
-      ],
-      condition: "good",
-      location: {
-        address: "888 Residential St",
-        city: "Staten Island",
-        state: "NY",
-        zipCode: "10301",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-        maxRentalDays: 120,
-      },
-      pricing: {
-        dailyRate: 12,
-        weeklyRate: 70,
-        monthlyRate: 250,
-        securityDeposit: 75,
-        isForSale: false,
-        isForRent: true,
-      },
-      rating: 4.6,
-      reviewCount: 78,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ]);
+  const [listings, setListings] = useState<LuggageListing[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
+
+  // Load listings from Supabase
+  useEffect(() => {
+    loadListings();
+  }, []);
+
+  const loadListings = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('listings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading listings:', error);
+        return;
+      }
+
+      if (data) {
+        const formattedListings: LuggageListing[] = data.map((item: any) => ({
+          id: item.id,
+          hostId: item.host_id,
+          hostName: item.host_name,
+          title: item.title,
+          description: item.description,
+          images: item.images || [],
+          category: item.category,
+          type: item.type,
+          size: item.size,
+          features: item.features || [],
+          condition: item.condition,
+          location: item.location,
+          availability: item.availability,
+          pricing: item.pricing,
+          rating: item.rating || 0,
+          reviewCount: item.review_count || 0,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at,
+        }));
+
+        setListings(formattedListings);
+      }
+    } catch (error) {
+      console.error('Error loading listings:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getUserListings = (userId: string): LuggageListing[] => {
     return listings.filter((listing) => listing.hostId === userId);
   };
 
-  const addListing = (
+  const addListing = async (
     listingData: Omit<
       LuggageListing,
       "id" | "createdAt" | "updatedAt" | "rating" | "reviewCount"
     >,
   ) => {
-    const newListing: LuggageListing = {
-      ...listingData,
-      id: Math.random().toString(36).substr(2, 9),
-      rating: 0,
-      reviewCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    if (!user) {
+      throw new Error('User must be authenticated to create a listing');
+    }
 
-    setListings((prev) => [newListing, ...prev]);
+    try {
+      const { data, error } = await supabase
+        .from('listings')
+        .insert([
+          {
+            host_id: user.id,
+            host_name: `${user.firstName} ${user.lastName}`,
+            title: listingData.title,
+            description: listingData.description,
+            images: listingData.images,
+            category: listingData.category,
+            type: listingData.type,
+            size: listingData.size,
+            features: listingData.features,
+            condition: listingData.condition,
+            location: listingData.location,
+            availability: listingData.availability,
+            pricing: listingData.pricing,
+            rating: 0,
+            review_count: 0,
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data) {
+        const newListing: LuggageListing = {
+          id: data.id,
+          hostId: data.host_id,
+          hostName: data.host_name,
+          title: data.title,
+          description: data.description,
+          images: data.images || [],
+          category: data.category,
+          type: data.type,
+          size: data.size,
+          features: data.features || [],
+          condition: data.condition,
+          location: data.location,
+          availability: data.availability,
+          pricing: data.pricing,
+          rating: data.rating || 0,
+          reviewCount: data.review_count || 0,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        };
+
+        setListings((prev) => [newListing, ...prev]);
+      }
+    } catch (error) {
+      console.error('Error adding listing:', error);
+      throw error;
+    }
   };
 
-  const updateListing = (id: string, updates: Partial<LuggageListing>) => {
-    setListings((prev) =>
-      prev.map((listing) =>
-        listing.id === id
-          ? { ...listing, ...updates, updatedAt: new Date().toISOString() }
-          : listing,
-      ),
-    );
+  const updateListing = async (id: string, updates: Partial<LuggageListing>) => {
+    try {
+      const { error } = await supabase
+        .from('listings')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      setListings((prev) =>
+        prev.map((listing) =>
+          listing.id === id
+            ? { ...listing, ...updates, updatedAt: new Date().toISOString() }
+            : listing,
+        ),
+      );
+    } catch (error) {
+      console.error('Error updating listing:', error);
+      throw error;
+    }
   };
 
-  const deleteListing = (id: string) => {
-    setListings((prev) => prev.filter((listing) => listing.id !== id));
+  const deleteListing = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('listings')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      setListings((prev) => prev.filter((listing) => listing.id !== id));
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      throw error;
+    }
   };
 
   const getListingById = (id: string): LuggageListing | undefined => {
@@ -392,8 +283,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  // Get user-specific listings (requires auth context)
-  const userListings = getUserListings("current-user-id"); // This would use actual user ID from auth context
+  // Get user-specific listings
+  const userListings = user ? getUserListings(user.id) : [];
 
   const value = {
     listings,
@@ -403,6 +294,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     deleteListing,
     getListingById,
     searchListings,
+    isLoading,
   };
 
   return (

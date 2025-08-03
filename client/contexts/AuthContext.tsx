@@ -42,6 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event, session?.user?.email);
+        console.log('Session user:', session?.user);
+        console.log('Email confirmed:', session?.user?.email_confirmed_at);
         
         if (session?.user) {
           // Get user profile from profiles table
@@ -51,8 +53,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .eq('id', session.user.id)
             .single();
 
+          console.log('Profile data:', profile);
+          console.log('Profile error:', error);
+
           if (profile) {
-            setUser({
+            const userData = {
               id: session.user.id,
               email: session.user.email!,
               firstName: profile.first_name || '',
@@ -61,10 +66,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               avatar: profile.avatar_url,
               joinDate: profile.created_at || new Date().toISOString(),
               isHost: profile.is_host || false
-            });
+            };
+            console.log('Setting user data:', userData);
+            setUser(userData);
           } else {
             // If no profile exists, create one
             if (session.user.email_confirmed_at) {
+              console.log('Creating profile for confirmed user');
               const { error: profileError } = await supabase
                 .from('profiles')
                 .insert([
@@ -79,18 +87,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 ]);
 
               if (!profileError) {
-                setUser({
+                const userData = {
                   id: session.user.id,
                   email: session.user.email!,
                   firstName: '',
                   lastName: '',
                   joinDate: new Date().toISOString(),
                   isHost: false
-                });
+                };
+                console.log('Setting user data after profile creation:', userData);
+                setUser(userData);
+              } else {
+                console.error('Profile creation error:', profileError);
               }
+            } else {
+              console.log('User not confirmed yet');
             }
           }
         } else {
+          console.log('No session, setting user to null');
           setUser(null);
         }
         setIsLoading(false);
@@ -171,7 +186,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { success: false, message: 'Registration failed' };
     } catch (error) {
-      setIsLoading(false);
       const message = error instanceof Error ? error.message : 'Registration failed';
       return { success: false, message };
     } finally {

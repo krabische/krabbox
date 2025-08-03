@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { SearchSection } from "@/components/SearchSection";
 import { FeaturedListings } from "@/components/FeaturedListings";
 import { HowItWorks } from "@/components/HowItWorks";
+import { AuthDebug } from "@/components/AuthDebug";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Plane, Shield, Clock, Users } from "lucide-react";
 
@@ -160,6 +161,13 @@ export default function Index() {
               List Your Luggage
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* Debug Section - Remove in production */}
+      <section className="py-8 bg-gray-50">
+        <div className="container">
+          <AuthDebug />
         </div>
       </section>
     </div>

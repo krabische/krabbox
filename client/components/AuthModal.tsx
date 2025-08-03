@@ -25,7 +25,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
     confirmPassword: ""
   });
   
-  const { login, signup, isLoading } = useAuth();
+  const { login, signup, isLoading, signUpMessage } = useAuth();
   const { toast } = useToast();
 
   const handleInputChange = (field: string, value: string) => {

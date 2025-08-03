@@ -1,5 +1,5 @@
-import serverless from "serverless-http";
+import { VercelRequest, VercelResponse } from '@vercel/node';
 
-import { createServer } from "../../server";
-
-export const handler = serverless(createServer());
+export default function handler(req: VercelRequest, res: VercelResponse) {
+  res.status(200).json({ message: 'Backend is working!' });
+}

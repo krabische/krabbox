@@ -1,12 +1,14 @@
 {
-    "buildCommand": "npm run build:client",
+    "buildCommand": "npm run build",
     "outputDirectory": "dist/spa",
     "framework": "vite",
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/index.html"
+    "functions": {
+      "netlify/functions/*.ts": {
+        "runtime": "nodejs18.x"
       }
+    },
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/index.html" }
     ]
   }
   

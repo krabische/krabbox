@@ -70,24 +70,34 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
     }
 
     try {
-      await signup({
+      const result = await signup({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password
       });
-      toast({
-        title: "Welcome to LugSpace!",
-        description: "Your account has been created successfully.",
-      });
-      onClose();
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-      });
+
+      if (result.success) {
+        toast({
+          title: "Registration successful!",
+          description: result.message,
+        });
+        // Don't close modal - user needs to confirm email
+        setActiveTab("login");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          confirmPassword: ""
+        });
+      } else {
+        toast({
+          title: "Registration failed",
+          description: result.message,
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       toast({
         title: "Signup failed",

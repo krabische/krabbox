@@ -17,9 +17,10 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (data: SignupData) => Promise<void>;
+  signup: (data: SignupData) => Promise<{ success: boolean; message: string }>;
   logout: () => Promise<void>;
   isLoading: boolean;
+  signUpMessage: string | null;
 }
 
 interface SignupData {
@@ -34,11 +35,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [signUpMessage, setSignUpMessage] = useState<string | null>(null);
 
   // Listen for auth changes
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
+        
         if (session?.user) {
           // Get user profile from profiles table
           const { data: profile, error } = await supabase
@@ -58,6 +62,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               joinDate: profile.created_at || new Date().toISOString(),
               isHost: profile.is_host || false
             });
+          } else {
+            // If no profile exists, create one
+            if (session.user.email_confirmed_at) {
+              const { error: profileError } = await supabase
+                .from('profiles')
+                .insert([
+                  {
+                    id: session.user.id,
+                    email: session.user.email,
+                    first_name: '',
+                    last_name: '',
+                    created_at: new Date().toISOString(),
+                    is_host: false
+                  }
+                ]);
+
+              if (!profileError) {
+                setUser({
+                  id: session.user.id,
+                  email: session.user.email!,
+                  firstName: '',
+                  lastName: '',
+                  joinDate: new Date().toISOString(),
+                  isHost: false
+                });
+              }
+            }
           }
         } else {
           setUser(null);
@@ -84,6 +115,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!data.user) {
         throw new Error('Login failed');
       }
+
+      // Check if email is confirmed
+      if (!data.user.email_confirmed_at) {
+        throw new Error('Please confirm your email before logging in');
+      }
     } catch (error) {
       setIsLoading(false);
       throw error;
@@ -96,7 +132,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Create user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
-        password: data.password
+        password: data.password,
+        options: {
+          data: {
+            first_name: data.firstName,
+            last_name: data.lastName
+          }
+        }
       });
 
       if (authError) {
@@ -119,12 +161,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           ]);
 
         if (profileError) {
-          throw new Error(profileError.message);
+          console.error('Profile creation error:', profileError);
+          // Don't throw error here as user is created
         }
+
+        setSignUpMessage('Please check your email to confirm your account before logging in.');
+        return { success: true, message: 'Registration successful! Please check your email to confirm your account.' };
       }
+
+      return { success: false, message: 'Registration failed' };
     } catch (error) {
       setIsLoading(false);
-      throw error;
+      const message = error instanceof Error ? error.message : 'Registration failed';
+      return { success: false, message };
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -134,6 +185,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) {
         throw new Error(error.message);
       }
+      setUser(null);
+      setSignUpMessage(null);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -145,7 +198,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login,
     signup,
     logout,
-    isLoading
+    isLoading,
+    signUpMessage
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

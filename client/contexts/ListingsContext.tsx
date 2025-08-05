@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface LuggageListing {
   id: string;
@@ -69,6 +70,8 @@ const ListingsContext = createContext<ListingsContextType | undefined>(undefined
 export function ListingsProvider({ children }: { children: ReactNode }) {
   const [listings, setListings] = useState<LuggageListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
+  const [userListings, setUserListings] = useState<LuggageListing[]>([]);
 
   // Load listings from Supabase
   useEffect(() => {
@@ -126,6 +129,14 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   const getUserListings = (userId: string): LuggageListing[] => {
     return listings.filter(listing => listing.hostId === userId);
   };
+
+  useEffect(() => {
+    if (user?.id) {
+      setUserListings(getUserListings(user.id));
+    } else {
+      setUserListings([]);
+    }
+  }, [user, listings]);
 
   const addListing = async (listingData: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => {
     try {
@@ -203,9 +214,6 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       return true;
     });
   };
-
-  // Get user-specific listings (requires auth context)
-  const userListings = getUserListings('current-user-id'); // This would use actual user ID from auth context
 
   const value = {
     listings,

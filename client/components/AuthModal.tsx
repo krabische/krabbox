@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -27,6 +28,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
   
   const { login, signup, isLoading, signUpMessage } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -48,6 +50,8 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
         password: "",
         confirmPassword: ""
       });
+      // Redirect to account page after successful login
+      navigate("/account");
     } catch (error) {
       toast({
         title: "Login failed",

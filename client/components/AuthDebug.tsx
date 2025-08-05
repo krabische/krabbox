@@ -1,10 +1,12 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 
 export function AuthDebug() {
   const { user, isAuthenticated, isLoading, signUpMessage } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -44,6 +46,24 @@ export function AuthDebug() {
         {signUpMessage && (
           <div className="p-3 bg-blue-50 border border-blue-200 rounded">
             <p className="text-sm text-blue-800">{signUpMessage}</p>
+          </div>
+        )}
+
+        {isAuthenticated && (
+          <div className="space-y-2">
+            <Button 
+              onClick={() => navigate("/account")}
+              className="w-full"
+            >
+              Go to Account Page
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/host")}
+              className="w-full"
+            >
+              Go to Host Page
+            </Button>
           </div>
         )}
 

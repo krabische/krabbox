@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 
@@ -36,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [signUpMessage, setSignUpMessage] = useState<string | null>(null);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   // Listen for auth changes
   useEffect(() => {
@@ -115,6 +117,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Handle redirect after successful authentication
+  useEffect(() => {
+    if (shouldRedirect && user && !!user) {
+      setShouldRedirect(false);
+      // Redirect will be handled by AuthModal
+    }
+  }, [shouldRedirect, user]);
+
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
@@ -135,6 +145,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!data.user.email_confirmed_at) {
         throw new Error('Please confirm your email before logging in');
       }
+
+      // Set flag for redirect
+      setShouldRedirect(true);
     } catch (error) {
       setIsLoading(false);
       throw error;

@@ -395,17 +395,17 @@ export default function Browse() {
                           </span>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {listing.size.height}×{listing.size.width}×
-                          {listing.size.depth} {listing.size.unit}
+                          {listing.size && !isNaN(listing.size.height) && !isNaN(listing.size.width) && !isNaN(listing.size.depth) 
+                            ? `${listing.size.height}×${listing.size.width}×${listing.size.depth} ${listing.size.unit}`
+                            : 'Size not specified'
+                          }
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground text-right">
-                        {calculateSquareMeters(
-                          listing.size.height,
-                          listing.size.width,
-                          listing.size.unit,
-                        )}{" "}
-                        m²
+                        {listing.size && !isNaN(listing.size.height) && !isNaN(listing.size.width)
+                          ? `${calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit)} m²`
+                          : 'Area not specified'
+                        }
                       </div>
                     </div>
 

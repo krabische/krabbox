@@ -42,10 +42,6 @@ export function CreateListingForm() {
     description: "",
     category: "",
     type: "",
-    height: "",
-    width: "",
-    depth: "",
-    unit: "cm" as "cm" | "inches" | "sqm",
     squareMeters: "",
     condition: "",
     features: [] as string[],
@@ -129,10 +125,10 @@ export function CreateListingForm() {
         category: formData.category as any,
         type: formData.type as any,
         size: {
-          height: parseFloat(formData.height),
-          width: parseFloat(formData.width),
-          depth: parseFloat(formData.depth),
-          unit: formData.unit,
+          height: parseFloat(formData.squareMeters) || 1,
+          width: parseFloat(formData.squareMeters) || 1,
+          depth: 1,
+          unit: "sqm",
         },
         features: formData.features,
         condition: formData.condition as any,
@@ -177,10 +173,6 @@ export function CreateListingForm() {
         description: "",
         category: "",
         type: "",
-        height: "",
-        width: "",
-        depth: "",
-        unit: "cm",
         squareMeters: "",
         condition: "",
         features: [],
@@ -354,81 +346,17 @@ export function CreateListingForm() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <Label>Dimensions *</Label>
-              <div className="space-y-4">
-                <Select
-                  value={formData.unit}
-                  onValueChange={(value) => handleInputChange("unit", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select measurement type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cm">
-                      Height x Width x Depth (cm)
-                    </SelectItem>
-                    <SelectItem value="inches">
-                      Height x Width x Depth (inches)
-                    </SelectItem>
-                    <SelectItem value="sqm">Square Meters</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {formData.unit === "sqm" ? (
-                  <div>
-                    <Label className="text-sm">Total Square Meters</Label>
-                    <Input
-                      type="number"
-                      placeholder="25.5"
-                      step="0.1"
-                      value={formData.squareMeters}
-                      onChange={(e) =>
-                        handleInputChange("squareMeters", e.target.value)
-                      }
-                      required
-                    />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <Label className="text-sm">Height</Label>
-                      <Input
-                        type="number"
-                        placeholder="56"
-                        value={formData.height}
-                        onChange={(e) =>
-                          handleInputChange("height", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-sm">Width</Label>
-                      <Input
-                        type="number"
-                        placeholder="35"
-                        value={formData.width}
-                        onChange={(e) =>
-                          handleInputChange("width", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-sm">Depth</Label>
-                      <Input
-                        type="number"
-                        placeholder="23"
-                        value={formData.depth}
-                        onChange={(e) =>
-                          handleInputChange("depth", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Label>Area (Square Meters) *</Label>
+              <Input
+                type="number"
+                placeholder="25.5"
+                step="0.1"
+                value={formData.squareMeters}
+                onChange={(e) =>
+                  handleInputChange("squareMeters", e.target.value)
+                }
+                required
+              />
             </div>
 
             <div className="space-y-3">
@@ -718,10 +646,7 @@ export function CreateListingForm() {
                   !formData.category ||
                   !formData.type ||
                   !formData.condition)) ||
-              (currentStep === 2 &&
-                (formData.unit === "sqm"
-                  ? !formData.squareMeters
-                  : !formData.height || !formData.width || !formData.depth)) ||
+              (currentStep === 2 && !formData.squareMeters) ||
               (currentStep === 3 &&
                 (!formData.address ||
                   !formData.city ||

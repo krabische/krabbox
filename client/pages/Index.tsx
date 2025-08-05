@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { SearchSection } from "@/components/SearchSection";
 import { FeaturedListings } from "@/components/FeaturedListings";
 import { HowItWorks } from "@/components/HowItWorks";
+import { SupabaseTest } from "@/components/SupabaseTest";
 import { Plane, Shield, Clock, Users } from "lucide-react";
 
 export default function Index() {
@@ -110,6 +111,13 @@ export default function Index() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Supabase Test Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container">
+          <SupabaseTest />
         </div>
       </section>
 

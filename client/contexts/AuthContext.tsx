@@ -183,8 +183,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signup = async (data: SignupData) => {
+    console.log('Signup function called with data:', { email: data.email, firstName: data.firstName, lastName: data.lastName });
     setIsLoading(true);
     try {
+      console.log('Attempting to create user in Supabase Auth...');
+      
       // Create user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
@@ -197,11 +200,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       });
 
+      console.log('Supabase signup response:', { authData, authError });
+
       if (authError) {
+        console.error('Auth error during signup:', authError);
         throw new Error(authError.message);
       }
 
       if (authData.user) {
+        console.log('User created successfully, creating profile...');
+        
         // Create profile in profiles table
         const { error: profileError } = await supabase
           .from('profiles')
@@ -219,14 +227,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (profileError) {
           console.error('Profile creation error:', profileError);
           // Don't throw error here as user is created
+        } else {
+          console.log('Profile created successfully');
         }
 
         setSignUpMessage('Please check your email to confirm your account before logging in.');
         return { success: true, message: 'Registration successful! Please check your email to confirm your account.' };
       }
 
+      console.log('No user data returned from signup');
       return { success: false, message: 'Registration failed' };
     } catch (error) {
+      console.error('Signup error:', error);
       const message = error instanceof Error ? error.message : 'Registration failed';
       return { success: false, message };
     } finally {

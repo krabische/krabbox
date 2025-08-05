@@ -78,53 +78,81 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     loadListings();
   }, []);
 
-  const loadListings = async () => {
+    const loadListings = async () => {
     try {
-      const { data, error } = await supabase
+      // First, load all listings
+      const { data: listingsData, error: listingsError } = await supabase
         .from('listing')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error loading listings:', error);
+      if (listingsError) {
+        console.error('Error loading listings:', listingsError);
         return;
       }
 
-      if (data) {
-        const formattedListings: LuggageListing[] = data.map((item: any) => ({
-          id: item.id.toString(),
-          hostId: item.owner_id,
-          hostName: 'Unknown Host', // We don't have host_name in the table
-          title: item.title,
-          description: item.description,
-          images: item.image_url ? [item.image_url] : ['/placeholder.svg'],
-          category: 'carry-on', // Default since we don't have category
-          type: 'hardside', // Default since we don't have type
-          size: { height: 56, width: 35, depth: 23, unit: 'cm' }, // Default size
-          features: [], // Default since we don't have features
-          condition: 'excellent', // Default since we don't have condition
-      location: {
-            address: '',
-            city: item.location,
-            state: '',
-            zipCode: ''
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-            maxRentalDays: 30
-      },
-      pricing: {
-            dailyRate: item.price,
-            securityDeposit: 50,
-        isForSale: false,
-            isForRent: true
-          },
-          rating: 0,
-          reviewCount: 0,
-          createdAt: item.created_at,
-          updatedAt: item.created_at
-        }));
+      if (listingsData) {
+        // Load all images for all listings
+        const { data: imagesData, error: imagesError } = await supabase
+          .from('listing_images')
+          .select('*')
+          .order('order_index', { ascending: true });
+
+        if (imagesError) {
+          console.error('Error loading images:', imagesError);
+        }
+
+        // Create a map of listing_id to images
+        const imagesMap = new Map();
+        if (imagesData) {
+          imagesData.forEach((imageRecord: any) => {
+            if (!imagesMap.has(imageRecord.listing_id)) {
+              imagesMap.set(imageRecord.listing_id, []);
+            }
+            imagesMap.get(imageRecord.listing_id).push(imageRecord.image_url);
+          });
+        }
+
+        const formattedListings: LuggageListing[] = listingsData.map((item: any) => {
+          // Get images for this listing, fallback to main image_url if no images in listing_images
+          const listingImages = imagesMap.get(item.id) || [];
+          const images = listingImages.length > 0 ? listingImages : (item.image_url ? [item.image_url] : ['/placeholder.svg']);
+
+          return {
+            id: item.id.toString(),
+            hostId: item.owner_id,
+            hostName: 'Unknown Host', // We don't have host_name in the table
+            title: item.title,
+            description: item.description,
+            images: images,
+            category: 'carry-on', // Default since we don't have category
+            type: 'hardside', // Default since we don't have type
+            size: { height: 56, width: 35, depth: 23, unit: 'cm' }, // Default size
+            features: [], // Default since we don't have features
+            condition: 'excellent', // Default since we don't have condition
+            location: {
+              address: '',
+              city: item.location,
+              state: '',
+              zipCode: ''
+            },
+            availability: {
+              available: true,
+              minRentalDays: 1,
+              maxRentalDays: 30
+            },
+            pricing: {
+              dailyRate: item.price,
+              securityDeposit: 50,
+              isForSale: false,
+              isForRent: true
+            },
+            rating: 0,
+            reviewCount: 0,
+            createdAt: item.created_at,
+            updatedAt: item.created_at
+          };
+        });
 
         setListings(formattedListings);
         console.log('Loaded listings from Supabase:', formattedListings);
@@ -158,7 +186,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         description: listingData.description,
         price: listingData.pricing.dailyRate,
         location: listingData.location.city,
-        image_url: listingData.images[0] || '/placeholder.svg',
+        image_url: listingData.images[0] || '/placeholder.svg', // Keep main image for backward compatibility
         owner_id: listingData.hostId
       };
       
@@ -181,12 +209,32 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       console.log('Supabase response:', data);
 
+      // Save images to listing_images table
+      if (listingData.images.length > 0) {
+        const imageRecords = listingData.images.map((imageUrl, index) => ({
+          listing_id: data.id,
+          image_url: imageUrl,
+          order_index: index
+        }));
+
+        const { error: imagesError } = await supabase
+          .from('listing_images')
+          .insert(imageRecords);
+
+        if (imagesError) {
+          console.error('Error saving images to listing_images:', imagesError);
+          // Don't throw error here, as the listing was already created
+        } else {
+          console.log('Successfully saved images to listing_images table');
+        }
+      }
+
       // Create local listing object
-    const newListing: LuggageListing = {
-      ...listingData,
+      const newListing: LuggageListing = {
+        ...listingData,
         id: data.id.toString(),
-      rating: 0,
-      reviewCount: 0,
+        rating: 0,
+        reviewCount: 0,
         createdAt: data.created_at,
         updatedAt: data.created_at
       };

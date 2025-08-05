@@ -1,4 +1,4 @@
-# Supabase Storage Setup for Image Uploads
+# Supabase Storage and Database Setup for Image Uploads
 
 ## 1. Create Storage Bucket
 
@@ -48,21 +48,43 @@ FOR DELETE USING (
 );
 ```
 
-## 3. Test the Setup
+## 3. Create listing_images Table
 
-1. Try uploading an image through the form
-2. Check if the image appears in the Storage section
-3. Verify the image URL is accessible publicly
+Execute the SQL script from `create-listing-images-table.sql` in your Supabase SQL Editor:
 
-## 4. Troubleshooting
+1. Go to **SQL Editor** in your Supabase Dashboard
+2. Copy and paste the contents of `create-listing-images-table.sql`
+3. Click **Run** to execute the script
+
+This will create:
+- `listing_images` table with proper structure
+- Indexes for better performance
+- RLS policies for security
+- Triggers for automatic timestamp updates
+
+## 4. Test the Setup
+
+1. Try uploading images through the form
+2. Check if images appear in the Storage section
+3. Verify images are saved in the `listing_images` table
+4. Check if images display correctly in listings
+
+## 5. Troubleshooting
 
 If images don't upload:
 1. Check browser console for errors
 2. Verify bucket name is exactly `listings`
-3. Ensure policies are correctly applied
+3. Ensure storage policies are correctly applied
 4. Check if user is authenticated when uploading
+5. Verify `listing_images` table exists and has proper RLS policies
 
 If images don't display:
 1. Verify the bucket is public
 2. Check if the image URL is correct
-3. Ensure the image file exists in the bucket 
+3. Ensure the image file exists in the bucket
+4. Check if images are properly linked in `listing_images` table
+
+If you get database errors:
+1. Ensure `listing_images` table was created successfully
+2. Check RLS policies on the table
+3. Verify foreign key relationship with `listing` table 

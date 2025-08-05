@@ -110,6 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log('No session, setting user to null');
           setUser(null);
         }
+        console.log('Auth state change completed, setting isLoading to false');
         setIsLoading(false);
       }
     );
@@ -126,12 +127,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [shouldRedirect, user]);
 
   const login = async (email: string, password: string) => {
+    console.log('Login function called with email:', email);
     setIsLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
+
+      console.log('Supabase login response:', { data, error });
 
       if (error) {
         throw new Error(error.message);
@@ -146,9 +150,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error('Please confirm your email before logging in');
       }
 
+      console.log('Login successful, user:', data.user);
       // Set flag for redirect
       setShouldRedirect(true);
     } catch (error) {
+      console.error('Login error:', error);
       setIsLoading(false);
       throw error;
     }
@@ -228,6 +234,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     signUpMessage
   };
+
+  // Debug logging for context value
+  console.log('AuthContext - Current value:', {
+    user: user ? { id: user.id, email: user.email, name: `${user.firstName} ${user.lastName}` } : null,
+    isAuthenticated: !!user,
+    isLoading,
+    signUpMessage
+  });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

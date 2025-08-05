@@ -3,6 +3,7 @@ import { SearchSection } from "@/components/SearchSection";
 import { FeaturedListings } from "@/components/FeaturedListings";
 import { HowItWorks } from "@/components/HowItWorks";
 import { AuthDebug } from "@/components/AuthDebug";
+import { AuthTest } from "@/components/AuthTest";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Plane, Shield, Clock, Users } from "lucide-react";
 
@@ -167,7 +168,10 @@ export default function Index() {
       {/* Debug Section - Remove in production */}
       <section className="py-8 bg-gray-50">
         <div className="container">
-          <AuthDebug />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <AuthDebug />
+            <AuthTest />
+          </div>
         </div>
       </section>
     </div>

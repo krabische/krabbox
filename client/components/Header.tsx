@@ -28,6 +28,8 @@ export function Header() {
   console.log('Header - User:', user);
   console.log('Header - IsAuthenticated:', isAuthenticated);
   console.log('Header - IsLoading:', isLoading);
+  console.log('Header - Should show auth buttons:', !isAuthenticated || !user);
+  console.log('Header - Should show user menu:', isAuthenticated && user);
   const { t } = useLanguage();
 
   const handleAuthClick = (tab: "login" | "signup") => {
@@ -79,6 +81,14 @@ export function Header() {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <LanguageSelector />
+            
+            {/* Debug info - remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="text-xs text-red-500 bg-red-50 px-2 py-1 rounded">
+                Auth: {isAuthenticated ? 'Yes' : 'No'} | User: {user ? 'Yes' : 'No'} | Loading: {isLoading ? 'Yes' : 'No'}
+              </div>
+            )}
+            
             {isAuthenticated && user ? (
               <>
                 <Button variant="outline" size="sm" asChild>

@@ -48,21 +48,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const sessionUser = data.user;
       if (!sessionUser) throw new Error('No user returned');
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('first_name, last_name, avatar_url, created_at, is_host')
-        .eq('id', sessionUser.id)
-        .single();
-      if (profileError) throw profileError;
-
+      // Create user object from session data
       const authUser: User = {
         id: sessionUser.id,
         email: sessionUser.email || '',
-        firstName: profile?.first_name || '',
-        lastName: profile?.last_name || '',
-        avatar: profile?.avatar_url || undefined,
-        joinDate: profile?.created_at || '',
-        isHost: profile?.is_host || false
+        firstName: sessionUser.user_metadata?.first_name || '',
+        lastName: sessionUser.user_metadata?.last_name || '',
+        avatar: sessionUser.user_metadata?.avatar_url || undefined,
+        joinDate: sessionUser.created_at || new Date().toISOString(),
+        isHost: false
       };
 
       setUser(authUser);
@@ -82,19 +76,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
-        password: data.password
+        password: data.password,
+        options: {
+          data: {
+            first_name: data.firstName,
+            last_name: data.lastName
+          }
+        }
       });
       if (signUpError) throw signUpError;
       const newUser = signUpData.user;
       if (!newUser) throw new Error('No user returned');
-
-      const { error: profileError } = await supabase.from('profiles').upsert({
-        id: newUser.id,
-        email: data.email,
-        first_name: data.firstName,
-        last_name: data.lastName
-      });
-      if (profileError) throw profileError;
 
       const authUser: User = {
         id: newUser.id,

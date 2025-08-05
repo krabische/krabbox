@@ -8,6 +8,7 @@ export interface User {
   avatar?: string;
   joinDate: string;
   isHost: boolean;
+  phoneNumber?: string;
 }
 
 interface AuthContextType {
@@ -35,23 +36,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful login
-      const mockUser: User = {
-        id: '1',
-        email,
-        firstName: 'John',
-        lastName: 'Doe',
-        joinDate: new Date().toISOString(),
-        isHost: false
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-    } catch (error) {
-      throw new Error('Login failed');
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Login failed' }));
+        throw new Error(err.error || 'Login failed');
+      }
+
+      const data = await res.json();
+      setUser(data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
+    } catch (error: any) {
+      throw new Error(error?.message || 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -60,23 +60,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (data: SignupData) => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful signup
-      const mockUser: User = {
-        id: Math.random().toString(36).substr(2, 9),
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        joinDate: new Date().toISOString(),
-        isHost: false
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-    } catch (error) {
-      throw new Error('Signup failed');
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Signup failed' }));
+        throw new Error(err.error || 'Signup failed');
+      }
+
+      const result = await res.json();
+      setUser(result.user);
+      localStorage.setItem('user', JSON.stringify(result.user));
+    } catch (error: any) {
+      throw new Error(error?.message || 'Signup failed');
     } finally {
       setIsLoading(false);
     }

@@ -19,6 +19,7 @@ import {
   Package,
   TrendingUp,
   Shield,
+  DollarSign,
 } from "lucide-react";
 
 export default function Account() {

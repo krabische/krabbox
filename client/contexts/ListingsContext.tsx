@@ -81,9 +81,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   const loadListings = async () => {
     try {
       const { data, error } = await supabase
-        .from('listings')
+        .from('listing')
         .select('*')
-        .eq('is_available', true)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -93,31 +92,42 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       if (data) {
         const formattedListings: LuggageListing[] = data.map((item: any) => ({
-          id: item.id,
-          hostId: item.host_id,
-          hostName: item.host_name || 'Unknown Host',
+          id: item.id.toString(),
+          hostId: item.owner_id,
+          hostName: 'Unknown Host', // We don't have host_name in the table
           title: item.title,
           description: item.description,
-          images: item.images || ['/placeholder.svg'],
-          category: item.category,
-          type: item.type,
-          size: item.size,
-          features: item.features || [],
-          condition: item.condition,
-          location: item.location,
+          images: item.image_url ? [item.image_url] : ['/placeholder.svg'],
+          category: 'carry-on', // Default since we don't have category
+          type: 'hardside', // Default since we don't have type
+          size: { height: 56, width: 35, depth: 23, unit: 'cm' }, // Default size
+          features: [], // Default since we don't have features
+          condition: 'excellent', // Default since we don't have condition
+          location: {
+            address: '',
+            city: item.location,
+            state: '',
+            zipCode: ''
+          },
           availability: {
-            available: item.is_available,
+            available: true,
             minRentalDays: 1,
             maxRentalDays: 30
           },
-          pricing: item.pricing,
-          rating: item.rating || 0,
-          reviewCount: item.review_count || 0,
+          pricing: {
+            dailyRate: item.price,
+            securityDeposit: 50,
+            isForSale: false,
+            isForRent: true
+          },
+          rating: 0,
+          reviewCount: 0,
           createdAt: item.created_at,
-          updatedAt: item.updated_at
+          updatedAt: item.created_at
         }));
 
         setListings(formattedListings);
+        console.log('Loaded listings from Supabase:', formattedListings);
       }
     } catch (error) {
       console.error('Error loading listings:', error);
@@ -140,47 +150,40 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
   const addListing = async (listingData: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => {
     try {
+      // Save to Supabase first
       const { data, error } = await supabase
-        .from('listings')
+        .from('listing')
         .insert([
           {
-            host_id: listingData.hostId,
-            host_name: listingData.hostName,
             title: listingData.title,
             description: listingData.description,
-            images: listingData.images,
-            category: listingData.category,
-            type: listingData.type,
-            size: listingData.size,
-            features: listingData.features,
-            condition: listingData.condition,
-            location: listingData.location,
-            pricing: listingData.pricing,
-            is_available: listingData.availability.available,
-            rating: 0,
-            review_count: 0
+            price: listingData.pricing.dailyRate,
+            location: listingData.location.city,
+            image_url: listingData.images[0] || '/placeholder.svg',
+            owner_id: listingData.hostId
           }
         ])
         .select()
         .single();
 
       if (error) {
-        console.error('Error adding listing:', error);
+        console.error('Error saving to Supabase:', error);
         throw error;
       }
 
-      if (data) {
-        const newListing: LuggageListing = {
-          ...listingData,
-          id: data.id,
-          rating: 0,
-          reviewCount: 0,
-          createdAt: data.created_at,
-          updatedAt: data.updated_at
-        };
+      // Create local listing object
+      const newListing: LuggageListing = {
+        ...listingData,
+        id: data.id.toString(),
+        rating: 0,
+        reviewCount: 0,
+        createdAt: data.created_at,
+        updatedAt: data.created_at
+      };
 
-        setListings(prev => [newListing, ...prev]);
-      }
+      setListings(prev => [newListing, ...prev]);
+      
+      console.log('Successfully saved listing to Supabase:', data);
     } catch (error) {
       console.error('Error adding listing:', error);
       throw error;

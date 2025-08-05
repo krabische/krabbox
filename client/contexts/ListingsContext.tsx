@@ -118,16 +118,27 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           const listingImages = imagesMap.get(item.id) || [];
           const images = listingImages.length > 0 ? listingImages : (item.image_url ? [item.image_url] : ['/placeholder.svg']);
 
+          // Get user info for host name
+          const hostName = item.host_name || 'Unknown Host';
+          
+          // Get square meters - try different possible field names
+          const squareMeters = item.square_meters || item.square_meters || item.area || 1;
+
           return {
             id: item.id.toString(),
             hostId: item.owner_id,
-            hostName: item.host_name || 'Unknown Host', // Use host_name from database
+            hostName: hostName,
             title: item.title,
             description: item.description,
             images: images,
             category: 'carry-on', // Default since we don't have category
             type: 'hardside', // Default since we don't have type
-            size: { height: parseFloat(item.square_meters) || 1, width: parseFloat(item.square_meters) || 1, depth: 1, unit: 'sqm' }, // Use square meters from database
+            size: { 
+              height: parseFloat(squareMeters) || 1, 
+              width: parseFloat(squareMeters) || 1, 
+              depth: 1, 
+              unit: 'sqm' 
+            },
             features: [], // Default since we don't have features
             condition: 'excellent', // Default since we don't have condition
             location: {

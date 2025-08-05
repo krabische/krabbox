@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Navigate, Link } from "react-router-dom";
 import { EditProfileModal } from "@/components/EditProfileModal";
+import { ListingManagementModal } from "@/components/ListingManagementModal";
 import {
   User,
   Settings,
@@ -26,6 +27,8 @@ export default function Account() {
   const { user, isAuthenticated, logout } = useAuth();
   const { listings } = useListings();
   const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const [managementModalOpen, setManagementModalOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<any>(null);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
@@ -40,6 +43,25 @@ export default function Account() {
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
+  const handleListingClick = (listing: any) => {
+    setSelectedListing(listing);
+    setManagementModalOpen(true);
+  };
+
+  const handleDeleteListing = async (listingId: string) => {
+    // Here you would implement the actual deletion logic
+    console.log('Deleting listing:', listingId);
+    // For now, just close the modal
+    setManagementModalOpen(false);
+  };
+
+  const handleEditListing = (listing: any) => {
+    // Here you would implement the edit logic
+    console.log('Editing listing:', listing);
+    // For now, just close the modal
+    setManagementModalOpen(false);
   };
 
   const mockBookings = [
@@ -267,7 +289,11 @@ export default function Account() {
                   <h3 className="text-lg font-semibold">Your Listings</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {userListings.map((listing) => (
-                      <Card key={listing.id}>
+                      <Card 
+                        key={listing.id} 
+                        className="cursor-pointer hover:shadow-lg transition-shadow"
+                        onClick={() => handleListingClick(listing)}
+                      >
                         <div className="relative">
                           <img
                             src={listing.images[0]}
@@ -432,6 +458,15 @@ export default function Account() {
       <EditProfileModal
         isOpen={editProfileOpen}
         onClose={() => setEditProfileOpen(false)}
+      />
+
+      {/* Listing Management Modal */}
+      <ListingManagementModal
+        isOpen={managementModalOpen}
+        onClose={() => setManagementModalOpen(false)}
+        listing={selectedListing}
+        onDelete={handleDeleteListing}
+        onEdit={handleEditListing}
       />
     </div>
   );

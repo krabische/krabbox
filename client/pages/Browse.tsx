@@ -308,7 +308,6 @@ export default function Browse() {
               <Card
                 key={listing.id}
                 className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md overflow-hidden"
-                onClick={() => handleViewDetails(listing)}
               >
                 <div className="relative">
                   <img
@@ -403,17 +402,11 @@ export default function Browse() {
                           </span>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {listing.size && !isNaN(listing.size.height) && !isNaN(listing.size.width) && !isNaN(listing.size.depth) 
-                            ? `${listing.size.height}×${listing.size.width}×${listing.size.depth} ${listing.size.unit}`
-                            : 'Size not specified'
+                          {listing.size && !isNaN(listing.size.height)
+                            ? `${listing.size.height} m²`
+                            : 'Area not specified'
                           }
                         </div>
-                      </div>
-                      <div className="text-xs text-muted-foreground text-right">
-                        {listing.size && !isNaN(listing.size.height) && !isNaN(listing.size.width)
-                          ? `${calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit)} m²`
-                          : 'Area not specified'
-                        }
                       </div>
                     </div>
 
@@ -439,6 +432,15 @@ export default function Browse() {
                           Contact
                         </Button>
                       )}
+                      <Button
+                        variant="outline"
+                        className="flex-1"
+                        size="sm"
+                        onClick={() => handleViewDetails(listing)}
+                      >
+                        <Package className="h-3 w-3 mr-1" />
+                        View Details
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

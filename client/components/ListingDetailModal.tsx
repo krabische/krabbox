@@ -171,8 +171,8 @@ export function ListingDetailModal({ isOpen, onClose, listing }: ListingDetailMo
                   <div>
                     <span className="text-muted-foreground">Area:</span>
                     <span className="ml-2">
-                      {listing.size && !isNaN(listing.size.height) && !isNaN(listing.size.width)
-                        ? `${calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit)} m²`
+                      {listing.size && !isNaN(listing.size.height)
+                        ? `${listing.size.height} m²`
                         : 'Not specified'
                       }
                     </span>

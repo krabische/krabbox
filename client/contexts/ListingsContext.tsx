@@ -121,13 +121,13 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           return {
             id: item.id.toString(),
             hostId: item.owner_id,
-            hostName: 'Unknown Host', // We don't have host_name in the table
+            hostName: item.host_name || 'Unknown Host', // Use host_name from database
             title: item.title,
             description: item.description,
             images: images,
             category: 'carry-on', // Default since we don't have category
             type: 'hardside', // Default since we don't have type
-            size: { height: 56, width: 35, depth: 23, unit: 'cm' }, // Default size
+            size: { height: parseFloat(item.square_meters) || 1, width: parseFloat(item.square_meters) || 1, depth: 1, unit: 'sqm' }, // Use square meters from database
             features: [], // Default since we don't have features
             condition: 'excellent', // Default since we don't have condition
             location: {
@@ -187,7 +187,9 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         price: listingData.pricing.dailyRate,
         location: listingData.location.city,
         image_url: listingData.images[0] || '/placeholder.svg', // Keep main image for backward compatibility
-        owner_id: listingData.hostId
+        owner_id: listingData.hostId,
+        host_name: listingData.hostName, // Save host name
+        square_meters: listingData.size.height // Save square meters
       };
       
       console.log('Data to insert into Supabase:', supabaseData);

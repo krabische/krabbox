@@ -41,6 +41,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Listen for auth changes
   useEffect(() => {
+    console.log('Setting up auth state listener');
+    
+    // Get initial session first
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session);
+      if (session?.user) {
+        handleUserSession(session);
+      } else {
+        console.log('No initial session found');
+        setIsLoading(false);
+      }
+    });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event, session?.user?.email);
@@ -48,64 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log('Email confirmed:', session?.user?.email_confirmed_at);
         
         if (session?.user) {
-          // Get user profile from profiles table
-          const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-
-          console.log('Profile data:', profile);
-          console.log('Profile error:', error);
-
-          if (profile) {
-            const userData = {
-              id: session.user.id,
-              email: session.user.email!,
-              firstName: profile.first_name || '',
-              lastName: profile.last_name || '',
-              phoneNumber: profile.phone_number,
-              avatar: profile.avatar_url,
-              joinDate: profile.created_at || new Date().toISOString(),
-              isHost: profile.is_host || false
-            };
-            console.log('Setting user data:', userData);
-            setUser(userData);
-          } else {
-            // If no profile exists, create one
-            if (session.user.email_confirmed_at) {
-              console.log('Creating profile for confirmed user');
-              const { error: profileError } = await supabase
-                .from('profiles')
-                .insert([
-                  {
-                    id: session.user.id,
-                    email: session.user.email,
-                    first_name: '',
-                    last_name: '',
-                    created_at: new Date().toISOString(),
-                    is_host: false
-                  }
-                ]);
-
-              if (!profileError) {
-                const userData = {
-                  id: session.user.id,
-                  email: session.user.email!,
-                  firstName: '',
-                  lastName: '',
-                  joinDate: new Date().toISOString(),
-                  isHost: false
-                };
-                console.log('Setting user data after profile creation:', userData);
-                setUser(userData);
-              } else {
-                console.error('Profile creation error:', profileError);
-              }
-            } else {
-              console.log('User not confirmed yet');
-            }
-          }
+          await handleUserSession(session);
         } else {
           console.log('No session, setting user to null');
           setUser(null);
@@ -117,6 +73,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleUserSession = async (session: any) => {
+    try {
+      // Get user profile from profiles table
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      console.log('Profile data:', profile);
+      console.log('Profile error:', error);
+
+      if (profile) {
+        const userData = {
+          id: session.user.id,
+          email: session.user.email!,
+          firstName: profile.first_name || '',
+          lastName: profile.last_name || '',
+          phoneNumber: profile.phone_number,
+          avatar: profile.avatar_url,
+          joinDate: profile.created_at || new Date().toISOString(),
+          isHost: profile.is_host || false
+        };
+        console.log('Setting user data:', userData);
+        setUser(userData);
+      } else {
+        // If no profile exists, create one
+        if (session.user.email_confirmed_at) {
+          console.log('Creating profile for confirmed user');
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: session.user.id,
+                email: session.user.email,
+                first_name: '',
+                last_name: '',
+                created_at: new Date().toISOString(),
+                is_host: false
+              }
+            ]);
+
+          if (!profileError) {
+            const userData = {
+              id: session.user.id,
+              email: session.user.email!,
+              firstName: '',
+              lastName: '',
+              joinDate: new Date().toISOString(),
+              isHost: false
+            };
+            console.log('Setting user data after profile creation:', userData);
+            setUser(userData);
+          } else {
+            console.error('Profile creation error:', profileError);
+          }
+        } else {
+          console.log('User not confirmed yet');
+        }
+      }
+    } catch (error) {
+      console.error('Error handling user session:', error);
+    }
+  };
 
   // Handle redirect after successful authentication
   useEffect(() => {
@@ -153,6 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('Login successful, user:', data.user);
       // Set flag for redirect
       setShouldRedirect(true);
+      // Don't set isLoading to false here - let onAuthStateChange handle it
     } catch (error) {
       console.error('Login error:', error);
       setIsLoading(false);

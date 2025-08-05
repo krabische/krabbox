@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -27,6 +28,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
   
   const { login, signup, isLoading } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -40,6 +42,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
         title: "Welcome back!",
         description: "You've successfully logged in to LugSpace.",
       });
+      navigate("/account");
       onClose();
       setFormData({
         firstName: "",
@@ -80,6 +83,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
         title: "Welcome to LugSpace!",
         description: "Your account has been created successfully.",
       });
+      navigate("/account");
       onClose();
       setFormData({
         firstName: "",

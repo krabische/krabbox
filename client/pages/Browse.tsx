@@ -50,8 +50,12 @@ export default function Browse() {
   const calculateSquareMeters = (
     height: number,
     width: number,
-    unit: "cm" | "inches",
+    unit: "cm" | "inches" | "sqm",
   ) => {
+    // If unit is already sqm, return height (which represents square meters)
+    if (unit === "sqm") {
+      return height;
+    }
     // Convert to meters if needed
     const heightInM = unit === "cm" ? height / 100 : height * 0.0254;
     const widthInM = unit === "cm" ? width / 100 : width * 0.0254;

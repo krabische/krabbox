@@ -13,7 +13,7 @@ export interface LuggageListing {
     height: number;
     width: number;
     depth: number;
-    unit: 'cm' | 'inches';
+    unit: 'cm' | 'inches' | 'sqm';
   };
   features: string[];
   condition: 'new' | 'excellent' | 'good' | 'fair';

@@ -201,10 +201,12 @@ export function CreateListingForm() {
       });
       setImages([]);
       setCurrentStep(1);
-    } catch (error) {
+    } catch (error: any) {
+      console.error('CreateListingForm error:', error);
+      const errorMessage = error?.message || 'Failed to create listing. Please try again.';
       toast({
         title: "Error",
-        description: "Failed to create listing. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

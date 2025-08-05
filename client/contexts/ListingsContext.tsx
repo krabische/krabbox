@@ -150,26 +150,36 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
   const addListing = async (listingData: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => {
     try {
+      console.log('Starting to add listing with data:', listingData);
+      
+      // Prepare data for Supabase
+      const supabaseData = {
+        title: listingData.title,
+        description: listingData.description,
+        price: listingData.pricing.dailyRate,
+        location: listingData.location.city,
+        image_url: listingData.images[0] || '/placeholder.svg',
+        owner_id: listingData.hostId
+      };
+      
+      console.log('Data to insert into Supabase:', supabaseData);
+
       // Save to Supabase first
       const { data, error } = await supabase
         .from('listing')
-        .insert([
-          {
-            title: listingData.title,
-            description: listingData.description,
-            price: listingData.pricing.dailyRate,
-            location: listingData.location.city,
-            image_url: listingData.images[0] || '/placeholder.svg',
-            owner_id: listingData.hostId
-          }
-        ])
+        .insert([supabaseData])
         .select()
         .single();
 
       if (error) {
-        console.error('Error saving to Supabase:', error);
-        throw error;
+        console.error('Supabase error details:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        console.error('Error details:', error.details);
+        throw new Error(`Supabase error: ${error.message}`);
       }
+
+      console.log('Supabase response:', data);
 
       // Create local listing object
       const newListing: LuggageListing = {
@@ -184,8 +194,11 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       setListings(prev => [newListing, ...prev]);
       
       console.log('Successfully saved listing to Supabase:', data);
+      return data;
     } catch (error) {
       console.error('Error adding listing:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
       throw error;
     }
   };

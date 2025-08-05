@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useListings, LuggageListing } from "@/contexts/ListingsContext";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,25 +28,33 @@ import {
 
 export default function Browse() {
   const { listings, searchListings } = useListings();
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
   const [priceRangeSlider, setPriceRangeSlider] = useState([0, 100]);
   const [sizeRangeSlider, setSizeRangeSlider] = useState([0, 1.0]);
-  const [periodValue, setPeriodValue] = useState([0]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [selectedListing, setSelectedListing] = useState<LuggageListing | null>(
     null,
   );
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
 
-  const periodOptions = [
-    { value: 0, label: "1 Month", months: 1 },
-    { value: 1, label: "3 Months", months: 3 },
-    { value: 2, label: "6 Months", months: 6 },
-    { value: 3, label: "1 Year", months: 12 },
-  ];
+  // Handle URL parameters
+  useEffect(() => {
+    const location = searchParams.get('location');
+    const startDateParam = searchParams.get('startDate');
+    const endDateParam = searchParams.get('endDate');
+    
+    if (location) setSearchTerm(location);
+    if (startDateParam) setStartDate(startDateParam);
+    if (endDateParam) setEndDate(endDateParam);
+  }, [searchParams]);
+
+
 
   const calculateSquareMeters = (
     height: number,
@@ -164,30 +173,30 @@ export default function Browse() {
               </div>
             </div>
 
-            {/* Period Slider */}
+            {/* Rental Dates */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-gray-700">
-                  Storage Period
-                </label>
-                <Badge variant="secondary" className="px-3 py-1">
-                  {periodOptions[periodValue[0]].label}
-                </Badge>
-              </div>
-
-              <div className="px-3">
-                <Slider
-                  value={periodValue}
-                  onValueChange={setPeriodValue}
-                  max={3}
-                  min={0}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                  {periodOptions.map((option) => (
-                    <span key={option.value}>{option.label}</span>
-                  ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Start Date
+                  </label>
+                  <Input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="border-gray-200 focus:border-primary"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    End Date
+                  </label>
+                  <Input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="border-gray-200 focus:border-primary"
+                  />
                 </div>
               </div>
             </div>

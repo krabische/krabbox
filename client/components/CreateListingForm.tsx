@@ -164,7 +164,7 @@ export function CreateListingForm() {
         },
       };
 
-      addListing(listingData);
+      await addListing(listingData);
 
       toast({
         title: "Listing Created!",

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 export interface LuggageListing {
   id: string;
@@ -47,7 +48,7 @@ export interface LuggageListing {
 interface ListingsContextType {
   listings: LuggageListing[];
   userListings: LuggageListing[];
-  addListing: (listing: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => void;
+  addListing: (listing: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => Promise<void>;
   updateListing: (id: string, updates: Partial<LuggageListing>) => void;
   deleteListing: (id: string) => void;
   getListingById: (id: string) => LuggageListing | undefined;
@@ -66,61 +67,113 @@ interface SearchFilters {
 const ListingsContext = createContext<ListingsContextType | undefined>(undefined);
 
 export function ListingsProvider({ children }: { children: ReactNode }) {
-  const [listings, setListings] = useState<LuggageListing[]>([
-    // Mock featured listings for initial display
-    {
-      id: '1',
-      hostId: 'host1',
-      hostName: 'Sarah M.',
-      title: 'Premium Hardside Carry-On',
-      description: 'Professional grade hardside carry-on with TSA lock. Perfect for business travel.',
-      images: ['/placeholder.svg'],
-      category: 'carry-on',
-      type: 'hardside',
-      size: { height: 56, width: 35, depth: 23, unit: 'cm' },
-      features: ['TSA Lock', '4 Wheels', 'Hard Shell', 'Expandable'],
-      condition: 'excellent',
-      location: {
-        address: '123 Downtown St',
-        city: 'New York',
-        state: 'NY',
-        zipCode: '10001'
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-        maxRentalDays: 30
-      },
-      pricing: {
-        dailyRate: 12,
-        weeklyRate: 70,
-        monthlyRate: 250,
-        securityDeposit: 100,
-        isForSale: false,
-        isForRent: true
-      },
-      rating: 4.9,
-      reviewCount: 127,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+  const [listings, setListings] = useState<LuggageListing[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load listings from Supabase
+  useEffect(() => {
+    loadListings();
+  }, []);
+
+  const loadListings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('is_available', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading listings:', error);
+        return;
+      }
+
+      if (data) {
+        const formattedListings: LuggageListing[] = data.map((item: any) => ({
+          id: item.id,
+          hostId: item.host_id,
+          hostName: item.host_name || 'Unknown Host',
+          title: item.title,
+          description: item.description,
+          images: item.images || ['/placeholder.svg'],
+          category: item.category,
+          type: item.type,
+          size: item.size,
+          features: item.features || [],
+          condition: item.condition,
+          location: item.location,
+          availability: {
+            available: item.is_available,
+            minRentalDays: 1,
+            maxRentalDays: 30
+          },
+          pricing: item.pricing,
+          rating: item.rating || 0,
+          reviewCount: item.review_count || 0,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at
+        }));
+
+        setListings(formattedListings);
+      }
+    } catch (error) {
+      console.error('Error loading listings:', error);
+    } finally {
+      setIsLoading(false);
     }
-  ]);
+  };
 
   const getUserListings = (userId: string): LuggageListing[] => {
     return listings.filter(listing => listing.hostId === userId);
   };
 
-  const addListing = (listingData: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => {
-    const newListing: LuggageListing = {
-      ...listingData,
-      id: Math.random().toString(36).substr(2, 9),
-      rating: 0,
-      reviewCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+  const addListing = async (listingData: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('listings')
+        .insert([
+          {
+            host_id: listingData.hostId,
+            host_name: listingData.hostName,
+            title: listingData.title,
+            description: listingData.description,
+            images: listingData.images,
+            category: listingData.category,
+            type: listingData.type,
+            size: listingData.size,
+            features: listingData.features,
+            condition: listingData.condition,
+            location: listingData.location,
+            pricing: listingData.pricing,
+            is_available: listingData.availability.available,
+            rating: 0,
+            review_count: 0
+          }
+        ])
+        .select()
+        .single();
 
-    setListings(prev => [newListing, ...prev]);
+      if (error) {
+        console.error('Error adding listing:', error);
+        throw error;
+      }
+
+      if (data) {
+        const newListing: LuggageListing = {
+          ...listingData,
+          id: data.id,
+          rating: 0,
+          reviewCount: 0,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at
+        };
+
+        setListings(prev => [newListing, ...prev]);
+      }
+    } catch (error) {
+      console.error('Error adding listing:', error);
+      throw error;
+    }
   };
 
   const updateListing = (id: string, updates: Partial<LuggageListing>) => {

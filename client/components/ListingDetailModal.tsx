@@ -52,7 +52,7 @@ export function ListingDetailModal({ isOpen, onClose, listing }: ListingDetailMo
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" aria-describedby="listing-detail-description">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="flex items-center gap-2">
@@ -65,7 +65,7 @@ export function ListingDetailModal({ isOpen, onClose, listing }: ListingDetailMo
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6" id="listing-detail-description">
           {/* Images Section */}
           {listing.images && listing.images.length > 0 && (
             <div className="relative">

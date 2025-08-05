@@ -15,6 +15,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { BookingModal } from "@/components/BookingModal";
 import { ContactSellerModal } from "@/components/ContactSellerModal";
+import { ListingDetailModal } from "@/components/ListingDetailModal";
 import {
   Search,
   MapPin,
@@ -42,6 +43,7 @@ export default function Browse() {
   );
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
 
   // Handle URL parameters
   useEffect(() => {
@@ -146,6 +148,11 @@ export default function Browse() {
   const handleContactSeller = (listing: LuggageListing) => {
     setSelectedListing(listing);
     setContactModalOpen(true);
+  };
+
+  const handleViewDetails = (listing: LuggageListing) => {
+    setSelectedListing(listing);
+    setDetailModalOpen(true);
   };
 
   return (
@@ -301,6 +308,7 @@ export default function Browse() {
               <Card
                 key={listing.id}
                 className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md overflow-hidden"
+                onClick={() => handleViewDetails(listing)}
               >
                 <div className="relative">
                   <img
@@ -459,6 +467,11 @@ export default function Browse() {
       <ContactSellerModal
         isOpen={contactModalOpen}
         onClose={() => setContactModalOpen(false)}
+        listing={selectedListing}
+      />
+      <ListingDetailModal
+        isOpen={detailModalOpen}
+        onClose={() => setDetailModalOpen(false)}
         listing={selectedListing}
       />
     </div>

@@ -103,21 +103,21 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           size: { height: 56, width: 35, depth: 23, unit: 'cm' }, // Default size
           features: [], // Default since we don't have features
           condition: 'excellent', // Default since we don't have condition
-          location: {
+      location: {
             address: '',
             city: item.location,
             state: '',
             zipCode: ''
-          },
-          availability: {
-            available: true,
-            minRentalDays: 1,
+      },
+      availability: {
+        available: true,
+        minRentalDays: 1,
             maxRentalDays: 30
-          },
-          pricing: {
+      },
+      pricing: {
             dailyRate: item.price,
             securityDeposit: 50,
-            isForSale: false,
+        isForSale: false,
             isForRent: true
           },
           rating: 0,
@@ -182,11 +182,11 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       console.log('Supabase response:', data);
 
       // Create local listing object
-      const newListing: LuggageListing = {
-        ...listingData,
+    const newListing: LuggageListing = {
+      ...listingData,
         id: data.id.toString(),
-        rating: 0,
-        reviewCount: 0,
+      rating: 0,
+      reviewCount: 0,
         createdAt: data.created_at,
         updatedAt: data.created_at
       };

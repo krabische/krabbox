@@ -28,6 +28,7 @@ import {
   Camera,
   Loader2,
 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 export function CreateListingForm() {
   const { user } = useAuth();
@@ -91,15 +92,55 @@ export function CreateListingForm() {
     }));
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      // In a real app, you'd upload to a file service here
-      // For now, we'll use placeholder URLs
-      const newImages = Array.from(files).map(
-        () => `/placeholder.svg?${Math.random()}`,
-      );
-      setImages((prev) => [...prev, ...newImages].slice(0, 5)); // Max 5 images
+      try {
+        const uploadedUrls = [];
+        
+        for (const file of Array.from(files)) {
+          // Create a unique filename
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `listings/${fileName}`;
+          
+          // Upload to Supabase Storage
+          const { data, error } = await supabase.storage
+            .from('listings')
+            .upload(filePath, file);
+          
+          if (error) {
+            console.error('Error uploading image:', error);
+            toast({
+              title: "Upload Error",
+              description: "Failed to upload image. Please try again.",
+              variant: "destructive",
+            });
+            continue;
+          }
+          
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('listings')
+            .getPublicUrl(filePath);
+          
+          uploadedUrls.push(publicUrl);
+        }
+        
+        setImages((prev) => [...prev, ...uploadedUrls].slice(0, 5)); // Max 5 images
+        
+        toast({
+          title: "Images Uploaded",
+          description: `${uploadedUrls.length} image(s) uploaded successfully.`,
+        });
+      } catch (error) {
+        console.error('Error uploading images:', error);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload images. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 

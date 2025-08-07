@@ -137,6 +137,12 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
             id: item.id.toString(),
             hostId: item.owner_id,
             hostName: hostName,
+            // Debug info
+            _debug: {
+              owner_id: item.owner_id,
+              user_id: user?.id,
+              isOwner: item.owner_id === user?.id
+            },
             title: item.title,
             description: item.description,
             images: images,
@@ -180,6 +186,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
         setListings(formattedListings);
         console.log('Loaded listings from Supabase:', formattedListings);
+        console.log('Total listings loaded:', formattedListings.length);
+        console.log('Available listings:', formattedListings.filter(l => !l.isDeleted && l.availability.available).length);
       }
     } catch (error) {
       console.error('Error loading listings:', error);
@@ -189,7 +197,12 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   };
 
   const getUserListings = (userId: string): LuggageListing[] => {
-    return listings.filter(listing => listing.hostId === userId && !listing.isDeleted);
+    const userListings = listings.filter(listing => listing.hostId === userId && !listing.isDeleted);
+    console.log('getUserListings called for userId:', userId);
+    console.log('All listings:', listings.length);
+    console.log('User listings found:', userListings.length);
+    console.log('User listings:', userListings);
+    return userListings;
   };
 
   useEffect(() => {
@@ -234,6 +247,9 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         zip_code: listingData.location.zipCode,
         available: listingData.availability.available
       };
+      
+      console.log('Creating listing with hostId:', listingData.hostId);
+      console.log('Supabase data:', supabaseData);
       
       console.log('Data to insert into Supabase:', supabaseData);
 

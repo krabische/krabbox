@@ -62,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(authUser);
       localStorage.setItem('user', JSON.stringify(authUser));
+      console.log('AuthContext: User logged in with ID:', authUser.id);
     } catch (err: any) {
       const message = err?.message || 'Login failed';
       setError(message);

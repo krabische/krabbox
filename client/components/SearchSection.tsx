@@ -22,7 +22,7 @@ export function SearchSection() {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="bg-white rounded-2xl shadow-xl border p-6 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
           {/* Location */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
@@ -51,6 +51,20 @@ export function SearchSection() {
             />
           </div>
 
+          {/* End Date */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700 flex items-center">
+              <CalendarDays className="h-4 w-4 mr-2" />
+              End Date
+            </label>
+            <Input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="border-gray-200 focus:border-primary"
+            />
+          </div>
+
           {/* Search Button */}
           <div className="space-y-2 flex flex-col justify-end">
             <label className="text-sm font-medium text-gray-700 opacity-0">
@@ -63,24 +77,6 @@ export function SearchSection() {
               <Search className="h-4 w-4 mr-2" />
               Search
             </Button>
-          </div>
-        </div>
-
-        {/* End Date */}
-        <div className="mt-6 pt-6 border-t">
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center">
-                <CalendarDays className="h-4 w-4 mr-2" />
-                End Date
-              </label>
-              <Input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="border-gray-200 focus:border-primary"
-              />
-            </div>
           </div>
         </div>
 

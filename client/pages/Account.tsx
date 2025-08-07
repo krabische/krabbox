@@ -37,6 +37,8 @@ export default function Account() {
   // Use userListings from context instead of filtering locally
   console.log('Account: User listings from context:', userListings);
   console.log('Account: User ID:', user.id);
+  console.log('Account: All listings:', listings);
+  console.log('Account: Listings with matching hostId:', listings.filter(l => l.hostId === user.id));
 
   // Mock earnings data
   const totalEarnings = userListings.length * 450; // Mock calculation

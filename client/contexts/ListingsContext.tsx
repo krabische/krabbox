@@ -121,7 +121,16 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         }
 
         const formattedListings: LuggageListing[] = listingsData
-          .filter((item: any) => !item.is_deleted && item.available !== false) // Only show available and not deleted listings
+          .filter((item: any) => {
+            // Show all listings for debugging
+            console.log('Listing filter check:', {
+              id: item.id,
+              is_deleted: item.is_deleted,
+              available: item.available,
+              title: item.title
+            });
+            return true; // Show all listings for now
+          })
           .map((item: any) => {
           // Get images for this listing, fallback to main image_url if no images in listing_images
           const listingImages = imagesMap.get(item.id) || [];

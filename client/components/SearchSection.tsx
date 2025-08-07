@@ -3,18 +3,24 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { CalendarDays, MapPin, Search } from "lucide-react";
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
 
 export function SearchSection() {
   const navigate = useNavigate();
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [isForRent, setIsForRent] = useState(true);
+  const [isForSale, setIsForSale] = useState(false);
 
   const handleSearch = () => {
     const searchParams = new URLSearchParams();
     if (location) searchParams.set('location', location);
     if (startDate) searchParams.set('startDate', startDate);
     if (endDate) searchParams.set('endDate', endDate);
+    if (isForRent) searchParams.set('rent', 'true');
+    if (isForSale) searchParams.set('sale', 'true');
     
     navigate(`/browse?${searchParams.toString()}`);
   };
@@ -77,6 +83,33 @@ export function SearchSection() {
               <Search className="h-4 w-4 mr-2" />
               Search
             </Button>
+          </div>
+        </div>
+
+        {/* Listing Type Selection */}
+        <div className="mt-6 pt-6 border-t">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">Listing Type</Label>
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="rent"
+                    checked={isForRent}
+                    onCheckedChange={setIsForRent}
+                  />
+                  <Label htmlFor="rent" className="text-sm">For Rent</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="sale"
+                    checked={isForSale}
+                    onCheckedChange={setIsForSale}
+                  />
+                  <Label htmlFor="sale" className="text-sm">For Sale</Label>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -26,6 +26,8 @@ import {
   Users,
   Package,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export default function Browse() {
   const { listings, searchListings } = useListings();
@@ -53,7 +55,7 @@ export default function Browse() {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCondition, setSelectedCondition] = useState("all");
-  const [selectedListingType, setSelectedListingType] = useState("all");
+  const [selectedListingType, setSelectedListingType] = useState("rent"); // Default to rent
   const [minRentalDays, setMinRentalDays] = useState("");
   const [maxRentalDays, setMaxRentalDays] = useState("");
   const [securityDepositRange, setSecurityDepositRange] = useState([0, 200]);
@@ -127,11 +129,9 @@ export default function Browse() {
     if (selectedCondition !== "all" && listing.condition !== selectedCondition)
       return false;
 
-    // Listing type filter
-    if (selectedListingType !== "all") {
-      if (selectedListingType === "rent" && !listing.pricing.isForRent) return false;
-      if (selectedListingType === "sale" && !listing.pricing.isForSale) return false;
-    }
+    // Listing type filter - mandatory
+    if (selectedListingType === "rent" && !listing.pricing.isForRent) return false;
+    if (selectedListingType === "sale" && !listing.pricing.isForSale) return false;
 
     // Min rental days filter
     if (minRentalDays && listing.availability.minRentalDays < parseInt(minRentalDays))
@@ -217,15 +217,7 @@ export default function Browse() {
                   className="pl-10"
                 />
               </div>
-              <div className="flex gap-2">
-                <Input type="date" placeholder="Start date" className="w-40" />
-                <Button onClick={handleSearch}>Search</Button>
-              </div>
-            </div>
-
-            {/* Rental Dates */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex gap-4 items-end">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
                     Start Date
@@ -248,6 +240,10 @@ export default function Browse() {
                     className="border-gray-200 focus:border-primary"
                   />
                 </div>
+                <Button onClick={handleSearch} className="h-10 bg-primary hover:bg-primary/90">
+                  <Search className="h-4 w-4 mr-2" />
+                  Search
+                </Button>
               </div>
             </div>
           </div>
@@ -305,6 +301,33 @@ export default function Browse() {
               <SlidersHorizontal className="h-4 w-4 mr-2" />
               More Filters
             </Button>
+          </div>
+
+          {/* Listing Type Toggle */}
+          <div className="mt-4 pt-4 border-t">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Listing Type</Label>
+                <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="browse-rent"
+                      checked={selectedListingType === "rent"}
+                      onCheckedChange={(checked) => setSelectedListingType(checked ? "rent" : "sale")}
+                    />
+                    <Label htmlFor="browse-rent" className="text-sm">For Rent</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="browse-sale"
+                      checked={selectedListingType === "sale"}
+                      onCheckedChange={(checked) => setSelectedListingType(checked ? "sale" : "rent")}
+                    />
+                    <Label htmlFor="browse-sale" className="text-sm">For Sale</Label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Range Sliders */}

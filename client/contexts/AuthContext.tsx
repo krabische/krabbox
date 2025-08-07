@@ -18,6 +18,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (data: SignupData) => Promise<void>;
   logout: () => void;
+  updateUser: (updates: Partial<User>) => Promise<void>;
   isLoading: boolean;
   error: string | null;
 }
@@ -115,6 +116,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
   };
 
+  const updateUser = async (updates: Partial<User>) => {
+    if (!user) return;
+    
+    try {
+      // Update user metadata in Supabase
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          first_name: updates.firstName || user.firstName,
+          last_name: updates.lastName || user.lastName,
+          phone_number: updates.phoneNumber || user.phoneNumber
+        }
+      });
+
+      if (error) throw error;
+
+      // Update local user state
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    } catch (err: any) {
+      const message = err?.message || 'Failed to update profile';
+      setError(message);
+      throw new Error(message);
+    }
+  };
+
   // Initialize user from localStorage on mount
   React.useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -133,6 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login,
     signup,
     logout,
+    updateUser,
     isLoading,
     error
   };

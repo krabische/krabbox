@@ -44,6 +44,13 @@ export default function Browse() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [selectedType, setSelectedType] = useState("all");
+  const [selectedCondition, setSelectedCondition] = useState("all");
+  const [selectedListingType, setSelectedListingType] = useState("all");
+  const [minRentalDays, setMinRentalDays] = useState("");
+  const [maxRentalDays, setMaxRentalDays] = useState("");
+  const [securityDepositRange, setSecurityDepositRange] = useState([0, 200]);
 
   // Handle URL parameters
   useEffect(() => {
@@ -80,8 +87,11 @@ export default function Browse() {
   };
 
   const filteredListings = listings.filter((listing) => {
+    // Category filter
     if (selectedCategory !== "all" && listing.category !== selectedCategory)
       return false;
+    
+    // Search term filter
     if (
       searchTerm &&
       !listing.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -101,6 +111,33 @@ export default function Browse() {
       listing.size.unit,
     );
     if (squareMeters < sizeRangeSlider[0] || squareMeters > sizeRangeSlider[1])
+      return false;
+
+    // Type filter
+    if (selectedType !== "all" && listing.type !== selectedType)
+      return false;
+
+    // Condition filter
+    if (selectedCondition !== "all" && listing.condition !== selectedCondition)
+      return false;
+
+    // Listing type filter
+    if (selectedListingType !== "all") {
+      if (selectedListingType === "rent" && !listing.pricing.isForRent) return false;
+      if (selectedListingType === "sale" && !listing.pricing.isForSale) return false;
+    }
+
+    // Min rental days filter
+    if (minRentalDays && listing.availability.minRentalDays < parseInt(minRentalDays))
+      return false;
+
+    // Max rental days filter
+    if (maxRentalDays && listing.availability.maxRentalDays > parseInt(maxRentalDays))
+      return false;
+
+    // Security deposit filter
+    const deposit = listing.pricing.securityDeposit;
+    if (deposit < securityDepositRange[0] || deposit > securityDepositRange[1])
       return false;
 
     if (priceRange !== "all") {
@@ -255,7 +292,10 @@ export default function Browse() {
               </SelectContent>
             </Select>
 
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            >
               <SlidersHorizontal className="h-4 w-4 mr-2" />
               More Filters
             </Button>
@@ -291,6 +331,93 @@ export default function Browse() {
               />
             </div>
           </div>
+
+          {/* Advanced Filters */}
+          {showAdvancedFilters && (
+            <div className="mt-6 pt-6 border-t space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Type</label>
+                  <Select value={selectedType} onValueChange={setSelectedType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="hardside">Hardside</SelectItem>
+                      <SelectItem value="softside">Softside</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Condition</label>
+                  <Select value={selectedCondition} onValueChange={setSelectedCondition}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Conditions" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Conditions</SelectItem>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="excellent">Excellent</SelectItem>
+                      <SelectItem value="good">Good</SelectItem>
+                      <SelectItem value="fair">Fair</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Listing Type</label>
+                  <Select value={selectedListingType} onValueChange={setSelectedListingType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="rent">For Rent</SelectItem>
+                      <SelectItem value="sale">For Sale</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Min Rental Days</label>
+                  <Input
+                    type="number"
+                    placeholder="1"
+                    value={minRentalDays}
+                    onChange={(e) => setMinRentalDays(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Max Rental Days</label>
+                  <Input
+                    type="number"
+                    placeholder="30"
+                    value={maxRentalDays}
+                    onChange={(e) => setMaxRentalDays(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-sm font-medium">
+                  Security Deposit: ${securityDepositRange[0]} - ${securityDepositRange[1]}
+                </label>
+                <Slider
+                  value={securityDepositRange}
+                  onValueChange={setSecurityDepositRange}
+                  max={200}
+                  min={0}
+                  step={10}
+                  className="w-full"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -308,6 +435,7 @@ export default function Browse() {
               <Card
                 key={listing.id}
                 className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md overflow-hidden"
+                onClick={() => handleBookListing(listing)}
               >
                 <div className="relative">
                   <img
@@ -349,7 +477,10 @@ export default function Browse() {
                       </h3>
                       <div className="flex items-center text-sm text-muted-foreground mt-1">
                         <MapPin className="h-3 w-3 mr-1" />
-                        {listing.location.city}, {listing.location.state}
+                        {listing.location.address ? 
+                          `${listing.location.address}, ${listing.location.city}` : 
+                          listing.location.city
+                        }
                       </div>
                     </div>
 
@@ -413,9 +544,12 @@ export default function Browse() {
                     <div className="flex gap-2">
                       {listing.pricing.isForRent && (
                         <Button
-                          className="flex-1"
+                          className="flex-1 ml-auto"
                           size="sm"
-                          onClick={() => handleBookListing(listing)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleBookListing(listing);
+                          }}
                         >
                           <Calendar className="h-3 w-3 mr-1" />
                           Book
@@ -424,23 +558,17 @@ export default function Browse() {
                       {listing.pricing.isForSale && (
                         <Button
                           variant="outline"
-                          className="flex-1"
+                          className="flex-1 ml-auto"
                           size="sm"
-                          onClick={() => handleContactSeller(listing)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleContactSeller(listing);
+                          }}
                         >
                           <Users className="h-3 w-3 mr-1" />
                           Contact
                         </Button>
                       )}
-                      <Button
-                        variant="outline"
-                        className="flex-1"
-                        size="sm"
-                        onClick={() => handleViewDetails(listing)}
-                      >
-                        <Package className="h-3 w-3 mr-1" />
-                        View Details
-                      </Button>
                     </div>
                   </div>
                 </CardContent>

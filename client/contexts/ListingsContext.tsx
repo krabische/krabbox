@@ -84,7 +84,13 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       // First, load all listings
       const { data: listingsData, error: listingsError } = await supabase
         .from('listing')
-        .select('*')
+        .select(`
+          *,
+          profiles:owner_id (
+            full_name,
+            email
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (listingsError) {
@@ -120,7 +126,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           const images = listingImages.length > 0 ? listingImages : (item.image_url ? [item.image_url] : ['/placeholder.svg']);
 
           // Get user info for host name
-          const hostName = item.host_name || 'Unknown Host';
+          const hostName = item.profiles?.full_name || item.host_name || 'Unknown Host';
           
           // Get square meters - try different possible field names
           const squareMeters = item.square_meters || item.square_meters || item.area || 1;
@@ -132,35 +138,38 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
             title: item.title,
             description: item.description,
             images: images,
-            category: 'carry-on', // Default since we don't have category
-            type: 'hardside', // Default since we don't have type
+            category: item.category || 'carry-on',
+            type: item.type || 'hardside',
             size: { 
               height: parseFloat(squareMeters) || 1, 
               width: parseFloat(squareMeters) || 1, 
               depth: 1, 
               unit: 'sqm' 
             },
-            features: [], // Default since we don't have features
-            condition: 'excellent', // Default since we don't have condition
+            features: item.features || [],
+            condition: item.condition || 'excellent',
             location: {
-              address: '',
+              address: item.address || '',
               city: item.location,
-              state: '',
-              zipCode: ''
+              state: item.state || '',
+              zipCode: item.zip_code || ''
             },
             availability: {
-              available: true,
-              minRentalDays: 1,
-              maxRentalDays: 30
+              available: item.available !== false,
+              minRentalDays: item.min_rental_days || 1,
+              maxRentalDays: item.max_rental_days || 30
             },
             pricing: {
               dailyRate: item.price,
-              securityDeposit: 50,
-              isForSale: false,
-              isForRent: true
+              weeklyRate: item.weekly_rate,
+              monthlyRate: item.monthly_rate,
+              securityDeposit: item.security_deposit || 50,
+              sellPrice: item.sell_price,
+              isForSale: item.listing_type === 'sale',
+              isForRent: item.listing_type !== 'sale'
             },
-            rating: 0,
-            reviewCount: 0,
+            rating: item.rating || 0,
+            reviewCount: item.review_count || 0,
             createdAt: item.created_at,
             updatedAt: item.created_at,
             isDeleted: item.is_deleted || false
@@ -201,8 +210,25 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         location: listingData.location.city,
         image_url: listingData.images[0] || '/placeholder.svg', // Keep main image for backward compatibility
         owner_id: listingData.hostId,
-        host_name: listingData.hostName, // Save host name
-        square_meters: listingData.size.height // Save square meters
+        host_name: listingData.hostName,
+        square_meters: listingData.size.height,
+        // Add all new fields
+        category: listingData.category,
+        type: listingData.type,
+        condition: listingData.condition,
+        features: listingData.features,
+        contact_number: listingData.hostName, // You might want to get this from user profile
+        listing_type: listingData.pricing.isForSale ? 'sale' : 'rent',
+        weekly_rate: listingData.pricing.weeklyRate,
+        monthly_rate: listingData.pricing.monthlyRate,
+        security_deposit: listingData.pricing.securityDeposit,
+        min_rental_days: listingData.availability.minRentalDays,
+        max_rental_days: listingData.availability.maxRentalDays,
+        sell_price: listingData.pricing.sellPrice,
+        address: listingData.location.address,
+        state: listingData.location.state,
+        zip_code: listingData.location.zipCode,
+        available: listingData.availability.available
       };
       
       console.log('Data to insert into Supabase:', supabaseData);

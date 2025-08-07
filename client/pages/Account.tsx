@@ -25,7 +25,7 @@ import {
 
 export default function Account() {
   const { user, isAuthenticated, logout } = useAuth();
-  const { listings } = useListings();
+  const { listings, userListings } = useListings();
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [managementModalOpen, setManagementModalOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<any>(null);
@@ -34,8 +34,9 @@ export default function Account() {
     return <Navigate to="/" replace />;
   }
 
-  // Get user's listings (including deleted ones)
-  const userListings = listings.filter((listing) => listing.hostId === user.id);
+  // Use userListings from context instead of filtering locally
+  console.log('Account: User listings from context:', userListings);
+  console.log('Account: User ID:', user.id);
 
   // Mock earnings data
   const totalEarnings = userListings.length * 450; // Mock calculation

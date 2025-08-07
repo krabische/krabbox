@@ -29,6 +29,12 @@ import {
 
 export default function Browse() {
   const { listings, searchListings } = useListings();
+  
+  // Debug: Log listings count
+  useEffect(() => {
+    console.log('Browse: Total listings loaded:', listings.length);
+    console.log('Browse: Listings:', listings);
+  }, [listings]);
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");

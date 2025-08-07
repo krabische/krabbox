@@ -120,7 +120,9 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           });
         }
 
-        const formattedListings: LuggageListing[] = listingsData.map((item: any) => {
+        const formattedListings: LuggageListing[] = listingsData
+          .filter((item: any) => !item.is_deleted && item.available !== false) // Only show available and not deleted listings
+          .map((item: any) => {
           // Get images for this listing, fallback to main image_url if no images in listing_images
           const listingImages = imagesMap.get(item.id) || [];
           const images = listingImages.length > 0 ? listingImages : (item.image_url ? [item.image_url] : ['/placeholder.svg']);
@@ -187,12 +189,14 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   };
 
   const getUserListings = (userId: string): LuggageListing[] => {
-    return listings.filter(listing => listing.hostId === userId);
+    return listings.filter(listing => listing.hostId === userId && !listing.isDeleted);
   };
 
   useEffect(() => {
     if (user?.id) {
-      setUserListings(getUserListings(user.id));
+      const userListings = getUserListings(user.id);
+      console.log('User listings:', userListings);
+      setUserListings(userListings);
     } else {
       setUserListings([]);
     }
@@ -281,6 +285,9 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       };
 
       setListings(prev => [newListing, ...prev]);
+      
+      // Reload listings to ensure everything is in sync
+      await loadListings();
       
       console.log('Successfully saved listing to Supabase:', data);
       return data;

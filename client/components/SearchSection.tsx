@@ -52,7 +52,7 @@ export function SearchSection() {
           </div>
 
           {/* Search Button */}
-          <div className="space-y-2">
+          <div className="space-y-2 flex flex-col justify-end">
             <label className="text-sm font-medium text-gray-700 opacity-0">
               Search
             </label>

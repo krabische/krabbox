@@ -15,6 +15,7 @@ import {
   CheckCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabaseClient";
 
 interface ListingManagementModalProps {
   isOpen: boolean;
@@ -51,6 +52,16 @@ export function ListingManagementModal({
           variant: "destructive",
         });
         return;
+      }
+
+      // Mark as deleted in Supabase
+      const { error } = await supabase
+        .from('listing')
+        .update({ is_deleted: true })
+        .eq('id', listing.id);
+
+      if (error) {
+        throw error;
       }
 
       await onDelete(listing.id);

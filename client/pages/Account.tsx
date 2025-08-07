@@ -34,7 +34,7 @@ export default function Account() {
     return <Navigate to="/" replace />;
   }
 
-  // Get user's listings
+  // Get user's listings (including deleted ones)
   const userListings = listings.filter((listing) => listing.hostId === user.id);
 
   // Mock earnings data
@@ -51,16 +51,28 @@ export default function Account() {
   };
 
   const handleDeleteListing = async (listingId: string) => {
-    // Here you would implement the actual deletion logic
-    console.log('Deleting listing:', listingId);
-    // For now, just close the modal
-    setManagementModalOpen(false);
+    try {
+      // Update local state instead of reloading
+      const updatedListings = listings.map(listing => 
+        listing.id === listingId 
+          ? { ...listing, isDeleted: true }
+          : listing
+      );
+      
+      // Here you would also update the context
+      console.log('Deleting listing:', listingId);
+      
+      // Close modal without page reload
+      setManagementModalOpen(false);
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+    }
   };
 
   const handleEditListing = (listing: any) => {
-    // Here you would implement the edit logic
+    // Navigate to edit page or open edit modal
     console.log('Editing listing:', listing);
-    // For now, just close the modal
+    // Close modal without page reload
     setManagementModalOpen(false);
   };
 
@@ -291,7 +303,9 @@ export default function Account() {
                     {userListings.map((listing) => (
                       <Card 
                         key={listing.id} 
-                        className="cursor-pointer hover:shadow-lg transition-shadow"
+                        className={`cursor-pointer hover:shadow-lg transition-shadow ${
+                          listing.isDeleted ? 'opacity-50 grayscale' : ''
+                        }`}
                         onClick={() => handleListingClick(listing)}
                       >
                         <div className="relative">
@@ -306,6 +320,13 @@ export default function Account() {
                           >
                             ${listing.pricing.dailyRate}/day
                           </Badge>
+                          {listing.isDeleted && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                              <Badge variant="destructive" className="text-white bg-red-600">
+                                DELETED
+                              </Badge>
+                            </div>
+                          )}
                         </div>
                         <CardContent className="p-4">
                           <h4 className="font-semibold line-clamp-1">

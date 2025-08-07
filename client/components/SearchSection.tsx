@@ -37,14 +37,16 @@ export function SearchSection() {
             />
           </div>
 
-          {/* Pickup Date */}
+          {/* Start Date */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <CalendarDays className="h-4 w-4 mr-2" />
-              Pickup Date
+              Start Date
             </label>
             <Input
               type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               className="border-gray-200 focus:border-primary"
             />
           </div>
@@ -64,21 +66,9 @@ export function SearchSection() {
           </div>
         </div>
 
-        {/* Rental Dates */}
+        {/* End Date */}
         <div className="mt-6 pt-6 border-t">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center">
-                <CalendarDays className="h-4 w-4 mr-2" />
-                Start Date
-              </label>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="border-gray-200 focus:border-primary"
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 flex items-center">
                 <CalendarDays className="h-4 w-4 mr-2" />

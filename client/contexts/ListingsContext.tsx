@@ -44,6 +44,7 @@ export interface LuggageListing {
   reviewCount: number;
   createdAt: string;
   updatedAt: string;
+  isDeleted?: boolean;
 }
 
 interface ListingsContextType {
@@ -161,7 +162,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
             rating: 0,
             reviewCount: 0,
             createdAt: item.created_at,
-            updatedAt: item.created_at
+            updatedAt: item.created_at,
+            isDeleted: item.is_deleted || false
           };
         });
 

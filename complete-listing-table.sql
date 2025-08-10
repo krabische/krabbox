@@ -57,8 +57,8 @@ ALTER TABLE listing ADD COLUMN IF NOT EXISTS rating DECIMAL(3,2) DEFAULT 0;
 -- Add review count field
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS review_count INTEGER DEFAULT 0;
 
--- Add available field
-ALTER TABLE listing ADD COLUMN IF NOT EXISTS available BOOLEAN DEFAULT TRUE;
+-- Add availability field
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS is_available BOOLEAN DEFAULT TRUE;
 
 -- Success message
-SELECT 'All columns added successfully to listing table!' as status; 
+SELECT 'All columns added successfully to listing table!' as status;

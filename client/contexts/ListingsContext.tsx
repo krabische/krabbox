@@ -10,14 +10,20 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export interface LuggageListing {
   id: string;
-  hostId: string;
-  hostName: string;
+  ownerId: string;
+  ownerName: string;
   title: string;
   description: string;
+  imageUrl: string;
   images: string[];
-  category: "garage" | "shed" | "pantry" | "cell" | "container" | "large-space";
-  type: "hardside" | "softside" | "hybrid";
-  size: {
+  squareMeters: number;
+  address: string;
+  state: string;
+  zipCode: string;
+  isAvailable: boolean;
+  category?: "garage" | "shed" | "pantry" | "cell" | "container" | "large-space";
+  type?: "hardside" | "softside" | "hybrid";
+  size?: {
     height: number;
     width: number;
     depth: number;
@@ -25,21 +31,21 @@ export interface LuggageListing {
   };
   area?: number;
   contactNumber?: string;
-  features: string[];
-  condition: "new" | "excellent" | "good" | "fair";
-  location: {
+  features?: string[];
+  condition?: "new" | "excellent" | "good" | "fair";
+  location?: {
     address: string;
     city: string;
     state: string;
     zipCode: string;
     coordinates?: { lat: number; lng: number };
   };
-  availability: {
+  availability?: {
     available: boolean;
     minRentalDays: number;
     maxRentalDays: number;
   };
-  pricing: {
+  pricing?: {
     dailyRate: number;
     weeklyRate?: number;
     monthlyRate?: number;
@@ -106,14 +112,14 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       // First check if table exists by doing a simple count query
       const { count, error: countError } = await supabase
-        .from("listing")
+        .from("listings")
         .select("*", { count: "exact", head: true });
 
       if (countError) {
         console.error("Table access error:", countError.message);
         if (
           countError.message.includes(
-            'relation "public.listing" does not exist',
+            'relation "public.listings" does not exist',
           )
         ) {
           console.log("Listing table does not exist, using mock data");
@@ -124,8 +130,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       // If table exists, proceed with full query
       const { data, error } = await supabase
-        .from("listing")
-        .select("*")
+        .from("listings")
+        .select("*, listing_images(image_url)")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -162,42 +168,34 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   // Transform Supabase listing to our interface
   const transformSupabaseListing = (data: any): LuggageListing => ({
     id: data.id,
-    hostId: data.host_id,
-    hostName: data.host_name || "Anonymous Host",
+    ownerId: data.owner_id,
+    ownerName: data.owner_name || "Anonymous Owner",
     title: data.title,
     description: data.description || "",
-    images: data.images || ["/placeholder.svg"],
-    category: data.category || "garage",
-    type: data.type || "hardside",
-    size: {
-      height: data.size_height || 200,
-      width: data.size_width || 300,
-      depth: data.size_depth || 250,
-      unit: data.size_unit || "cm",
-    },
-    area: data.area,
-    contactNumber: data.contact_number,
-    features: data.features || [],
-    condition: data.condition || "good",
+    imageUrl: data.image_url || "/placeholder.svg",
+    images:
+      (data.listing_images || []).map((img: any) => img.image_url) || [
+        data.image_url || "/placeholder.svg",
+      ],
+    squareMeters: data.square_meters || 0,
+    address: data.address || "",
+    state: data.state || "",
+    zipCode: data.zip_code || "",
+    isAvailable: data.is_available !== false,
     location: {
-      address: data.location_address || "",
-      city: data.location_city || "",
-      state: data.location_state || "",
-      zipCode: data.location_zip_code || "",
-    },
-    availability: {
-      available: data.available !== false,
-      minRentalDays: data.min_rental_days || 1,
-      maxRentalDays: data.max_rental_days || 365,
+      address: data.address || "",
+      city: "",
+      state: data.state || "",
+      zipCode: data.zip_code || "",
     },
     pricing: {
-      dailyRate: data.daily_rate || 10,
-      weeklyRate: data.weekly_rate,
-      monthlyRate: data.monthly_rate,
-      securityDeposit: data.security_deposit || 50,
-      sellPrice: data.sell_price,
-      isForSale: data.is_for_sale || false,
-      isForRent: data.is_for_rent !== false,
+      dailyRate: 0,
+      weeklyRate: undefined,
+      monthlyRate: undefined,
+      securityDeposit: 0,
+      sellPrice: undefined,
+      isForSale: false,
+      isForRent: false,
     },
     rating: data.rating || 0,
     reviewCount: data.review_count || 0,
@@ -211,41 +209,18 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   const getMockListings = (): LuggageListing[] => [
     {
       id: "1",
-      hostId: "host1",
-      hostName: "Sarah M.",
+      ownerId: "owner1",
+      ownerName: "Sarah M.",
       title: "Spacious Garage Storage",
       description:
         "Large secure garage with 24/7 access. Perfect for long-term storage of luggage and belongings.",
+      imageUrl: "/placeholder.svg",
       images: ["/placeholder.svg"],
-      category: "garage",
-      type: "hardside",
-      size: { height: 300, width: 500, depth: 400, unit: "cm" },
-      features: [
-        "24/7 Access",
-        "Security Camera",
-        "Climate Controlled",
-        "Locked",
-      ],
-      condition: "excellent",
-      location: {
-        address: "123 Downtown St",
-        city: "New York",
-        state: "NY",
-        zipCode: "10001",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-        maxRentalDays: 365,
-      },
-      pricing: {
-        dailyRate: 25,
-        weeklyRate: 150,
-        monthlyRate: 500,
-        securityDeposit: 200,
-        isForSale: false,
-        isForRent: true,
-      },
+      squareMeters: 50,
+      address: "123 Downtown St",
+      state: "NY",
+      zipCode: "10001",
+      isAvailable: true,
       rating: 4.9,
       reviewCount: 127,
       createdAt: new Date().toISOString(),
@@ -253,36 +228,18 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     },
     {
       id: "2",
-      hostId: "host2",
-      hostName: "Mike R.",
+      ownerId: "owner2",
+      ownerName: "Mike R.",
       title: "Cozy Storage Shed",
       description:
         "Small but secure wooden shed in quiet neighborhood. Great for temporary storage.",
+      imageUrl: "/placeholder.svg",
       images: ["/placeholder.svg"],
-      category: "shed",
-      type: "softside",
-      size: { height: 200, width: 300, depth: 250, unit: "cm" },
-      features: ["Waterproof", "Padlock", "Easy Access", "Clean"],
-      condition: "good",
-      location: {
-        address: "456 Suburban Ave",
-        city: "Brooklyn",
-        state: "NY",
-        zipCode: "11201",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-        maxRentalDays: 90,
-      },
-      pricing: {
-        dailyRate: 15,
-        weeklyRate: 90,
-        monthlyRate: 300,
-        securityDeposit: 100,
-        isForSale: false,
-        isForRent: true,
-      },
+      squareMeters: 30,
+      address: "456 Suburban Ave",
+      state: "NY",
+      zipCode: "11201",
+      isAvailable: true,
       rating: 4.7,
       reviewCount: 89,
       createdAt: new Date().toISOString(),
@@ -290,42 +247,18 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     },
     {
       id: "3",
-      hostId: "host3",
-      hostName: "Emma L.",
+      ownerId: "owner3",
+      ownerName: "Emma L.",
       title: "Modern Storage Container",
       description:
         "Industrial-grade storage container with advanced security systems. Perfect for valuable items.",
+      imageUrl: "/placeholder.svg",
       images: ["/placeholder.svg"],
-      category: "container",
-      type: "hardside",
-      size: { height: 250, width: 600, depth: 240, unit: "cm" },
-      features: [
-        "Steel Construction",
-        "Digital Lock",
-        "Insurance Included",
-        "Fire Resistant",
-      ],
-      condition: "new",
-      location: {
-        address: "789 Industrial Blvd",
-        city: "Queens",
-        state: "NY",
-        zipCode: "11373",
-      },
-      availability: {
-        available: true,
-        minRentalDays: 7,
-        maxRentalDays: 365,
-      },
-      pricing: {
-        dailyRate: 35,
-        weeklyRate: 220,
-        monthlyRate: 800,
-        securityDeposit: 300,
-        isForSale: true,
-        sellPrice: 1500,
-        isForRent: true,
-      },
+      squareMeters: 40,
+      address: "789 Industrial Blvd",
+      state: "NY",
+      zipCode: "11373",
+      isAvailable: true,
       rating: 5.0,
       reviewCount: 203,
       createdAt: new Date().toISOString(),
@@ -339,7 +272,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getUserListings = (userId: string): LuggageListing[] => {
-    return listings.filter((listing) => listing.hostId === userId);
+    return listings.filter((listing) => listing.ownerId === userId);
   };
 
   const addListing = async (
@@ -351,40 +284,30 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     try {
       console.log("Adding listing to Supabase...");
       const { data, error } = await supabase
-        .from("listing")
+        .from("listings")
         .insert({
-          host_id: listingData.hostId,
-          host_name: listingData.hostName,
+          owner_id: listingData.ownerId,
+          owner_name: listingData.ownerName,
           title: listingData.title,
           description: listingData.description,
-          images: listingData.images,
-          category: listingData.category,
-          type: listingData.type,
-          size_height: listingData.size.height,
-          size_width: listingData.size.width,
-          size_depth: listingData.size.depth,
-          size_unit: listingData.size.unit,
-          area: listingData.area,
-          contact_number: listingData.contactNumber,
-          features: listingData.features,
-          condition: listingData.condition,
-          location_address: listingData.location.address,
-          location_city: listingData.location.city,
-          location_state: listingData.location.state,
-          location_zip_code: listingData.location.zipCode,
-          available: listingData.availability.available,
-          min_rental_days: listingData.availability.minRentalDays,
-          max_rental_days: listingData.availability.maxRentalDays,
-          daily_rate: listingData.pricing.dailyRate,
-          weekly_rate: listingData.pricing.weeklyRate,
-          monthly_rate: listingData.pricing.monthlyRate,
-          security_deposit: listingData.pricing.securityDeposit,
-          sell_price: listingData.pricing.sellPrice,
-          is_for_sale: listingData.pricing.isForSale,
-          is_for_rent: listingData.pricing.isForRent,
+          image_url: listingData.imageUrl || listingData.images?.[0],
+          square_meters: listingData.squareMeters,
+          address: listingData.address,
+          state: listingData.state,
+          zip_code: listingData.zipCode,
+          is_available: listingData.isAvailable,
         })
-        .select()
+        .select("*, listing_images(image_url)")
         .single();
+
+      if (!error && data && listingData.images?.length) {
+        const imagesData = listingData.images.map((url, index) => ({
+          listing_id: data.id,
+          image_url: url,
+          order_index: index,
+        }));
+        await supabase.from("listing_images").insert(imagesData);
+      }
 
       if (error) {
         console.error(
@@ -427,49 +350,29 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       if (updates.title) updateData.title = updates.title;
       if (updates.description) updateData.description = updates.description;
-      if (updates.category) updateData.category = updates.category;
-      if (updates.type) updateData.type = updates.type;
-      if (updates.condition) updateData.condition = updates.condition;
-      if (updates.features) updateData.features = updates.features;
-      if (updates.images) updateData.images = updates.images;
-      if (updates.area) updateData.area = updates.area;
-      if (updates.contactNumber)
-        updateData.contact_number = updates.contactNumber;
-
-      if (updates.size) {
-        updateData.size_height = updates.size.height;
-        updateData.size_width = updates.size.width;
-        updateData.size_depth = updates.size.depth;
-        updateData.size_unit = updates.size.unit;
-      }
-
-      if (updates.location) {
-        updateData.location_address = updates.location.address;
-        updateData.location_city = updates.location.city;
-        updateData.location_state = updates.location.state;
-        updateData.location_zip_code = updates.location.zipCode;
-      }
-
-      if (updates.availability) {
-        updateData.available = updates.availability.available;
-        updateData.min_rental_days = updates.availability.minRentalDays;
-        updateData.max_rental_days = updates.availability.maxRentalDays;
-      }
-
-      if (updates.pricing) {
-        updateData.daily_rate = updates.pricing.dailyRate;
-        updateData.weekly_rate = updates.pricing.weeklyRate;
-        updateData.monthly_rate = updates.pricing.monthlyRate;
-        updateData.security_deposit = updates.pricing.securityDeposit;
-        updateData.sell_price = updates.pricing.sellPrice;
-        updateData.is_for_sale = updates.pricing.isForSale;
-        updateData.is_for_rent = updates.pricing.isForRent;
-      }
+      if (updates.imageUrl) updateData.image_url = updates.imageUrl;
+      if (updates.squareMeters !== undefined)
+        updateData.square_meters = updates.squareMeters;
+      if (updates.address) updateData.address = updates.address;
+      if (updates.state) updateData.state = updates.state;
+      if (updates.zipCode) updateData.zip_code = updates.zipCode;
+      if (updates.isAvailable !== undefined)
+        updateData.is_available = updates.isAvailable;
 
       const { error } = await supabase
-        .from("listing")
+        .from("listings")
         .update(updateData)
         .eq("id", id);
+
+      if (!error && updates.images) {
+        await supabase.from("listing_images").delete().eq("listing_id", id);
+        const imagesData = updates.images.map((url, index) => ({
+          listing_id: id,
+          image_url: url,
+          order_index: index,
+        }));
+        await supabase.from("listing_images").insert(imagesData);
+      }
 
       if (error) {
         console.error("Error updating listing:", error);
@@ -498,7 +401,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
   const deleteListing = async (id: string) => {
     try {
-      const { error } = await supabase.from("listing").delete().eq("id", id);
+      const { error } = await supabase.from("listings").delete().eq("id", id);
 
       if (error) {
         console.error("Error deleting listing:", error);
@@ -604,23 +507,15 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       // Exclude archived listings from search results
       if (listing.isArchived) return false;
 
-      if (filters.category && listing.category !== filters.category)
-        return false;
-      if (
-        filters.location &&
-        !listing.location.city
-          .toLowerCase()
-          .includes(filters.location.toLowerCase())
-      )
-        return false;
-      if (filters.minPrice && listing.pricing.dailyRate < filters.minPrice)
-        return false;
-      if (filters.maxPrice && listing.pricing.dailyRate > filters.maxPrice)
-        return false;
-
-      // Filter by sale/rent type
-      if (filters.type === "sale" && !listing.pricing.isForSale) return false;
-      if (filters.type === "rent" && !listing.pricing.isForRent) return false;
+      if (filters.location) {
+        const search = filters.location.toLowerCase();
+        if (
+          !listing.address.toLowerCase().includes(search) &&
+          !listing.state.toLowerCase().includes(search)
+        ) {
+          return false;
+        }
+      }
 
       return true;
     });

@@ -43,7 +43,7 @@ export default function Account() {
   console.log('Account: User listings from context:', userListings);
   console.log('Account: User ID:', user.id);
   console.log('Account: All listings:', listings);
-  console.log('Account: Listings with matching hostId:', listings.filter(l => l.hostId === user.id));
+  console.log('Account: Listings with matching ownerId:', listings.filter(l => l.ownerId === user.id));
 
   // Mock earnings data
   const totalEarnings = localListings.length * 450; // Mock calculation

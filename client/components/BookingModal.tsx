@@ -254,10 +254,10 @@ export function BookingModal({ isOpen, onClose, listing }: BookingModalProps) {
               <CardContent className="p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                    {listing.hostName.charAt(0)}
+                    {listing.ownerName.charAt(0)}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">Hosted by {listing.hostName}</p>
+                    <p className="font-medium">Hosted by {listing.ownerName}</p>
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Clock className="h-3 w-3 mr-1" />
                       Usually responds in a few hours

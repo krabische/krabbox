@@ -106,8 +106,8 @@ export function SupabaseTest() {
         .from('listings')
         .insert([
           {
-            host_id: 'test-user-' + Date.now(),
-            host_name: 'Test Host',
+            owner_id: 'test-user-' + Date.now(),
+            owner_name: 'Test Host',
             title: 'Test Listing',
             description: 'This is a test listing',
             category: 'carry-on',

@@ -30,7 +30,7 @@ import {
   ArchiveRestore,
   Trash2,
   MapPin,
-  DollarSign,
+  Package,
 } from "lucide-react";
 
 interface ListingCardProps {
@@ -95,13 +95,6 @@ export function ListingCard({
     } finally {
       setIsArchiving(false);
     }
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
   };
 
   return (
@@ -219,18 +212,6 @@ export function ListingCard({
             <h3 className="font-semibold text-lg line-clamp-2">
               {listing.title}
             </h3>
-            <div className="flex gap-1">
-              {listing.pricing.isForSale && (
-                <Badge variant="outline" className="text-xs">
-                  {t("search.forSale")}
-                </Badge>
-              )}
-              {listing.pricing.isForRent && (
-                <Badge variant="outline" className="text-xs">
-                  {t("search.forRent")}
-                </Badge>
-              )}
-            </div>
           </div>
 
           <p className="text-sm text-gray-600 line-clamp-2">
@@ -240,34 +221,13 @@ export function ListingCard({
           <div className="flex items-center gap-1 text-sm text-gray-500">
             <MapPin className="h-4 w-4" />
             <span>
-              {listing.location.city}, {listing.location.state}
+              {listing.address}, {listing.state}
             </span>
           </div>
 
-          <div className="flex items-center gap-1 text-sm">
-            <DollarSign className="h-4 w-4" />
-            <span className="font-semibold">
-              {listing.pricing.isForRent && (
-                <span>{formatPrice(listing.pricing.dailyRate)}/day</span>
-              )}
-              {listing.pricing.isForSale && listing.pricing.isForRent && (
-                <span> | </span>
-              )}
-              {listing.pricing.isForSale && listing.pricing.sellPrice && (
-                <span>
-                  {formatPrice(listing.pricing.sellPrice)} {t("search.forSale")}
-                </span>
-              )}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs">
-              {t(`category.${listing.category}`)}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {t(`common.${listing.condition}`)}
-            </Badge>
+          <div className="flex items-center gap-1 text-sm text-gray-500">
+            <Package className="h-4 w-4" />
+            <span>{listing.squareMeters} m²</span>
           </div>
         </div>
       </CardContent>
@@ -275,17 +235,7 @@ export function ListingCard({
       {!isOwner && (
         <CardFooter className="p-4 pt-0">
           <div className="flex gap-2 w-full">
-            {listing.pricing.isForRent && (
-              <Button className="flex-1">{t("common.rent")}</Button>
-            )}
-            {listing.pricing.isForSale && (
-              <Button
-                variant={listing.pricing.isForRent ? "outline" : "default"}
-                className="flex-1"
-              >
-                {t("common.buy")}
-              </Button>
-            )}
+            <Button className="flex-1">{t("common.contact")}</Button>
           </div>
         </CardFooter>
       )}

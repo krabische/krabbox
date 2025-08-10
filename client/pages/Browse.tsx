@@ -92,7 +92,8 @@ export default function Browse() {
     if (
       searchTerm &&
       !listing.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !listing.location.city.toLowerCase().includes(searchTerm.toLowerCase())
+      !listing.address.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !listing.state.toLowerCase().includes(searchTerm.toLowerCase())
     )
       return false;
 
@@ -356,7 +357,7 @@ export default function Browse() {
                       </h3>
                       <div className="flex items-center text-sm text-muted-foreground mt-1">
                         <MapPin className="h-3 w-3 mr-1" />
-                        {listing.location.city}, {listing.location.state}
+                        {listing.address}, {listing.state}
                       </div>
                     </div>
 
@@ -405,7 +406,7 @@ export default function Browse() {
                       <div className="flex items-center justify-between mb-1">
                         <div className="text-sm text-muted-foreground">
                           <span className="font-medium">
-                            {listing.hostName}
+                            {listing.ownerName}
                           </span>
                         </div>
                         <div className="text-sm text-muted-foreground">

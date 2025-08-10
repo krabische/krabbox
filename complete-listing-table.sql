@@ -2,7 +2,7 @@
 -- This script will add all missing columns to the listing table
 
 -- Add all missing columns to listing table
-ALTER TABLE listing ADD COLUMN IF NOT EXISTS host_name TEXT;
+ALTER TABLE listing ADD COLUMN IF NOT EXISTS owner_name TEXT;
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS square_meters DECIMAL(10,2);
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT FALSE;
 

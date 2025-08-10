@@ -240,10 +240,10 @@ export function ListingDetailModal({ isOpen, onClose, listing }: ListingDetailMo
                   <h3 className="font-semibold mb-2">Host</h3>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-semibold">
-                      {listing.hostName.split(' ').map(n => n[0]).join('')}
+                      {listing.ownerName.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
-                      <div className="font-medium">{listing.hostName}</div>
+                      <div className="font-medium">{listing.ownerName}</div>
                       <div className="text-sm text-muted-foreground">Member since {new Date(listing.createdAt).getFullYear()}</div>
                     </div>
                   </div>

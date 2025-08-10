@@ -43,19 +43,18 @@ CREATE TRIGGER on_auth_user_created
 -- Update listings table structure
 CREATE TABLE IF NOT EXISTS listings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  host_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  owner_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  owner_name TEXT,
   title TEXT NOT NULL,
   description TEXT,
-  category TEXT NOT NULL,
-  type TEXT NOT NULL,
-  size JSONB NOT NULL, -- {height: number, width: number, depth: number, unit: string}
-  location JSONB NOT NULL, -- {city: string, address: string, zipCode: string}
-  pricing JSONB NOT NULL, -- {dailyRate: number, weeklyRate: number, monthlyRate: number}
-  features TEXT[],
-  images TEXT[],
+  image_url TEXT,
+  square_meters DECIMAL(10,2),
+  address TEXT,
+  state TEXT,
+  zip_code TEXT,
+  is_available BOOLEAN DEFAULT TRUE,
   rating DECIMAL(3,2) DEFAULT 0,
   review_count INTEGER DEFAULT 0,
-  is_available BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -67,17 +66,17 @@ ALTER TABLE listings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can view available listings" ON listings
   FOR SELECT USING (is_available = TRUE);
 
-CREATE POLICY "Hosts can view their own listings" ON listings
-  FOR SELECT USING (auth.uid() = host_id);
+CREATE POLICY "Owners can view their own listings" ON listings
+  FOR SELECT USING (auth.uid() = owner_id);
 
-CREATE POLICY "Hosts can create listings" ON listings
-  FOR INSERT WITH CHECK (auth.uid() = host_id);
+CREATE POLICY "Owners can create listings" ON listings
+  FOR INSERT WITH CHECK (auth.uid() = owner_id);
 
-CREATE POLICY "Hosts can update their own listings" ON listings
-  FOR UPDATE USING (auth.uid() = host_id);
+CREATE POLICY "Owners can update their own listings" ON listings
+  FOR UPDATE USING (auth.uid() = owner_id);
 
-CREATE POLICY "Hosts can delete their own listings" ON listings
-  FOR DELETE USING (auth.uid() = host_id);
+CREATE POLICY "Owners can delete their own listings" ON listings
+  FOR DELETE USING (auth.uid() = owner_id);
 
 -- Create bookings table
 CREATE TABLE IF NOT EXISTS bookings (
@@ -102,7 +101,7 @@ CREATE POLICY "Users can view their own bookings" ON bookings
 CREATE POLICY "Hosts can view bookings for their listings" ON bookings
   FOR SELECT USING (
     auth.uid() IN (
-      SELECT host_id FROM listings WHERE id = listing_id
+      SELECT owner_id FROM listings WHERE id = listing_id
     )
   );
 
@@ -131,6 +130,6 @@ CREATE POLICY "Anyone can view listing images" ON listing_images
 CREATE POLICY "Hosts can manage images for their listings" ON listing_images
   FOR ALL USING (
     auth.uid() IN (
-      SELECT host_id FROM listings WHERE id = listing_id
+      SELECT owner_id FROM listings WHERE id = listing_id
     )
   ); 

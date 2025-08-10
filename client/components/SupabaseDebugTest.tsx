@@ -17,7 +17,7 @@ export function SupabaseDebugTest() {
       // Test 1: Basic connection
       console.log('Test 1: Basic Supabase connection');
       const { data: healthData, error: healthError } = await supabase
-        .from('listings')
+        .from('listing')
         .select('*', { count: 'exact', head: true });
 
       if (healthError) {

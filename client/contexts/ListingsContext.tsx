@@ -51,8 +51,8 @@ interface ListingsContextType {
   listings: LuggageListing[];
   userListings: LuggageListing[];
   addListing: (listing: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => Promise<void>;
-  updateListing: (id: string, updates: Partial<LuggageListing>) => void;
-  deleteListing: (id: string) => void;
+  updateListing: (id: string, updates: Partial<LuggageListing>) => Promise<void>;
+  deleteListing: (id: string) => Promise<void>;
   getListingById: (id: string) => LuggageListing | undefined;
   searchListings: (filters: SearchFilters) => LuggageListing[];
 }
@@ -121,16 +121,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         }
 
         const formattedListings: LuggageListing[] = listingsData
-          .filter((item: any) => {
-            // Show all listings for debugging
-            console.log('Listing filter check:', {
-              id: item.id,
-              is_deleted: item.is_deleted,
-              available: item.available,
-              title: item.title
-            });
-            return true; // Show all listings for now
-          })
+          // Exclude deleted or unavailable listings
+          .filter((item: any) => !item.is_deleted && item.available !== false)
           .map((item: any) => {
           // Get images for this listing, fallback to main image_url if no images in listing_images
           const listingImages = imagesMap.get(item.id) || [];
@@ -324,18 +316,110 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateListing = (id: string, updates: Partial<LuggageListing>) => {
-    setListings(prev =>
-      prev.map(listing =>
-        listing.id === id
-          ? { ...listing, ...updates, updatedAt: new Date().toISOString() }
-          : listing
-      )
-    );
+  const updateListing = async (id: string, updates: Partial<LuggageListing>): Promise<void> => {
+    try {
+      const supabaseUpdates: any = {};
+
+      if (updates.title !== undefined) supabaseUpdates.title = updates.title;
+      if (updates.description !== undefined) supabaseUpdates.description = updates.description;
+      if (updates.pricing?.dailyRate !== undefined) supabaseUpdates.price = updates.pricing.dailyRate;
+      if (updates.location?.city !== undefined) supabaseUpdates.location = updates.location.city;
+      if (updates.images && updates.images.length > 0) supabaseUpdates.image_url = updates.images[0];
+      if (updates.category !== undefined) supabaseUpdates.category = updates.category;
+      if (updates.type !== undefined) supabaseUpdates.type = updates.type;
+      if (updates.condition !== undefined) supabaseUpdates.condition = updates.condition;
+      if (updates.features !== undefined) supabaseUpdates.features = updates.features;
+      if (updates.pricing?.weeklyRate !== undefined) supabaseUpdates.weekly_rate = updates.pricing.weeklyRate;
+      if (updates.pricing?.monthlyRate !== undefined) supabaseUpdates.monthly_rate = updates.pricing.monthlyRate;
+      if (updates.pricing?.securityDeposit !== undefined) supabaseUpdates.security_deposit = updates.pricing.securityDeposit;
+      if (updates.availability?.minRentalDays !== undefined) supabaseUpdates.min_rental_days = updates.availability.minRentalDays;
+      if (updates.availability?.maxRentalDays !== undefined) supabaseUpdates.max_rental_days = updates.availability.maxRentalDays;
+      if (updates.pricing?.sellPrice !== undefined) supabaseUpdates.sell_price = updates.pricing.sellPrice;
+      if (updates.location?.address !== undefined) supabaseUpdates.address = updates.location.address;
+      if (updates.location?.state !== undefined) supabaseUpdates.state = updates.location.state;
+      if (updates.location?.zipCode !== undefined) supabaseUpdates.zip_code = updates.location.zipCode;
+      if (updates.availability?.available !== undefined) supabaseUpdates.available = updates.availability.available;
+      if (updates.pricing?.isForSale !== undefined) supabaseUpdates.listing_type = updates.pricing.isForSale ? 'sale' : 'rent';
+      if (updates.size?.height !== undefined) supabaseUpdates.square_meters = updates.size.height;
+
+      const { error } = await supabase
+        .from('listing')
+        .update(supabaseUpdates)
+        .eq('id', id);
+
+      if (error) throw error;
+
+      if (updates.images) {
+        const { error: deleteError } = await supabase
+          .from('listing_images')
+          .delete()
+          .eq('listing_id', id);
+
+        if (deleteError) {
+          console.error('Error deleting existing images:', deleteError);
+        }
+
+        if (updates.images.length > 0) {
+          const imageRecords = updates.images.map((url, index) => ({
+            listing_id: id,
+            image_url: url,
+            order_index: index,
+          }));
+
+          const { error: insertError } = await supabase
+            .from('listing_images')
+            .insert(imageRecords);
+
+          if (insertError) {
+            console.error('Error saving images:', insertError);
+          }
+        }
+      }
+
+      setListings(prev =>
+        prev.map(listing =>
+          listing.id === id
+            ? { ...listing, ...updates, updatedAt: new Date().toISOString() }
+            : listing
+        )
+      );
+
+      await loadListings();
+    } catch (error) {
+      console.error('Error updating listing:', error);
+      throw error;
+    }
   };
 
-  const deleteListing = (id: string) => {
-    setListings(prev => prev.filter(listing => listing.id !== id));
+  const deleteListing = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('listing')
+        .update({ is_deleted: true })
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting listing:', error);
+      }
+
+      // Mark listing as deleted locally instead of removing it
+      setListings(prev =>
+        prev.map(listing =>
+          listing.id === id
+            ? {
+                ...listing,
+                isDeleted: true,
+                availability: {
+                  ...listing.availability,
+                  available: false
+                }
+              }
+            : listing
+        )
+      );
+    } catch (err) {
+      console.error('Unexpected error deleting listing:', err);
+    }
   };
 
   const getListingById = (id: string): LuggageListing | undefined => {

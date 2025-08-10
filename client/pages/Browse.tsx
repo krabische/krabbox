@@ -104,7 +104,10 @@ export default function Browse() {
     if (
       searchTerm &&
       !listing.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !listing.location.city.toLowerCase().includes(searchTerm.toLowerCase())
+      !listing.location.city.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !listing.features.some((feature) =>
+        feature.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
     )
       return false;
 

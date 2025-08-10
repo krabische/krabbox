@@ -61,11 +61,16 @@ interface ListingsContextType {
 
 interface SearchFilters {
   category?: string;
+  type?: string;
+  condition?: string;
   location?: string;
   minPrice?: number;
   maxPrice?: number;
   dateRange?: { start: string; end: string };
   features?: string[];
+  available?: boolean;
+  minRentalDays?: number;
+  maxRentalDays?: number;
 }
 
 const ListingsContext = createContext<ListingsContextType | undefined>(undefined);
@@ -131,12 +136,12 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
             title: item.title,
             description: item.description,
             images: images,
-            category: 'carry-on',
-            type: 'hardside',
+            category: item.category,
+            type: item.type,
             size: { height: area, width: area, depth: 1, unit: 'sqm' },
             area,
-            features: [],
-            condition: 'excellent',
+            features: item.features ?? [],
+            condition: item.condition,
             location: {
               address: item.address || '',
               city: item.location,
@@ -144,9 +149,9 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
               zipCode: item.zip_code || ''
             },
             availability: {
-              available: true,
-              minRentalDays: 1,
-              maxRentalDays: 30
+              available: item.available,
+              minRentalDays: item.min_rental_days,
+              maxRentalDays: item.max_rental_days
             },
             pricing: {
               dailyRate: item.price,
@@ -422,7 +427,13 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   const searchListings = (filters: SearchFilters): LuggageListing[] => {
     return listings.filter(listing => {
       if (filters.category && listing.category !== filters.category) return false;
+      if (filters.type && listing.type !== filters.type) return false;
+      if (filters.condition && listing.condition !== filters.condition) return false;
       if (filters.location && !listing.location.city.toLowerCase().includes(filters.location.toLowerCase())) return false;
+      if (filters.features && !filters.features.every(f => listing.features.includes(f))) return false;
+      if (filters.available !== undefined && listing.availability.available !== filters.available) return false;
+      if (filters.minRentalDays && listing.availability.minRentalDays < filters.minRentalDays) return false;
+      if (filters.maxRentalDays && listing.availability.maxRentalDays > filters.maxRentalDays) return false;
       if (filters.minPrice && listing.pricing.dailyRate < filters.minPrice) return false;
       if (filters.maxPrice && listing.pricing.dailyRate > filters.maxPrice) return false;
       return true;

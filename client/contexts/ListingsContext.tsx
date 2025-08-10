@@ -302,6 +302,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
   const addListing = async (listingData: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => {
     try {
+      console.log('Adding listing to Supabase...');
       const { data, error } = await supabase
         .from('listings')
         .insert({
@@ -339,16 +340,18 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         .single();
 
       if (error) {
-        console.error('Error adding listing:', error);
-        throw error;
+        console.error('Supabase error adding listing:', error.message, error.details);
+        throw new Error(`Failed to add listing: ${error.message}`);
       }
 
       if (data) {
+        console.log('Successfully added listing to Supabase');
         const newListing = transformSupabaseListing(data);
         setListings(prev => [newListing, ...prev]);
       }
     } catch (error) {
       console.error('Error adding listing:', error);
+      console.log('Falling back to local state update');
       // Fallback to local state update
       const newListing: LuggageListing = {
         ...listingData,

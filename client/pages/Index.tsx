@@ -4,7 +4,6 @@ import { FeaturedListings } from "@/components/FeaturedListings";
 import { HowItWorks } from "@/components/HowItWorks";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SupabaseTest } from "@/components/SupabaseTest";
-import { SupabaseDebugTest } from "@/components/SupabaseDebugTest";
 import { Plane, Shield, Clock, Users } from "lucide-react";
 
 export default function Index() {

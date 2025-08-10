@@ -87,6 +87,22 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       console.log('Loading listings from Supabase...');
+
+      // First check if table exists by doing a simple count query
+      const { count, error: countError } = await supabase
+        .from('listings')
+        .select('*', { count: 'exact', head: true });
+
+      if (countError) {
+        console.error('Table access error:', countError.message);
+        if (countError.message.includes('relation "public.listings" does not exist')) {
+          console.log('Listings table does not exist, using mock data');
+          setListings(getMockListings());
+          return;
+        }
+      }
+
+      // If table exists, proceed with full query
       const { data, error } = await supabase
         .from('listings')
         .select('*')

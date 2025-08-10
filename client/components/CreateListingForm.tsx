@@ -16,6 +16,7 @@ import {
 import { useListings, LuggageListing } from "@/contexts/ListingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "./ui/badge";
 import {
   Upload,
@@ -34,6 +35,7 @@ export function CreateListingForm() {
   const { user } = useAuth();
   const { addListing } = useListings();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -541,7 +543,7 @@ export function CreateListingForm() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <Label>Listing Type *</Label>
+              <Label>{t("listing.listingType")} *</Label>
               <div className="flex gap-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -551,7 +553,7 @@ export function CreateListingForm() {
                       handleInputChange("isForRent", checked)
                     }
                   />
-                  <Label htmlFor="forRent">Available for Rent</Label>
+                  <Label htmlFor="forRent">{t("listing.availableForRent")}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -561,17 +563,17 @@ export function CreateListingForm() {
                       handleInputChange("isForSale", checked)
                     }
                   />
-                  <Label htmlFor="forSale">Available for Sale</Label>
+                  <Label htmlFor="forSale">{t("listing.availableForSale")}</Label>
                 </div>
               </div>
             </div>
 
             {formData.isForRent && (
               <div className="space-y-4">
-                <Label>Rental Pricing *</Label>
+                <Label>{t("listing.rentalPricing")} *</Label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <Label className="text-sm">Daily Rate ($)</Label>
+                    <Label className="text-sm">{t("listing.dailyRate")}</Label>
                     <Input
                       type="number"
                       placeholder="12.00"
@@ -584,7 +586,7 @@ export function CreateListingForm() {
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">Weekly Rate ($)</Label>
+                    <Label className="text-sm">{t("listing.weeklyRate")}</Label>
                     <Input
                       type="number"
                       placeholder="70.00"
@@ -596,7 +598,7 @@ export function CreateListingForm() {
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">Monthly Rate ($)</Label>
+                    <Label className="text-sm">{t("listing.monthlyRate")}</Label>
                     <Input
                       type="number"
                       placeholder="250.00"
@@ -611,7 +613,7 @@ export function CreateListingForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <Label className="text-sm">Security Deposit ($) *</Label>
+                    <Label className="text-sm">{t("listing.securityDeposit")} *</Label>
                     <Input
                       type="number"
                       placeholder="100.00"
@@ -624,7 +626,7 @@ export function CreateListingForm() {
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">Min Rental Days</Label>
+                    <Label className="text-sm">{t("listing.minRentalDays")}</Label>
                     <Input
                       type="number"
                       value={formData.minRentalDays}
@@ -634,7 +636,7 @@ export function CreateListingForm() {
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">Max Rental Days</Label>
+                    <Label className="text-sm">{t("listing.maxRentalDays")}</Label>
                     <Input
                       type="number"
                       value={formData.maxRentalDays}
@@ -649,7 +651,7 @@ export function CreateListingForm() {
 
             {formData.isForSale && (
               <div className="space-y-2">
-                <Label htmlFor="sellPrice">Sale Price ($) *</Label>
+                <Label htmlFor="sellPrice">{t("listing.salePrice")} *</Label>
                 <Input
                   id="sellPrice"
                   type="number"

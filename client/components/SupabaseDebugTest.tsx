@@ -38,7 +38,7 @@ export function SupabaseDebugTest() {
       // Test 2: Try to fetch data
       console.log('Test 2: Fetching data');
       const { data, error } = await supabase
-        .from('listings')
+        .from('listing')
         .select('*')
         .limit(5);
 

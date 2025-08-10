@@ -245,7 +245,6 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         owner_id: listingData.hostId,
         host_name: listingData.hostName,
         square_meters: listingData.area,
-        size: listingData.size,
         // Add all new fields
         category: listingData.category,
         type: listingData.type,
@@ -270,20 +269,34 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       
       console.log('Data to insert into Supabase:', supabaseData);
 
-      // Save to Supabase first
-      const { data, error } = await supabase
-        .from('listing')
-        .insert([supabaseData])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Supabase error details:', error);
-        console.error('Error code:', error.code);
-        console.error('Error message:', error.message);
-        console.error('Error details:', error.details);
-        throw new Error(`Supabase error: ${error.message}`);
+      // Save to Supabase first, try with all fields
+      let insertError = null as any;
+      let data = null as any;
+      try {
+        const res = await supabase
+          .from('listing')
+          .insert([supabaseData])
+          .select()
+          .single();
+        data = res.data;
+        insertError = res.error;
+      } catch (e) {
+        insertError = e as any;
       }
+
+      // If error mentions missing 'size' column, retry without it (already removed above)
+      if (insertError && typeof insertError.message === 'string' && insertError.message.includes("'size'")) {
+        console.warn("Supabase missing 'size' column, retrying insert without it");
+        const retry = await supabase
+          .from('listing')
+          .insert([{...supabaseData}])
+          .select()
+          .single();
+        data = retry.data;
+        insertError = retry.error;
+      }
+
+      if (insertError) throw insertError;
 
       console.log('Supabase response:', data);
 

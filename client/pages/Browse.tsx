@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import { useListings, LuggageListing } from "@/contexts/ListingsContext";
-<<<<<<< HEAD
 import { useLanguage } from "@/contexts/LanguageContext";
-=======
 import { useSearchParams } from "react-router-dom";
->>>>>>> origin/main
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,7 +16,6 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { BookingModal } from "@/components/BookingModal";
 import { ContactSellerModal } from "@/components/ContactSellerModal";
-import { ListingDetailModal } from "@/components/ListingDetailModal";
 import {
   Search,
   MapPin,
@@ -30,75 +26,53 @@ import {
   Users,
   Package,
 } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 
 export default function Browse() {
   const { listings, searchListings } = useListings();
-<<<<<<< HEAD
   const { t } = useLanguage();
-=======
   
   // Debug: Log listings count
   useEffect(() => {
-    console.log('Browse: Total listings loaded:', listings.length);
+    console.log('Browse: Listings count:', listings.length);
     console.log('Browse: Listings:', listings);
   }, [listings]);
+  
   const [searchParams] = useSearchParams();
->>>>>>> origin/main
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
   const [priceRangeSlider, setPriceRangeSlider] = useState([0, 100]);
   const [sizeRangeSlider, setSizeRangeSlider] = useState([0, 1.0]);
-<<<<<<< HEAD
-=======
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
->>>>>>> origin/main
   const [selectedListing, setSelectedListing] = useState<LuggageListing | null>(
     null,
   );
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
-  const [detailModalOpen, setDetailModalOpen] = useState(false);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [selectedType, setSelectedType] = useState("all");
-  const [selectedCondition, setSelectedCondition] = useState("all");
-  const [selectedListingType, setSelectedListingType] = useState("rent"); // Default to rent
-  const [minRentalDays, setMinRentalDays] = useState("");
-  const [maxRentalDays, setMaxRentalDays] = useState("");
-  const [securityDepositRange, setSecurityDepositRange] = useState([0, 200]);
 
-  // Handle URL parameters
+  // Set initial values from URL params
   useEffect(() => {
     const location = searchParams.get('location');
-    const startDateParam = searchParams.get('startDate');
-    const endDateParam = searchParams.get('endDate');
+    const category = searchParams.get('category');
+    const start = searchParams.get('startDate');
+    const end = searchParams.get('endDate');
     
     if (location) setSearchTerm(location);
-    if (startDateParam) setStartDate(startDateParam);
-    if (endDateParam) setEndDate(endDateParam);
+    if (category) setSelectedCategory(category);
+    if (start) setStartDate(start);
+    if (end) setEndDate(end);
   }, [searchParams]);
 
-
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
   const calculateSquareMeters = (
     height: number,
     width: number,
-    unit: "cm" | "inches" | "sqm",
+    unit: 'cm' | 'inches',
   ) => {
-    // If unit is already sqm, return height (which represents square meters)
-    if (unit === "sqm") {
-      return height;
-    }
     // Convert to meters if needed
-    const heightInM = unit === "cm" ? height / 100 : height * 0.0254;
-    const widthInM = unit === "cm" ? width / 100 : width * 0.0254;
+    const heightInM = unit === 'cm' ? height / 100 : height * 0.0254;
+    const widthInM = unit === 'cm' ? width / 100 : width * 0.0254;
     const squareMeters = heightInM * widthInM;
     return Math.round(squareMeters * 10) / 10; // Round to 1 decimal place
   };
@@ -109,12 +83,8 @@ export default function Browse() {
   };
 
   const filteredListings = listings.filter((listing) => {
-
-    // Category filter
     if (selectedCategory !== "all" && listing.category !== selectedCategory)
       return false;
-    
-    // Search term filter
     if (
       searchTerm &&
       !listing.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -128,37 +98,15 @@ export default function Browse() {
       return false;
 
     // Size range filter (square meters)
-    const area = listing.area ?? calculateSquareMeters(
+    const squareMeters = calculateSquareMeters(
       listing.size.height,
       listing.size.width,
       listing.size.unit,
     );
-    if (area < sizeRangeSlider[0] || area > sizeRangeSlider[1])
-      return false;
-
-    // Type filter
-    if (selectedType !== "all" && listing.type !== selectedType)
-      return false;
-
-    // Condition filter
-    if (selectedCondition !== "all" && listing.condition !== selectedCondition)
-      return false;
-
-    // Listing type filter - mandatory
-    if (selectedListingType === "rent" && !listing.pricing.isForRent) return false;
-    if (selectedListingType === "sale" && !listing.pricing.isForSale) return false;
-
-    // Min rental days filter
-    if (minRentalDays && listing.availability.minRentalDays < parseInt(minRentalDays))
-      return false;
-
-    // Max rental days filter
-    if (maxRentalDays && listing.availability.maxRentalDays > parseInt(maxRentalDays))
-      return false;
-
-    // Security deposit filter
-    const deposit = listing.pricing.securityDeposit;
-    if (deposit < securityDepositRange[0] || deposit > securityDepositRange[1])
+    if (
+      squareMeters < sizeRangeSlider[0] ||
+      squareMeters > sizeRangeSlider[1]
+    )
       return false;
 
     if (priceRange !== "all") {
@@ -208,17 +156,12 @@ export default function Browse() {
     setContactModalOpen(true);
   };
 
-  const handleViewDetails = (listing: LuggageListing) => {
-    setSelectedListing(listing);
-    setDetailModalOpen(true);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Search Header */}
       <div className="bg-white border-b">
         <div className="container py-6">
-          <h1 className="text-3xl font-bold mb-6">{t("browse.title")}</h1>
+          <h1 className="text-3xl font-bold mb-6">{t('browse.title')}</h1>
 
           {/* Search Bar */}
           <div className="space-y-6">
@@ -226,67 +169,46 @@ export default function Browse() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder={t("browse.searchPlaceholder")}
+                  placeholder={t('browse.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
-<<<<<<< HEAD
               <div className="flex gap-2">
-                <Input type="date" placeholder="Start date" className="w-40" />
-                <Input type="date" placeholder="End date" className="w-40" />
+                <Input 
+                  type="date" 
+                  placeholder="Start date" 
+                  className="w-40"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                <Input 
+                  type="date" 
+                  placeholder="End date" 
+                  className="w-40"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
                 <Button onClick={handleSearch}>Search</Button>
-=======
-              <div className="flex gap-4 items-end">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Start Date
-                  </label>
-                  <Input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="border-gray-200 focus:border-primary"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    End Date
-                  </label>
-                  <Input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="border-gray-200 focus:border-primary"
-                  />
-                </div>
-                <Button onClick={handleSearch} className="h-10 bg-primary hover:bg-primary/90">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
->>>>>>> origin/main
               </div>
             </div>
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-4">
-            <Select
-              value={selectedCategory}
-              onValueChange={setSelectedCategory}
-            >
+          <div className="flex flex-wrap gap-4 mt-6">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="garage">Garage</SelectItem>
-                <SelectItem value="shed">Shed</SelectItem>
-                <SelectItem value="pantry">Pantry</SelectItem>
-                <SelectItem value="cell">Storage Cell</SelectItem>
-                <SelectItem value="container">Container</SelectItem>
-                <SelectItem value="large-space">Large Space</SelectItem>
+                <SelectItem value="all">{t('browse.allCategories')}</SelectItem>
+                <SelectItem value="garage">{t('category.garage')}</SelectItem>
+                <SelectItem value="shed">{t('category.shed')}</SelectItem>
+                <SelectItem value="pantry">{t('category.pantry')}</SelectItem>
+                <SelectItem value="cell">{t('category.cell')}</SelectItem>
+                <SelectItem value="container">{t('category.container')}</SelectItem>
+                <SelectItem value="large-space">{t('category.largeSpace')}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -316,48 +238,17 @@ export default function Browse() {
               </SelectContent>
             </Select>
 
-            <Button 
-              variant="outline"
-              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            >
+            <Button variant="outline">
               <SlidersHorizontal className="h-4 w-4 mr-2" />
               More Filters
             </Button>
-          </div>
-
-          {/* Listing Type Toggle */}
-          <div className="mt-4 pt-4 border-t">
-            <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Listing Type</Label>
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="browse-rent"
-                      checked={selectedListingType === "rent"}
-                      onCheckedChange={(checked) => setSelectedListingType(checked ? "rent" : "sale")}
-                    />
-                    <Label htmlFor="browse-rent" className="text-sm">For Rent</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="browse-sale"
-                      checked={selectedListingType === "sale"}
-                      onCheckedChange={(checked) => setSelectedListingType(checked ? "sale" : "rent")}
-                    />
-                    <Label htmlFor="browse-sale" className="text-sm">For Sale</Label>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Range Sliders */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t">
             <div className="space-y-3">
               <label className="text-sm font-medium">
-                Price Range: ${priceRangeSlider[0]} - ${priceRangeSlider[1]} per
-                day
+                {t('browse.priceRange')}: ${priceRangeSlider[0]} - ${priceRangeSlider[1]} {t('browse.perDay')}
               </label>
               <Slider
                 value={priceRangeSlider}
@@ -370,7 +261,7 @@ export default function Browse() {
             </div>
             <div className="space-y-3">
               <label className="text-sm font-medium">
-                Size Range: {sizeRangeSlider[0]} - {sizeRangeSlider[1]} m²
+                {t('browse.sizeRange')}: {sizeRangeSlider[0]} - {sizeRangeSlider[1]} m²
               </label>
               <Slider
                 value={sizeRangeSlider}
@@ -382,93 +273,6 @@ export default function Browse() {
               />
             </div>
           </div>
-
-          {/* Advanced Filters */}
-          {showAdvancedFilters && (
-            <div className="mt-6 pt-6 border-t space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Type</label>
-                  <Select value={selectedType} onValueChange={setSelectedType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All Types" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="hardside">Hardside</SelectItem>
-                      <SelectItem value="softside">Softside</SelectItem>
-                      <SelectItem value="hybrid">Hybrid</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Condition</label>
-                  <Select value={selectedCondition} onValueChange={setSelectedCondition}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All Conditions" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Conditions</SelectItem>
-                      <SelectItem value="new">New</SelectItem>
-                      <SelectItem value="excellent">Excellent</SelectItem>
-                      <SelectItem value="good">Good</SelectItem>
-                      <SelectItem value="fair">Fair</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Listing Type</label>
-                  <Select value={selectedListingType} onValueChange={setSelectedListingType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All Types" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="rent">For Rent</SelectItem>
-                      <SelectItem value="sale">For Sale</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Min Rental Days</label>
-                  <Input
-                    type="number"
-                    placeholder="1"
-                    value={minRentalDays}
-                    onChange={(e) => setMinRentalDays(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Max Rental Days</label>
-                  <Input
-                    type="number"
-                    placeholder="30"
-                    value={maxRentalDays}
-                    onChange={(e) => setMaxRentalDays(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-sm font-medium">
-                  Security Deposit: ${securityDepositRange[0]} - ${securityDepositRange[1]}
-                </label>
-                <Slider
-                  value={securityDepositRange}
-                  onValueChange={setSecurityDepositRange}
-                  max={200}
-                  min={0}
-                  step={10}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -476,7 +280,7 @@ export default function Browse() {
       <div className="container py-8">
         <div className="flex justify-between items-center mb-6">
           <p className="text-muted-foreground">
-            {sortedListings.length} luggage options available
+            {sortedListings.length} {t('browse.optionsAvailable')}
           </p>
         </div>
 
@@ -486,7 +290,6 @@ export default function Browse() {
               <Card
                 key={listing.id}
                 className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-0 shadow-md overflow-hidden"
-                onClick={() => handleBookListing(listing)}
               >
                 <div className="relative">
                   <img
@@ -495,27 +298,18 @@ export default function Browse() {
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 right-3 flex flex-col gap-2">
-                    <Badge
-                      variant="secondary"
-                      className="bg-white/90 text-gray-800"
-                    >
+                    <Badge variant="secondary" className="bg-white/90 text-gray-800">
                       ${listing.pricing.dailyRate}/day
                     </Badge>
                     {listing.pricing.isForSale && (
-                      <Badge
-                        variant="outline"
-                        className="bg-white/90 text-green-700 border-green-300"
-                      >
+                      <Badge variant="outline" className="bg-white/90 text-green-700 border-green-300">
                         For Sale: ${listing.pricing.sellPrice}
                       </Badge>
                     )}
                   </div>
                   <div className="absolute top-3 left-3">
-                    <Badge
-                      variant="outline"
-                      className="bg-white/90 text-gray-800 capitalize"
-                    >
-                      {listing.category.replace("-", " ")}
+                    <Badge variant="outline" className="bg-white/90 text-gray-800 capitalize">
+                      {listing.category.replace('-', ' ')}
                     </Badge>
                   </div>
                 </div>
@@ -528,20 +322,13 @@ export default function Browse() {
                       </h3>
                       <div className="flex items-center text-sm text-muted-foreground mt-1">
                         <MapPin className="h-3 w-3 mr-1" />
-                        {listing.location.address ? 
-                          `${listing.location.address}, ${listing.location.city}` : 
-                          listing.location.city
-                        }
+                        {listing.location.city}, {listing.location.state}
                       </div>
                     </div>
 
                     <div className="flex flex-wrap gap-1">
                       {listing.features.slice(0, 3).map((feature) => (
-                        <Badge
-                          key={feature}
-                          variant="outline"
-                          className="text-xs"
-                        >
+                        <Badge key={feature} variant="outline" className="text-xs">
                           {feature}
                         </Badge>
                       ))}
@@ -556,9 +343,7 @@ export default function Browse() {
                       <div className="flex items-center space-x-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="text-sm font-medium">
-                          {listing.rating > 0
-                            ? listing.rating.toFixed(1)
-                            : "New"}
+                          {listing.rating > 0 ? listing.rating.toFixed(1) : t('common.new')}
                         </span>
                         {listing.reviewCount > 0 && (
                           <span className="text-sm text-muted-foreground">
@@ -567,57 +352,47 @@ export default function Browse() {
                         )}
                       </div>
                       <Badge
-                        variant={
-                          listing.condition === "new" ? "default" : "secondary"
-                        }
+                        variant={listing.condition === "new" ? "default" : "secondary"}
                         className="text-xs"
                       >
-                        {listing.condition}
+                        {t(`common.${listing.condition}`)}
                       </Badge>
                     </div>
 
                     <div className="pt-2 border-t">
                       <div className="flex items-center justify-between mb-1">
                         <div className="text-sm text-muted-foreground">
-                          <span className="font-medium">
-                            {listing.hostName}
-                          </span>
+                          <span className="font-medium">{listing.hostName}</span>
                         </div>
-                                                 <div className="text-sm text-muted-foreground">
-                           {listing.area && !isNaN(listing.area)
-                             ? `${listing.area} m²`
-                             : 'Area not specified'
-                           }
-                         </div>
+                        <div className="text-sm text-muted-foreground">
+                          {listing.size.height}×{listing.size.width}×{listing.size.depth} {listing.size.unit}
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground text-right">
+                        {calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit)} m²
                       </div>
                     </div>
 
                     <div className="flex gap-2">
                       {listing.pricing.isForRent && (
                         <Button
-                          className="flex-1 ml-auto"
+                          className="flex-1"
                           size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleBookListing(listing);
-                          }}
+                          onClick={() => handleBookListing(listing)}
                         >
                           <Calendar className="h-3 w-3 mr-1" />
-                          Book
+                          {t('common.book')}
                         </Button>
                       )}
                       {listing.pricing.isForSale && (
                         <Button
                           variant="outline"
-                          className="flex-1 ml-auto"
+                          className="flex-1"
                           size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleContactSeller(listing);
-                          }}
+                          onClick={() => handleContactSeller(listing)}
                         >
                           <Users className="h-3 w-3 mr-1" />
-                          Contact
+                          {t('common.contact')}
                         </Button>
                       )}
                     </div>
@@ -631,8 +406,7 @@ export default function Browse() {
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">No listings found</h3>
             <p className="text-muted-foreground mb-6">
-              Try adjusting your search criteria or check back later for new
-              listings.
+              Try adjusting your search criteria or check back later for new listings.
             </p>
             <Button variant="outline">Clear Filters</Button>
           </div>
@@ -648,11 +422,6 @@ export default function Browse() {
       <ContactSellerModal
         isOpen={contactModalOpen}
         onClose={() => setContactModalOpen(false)}
-        listing={selectedListing}
-      />
-      <ListingDetailModal
-        isOpen={detailModalOpen}
-        onClose={() => setDetailModalOpen(false)}
         listing={selectedListing}
       />
     </div>

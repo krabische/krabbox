@@ -90,13 +90,13 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       // First check if table exists by doing a simple count query
       const { count, error: countError } = await supabase
-        .from('listings')
+        .from('listing')
         .select('*', { count: 'exact', head: true });
 
       if (countError) {
         console.error('Table access error:', countError.message);
-        if (countError.message.includes('relation "public.listings" does not exist')) {
-          console.log('Listings table does not exist, using mock data');
+        if (countError.message.includes('relation "public.listing" does not exist')) {
+          console.log('Listing table does not exist, using mock data');
           setListings(getMockListings());
           return;
         }
@@ -104,7 +104,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       // If table exists, proceed with full query
       const { data, error } = await supabase
-        .from('listings')
+        .from('listing')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -304,7 +304,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     try {
       console.log('Adding listing to Supabase...');
       const { data, error } = await supabase
-        .from('listings')
+        .from('listing')
         .insert({
           host_id: listingData.hostId,
           host_name: listingData.hostName,
@@ -412,7 +412,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       }
 
       const { error } = await supabase
-        .from('listings')
+        .from('listing')
         .update(updateData)
         .eq('id', id);
 
@@ -444,7 +444,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   const deleteListing = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('listings')
+        .from('listing')
         .delete()
         .eq('id', id);
 

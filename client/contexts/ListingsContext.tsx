@@ -86,22 +86,27 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   const loadListings = async () => {
     setIsLoading(true);
     try {
+      console.log('Loading listings from Supabase...');
       const { data, error } = await supabase
         .from('listings')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error loading listings:', error);
+        console.error('Supabase error loading listings:', error.message, error.details, error.hint);
+        console.log('Falling back to mock data due to database error');
         // Fallback to mock data if database fails
         setListings(getMockListings());
       } else {
+        console.log('Successfully loaded listings from Supabase:', data?.length || 0, 'listings');
         // Transform Supabase data to our interface
         const transformedListings = data?.map(transformSupabaseListing) || [];
         setListings(transformedListings);
       }
     } catch (error) {
-      console.error('Error loading listings:', error);
+      console.error('Unexpected error loading listings:', error);
+      console.log('Error details:', JSON.stringify(error, null, 2));
+      console.log('Falling back to mock data due to unexpected error');
       // Fallback to mock data
       setListings(getMockListings());
     } finally {

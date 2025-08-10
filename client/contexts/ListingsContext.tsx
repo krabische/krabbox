@@ -160,7 +160,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
             rating: item.rating || 0,
             reviewCount: item.review_count || 0,
             createdAt: item.created_at,
-            updatedAt: item.created_at
+            updatedAt: item.created_at,
+            isDeleted: item.is_deleted || false
           };
         });
 
@@ -175,7 +176,15 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   };
 
   const getUserListings = (userId: string): LuggageListing[] => {
-    return listings.filter(listing => listing.hostId === userId);
+    console.log('getUserListings called with userId:', userId);
+    console.log('Available listings:', listings.length);
+    const userListings = listings.filter(listing => {
+      const matches = listing.hostId === userId;
+      console.log(`Listing ${listing.id}: hostId="${listing.hostId}" vs userId="${userId}" matches=${matches}`);
+      return matches;
+    });
+    console.log('Found user listings:', userListings.length, userListings);
+    return userListings;
   };
 
   useEffect(() => {

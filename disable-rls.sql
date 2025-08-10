@@ -1,2 +1,2 @@
--- Отключить RLS для таблицы listing
-ALTER TABLE listing DISABLE ROW LEVEL SECURITY; 
+-- Отключить RLS для таблицы listings
+ALTER TABLE listings DISABLE ROW LEVEL SECURITY;

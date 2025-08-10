@@ -1,11 +1,11 @@
 -- Safe SQL script that handles existing policies
 -- This script will drop existing policies and recreate them
 
--- Drop existing policies for listing table (if they exist)
-DROP POLICY IF EXISTS "Anyone can view listings" ON listing;
-DROP POLICY IF EXISTS "Authenticated users can create listings" ON listing;
-DROP POLICY IF EXISTS "Users can update their own listings" ON listing;
-DROP POLICY IF EXISTS "Users can delete their own listings" ON listing;
+-- Drop existing policies for listings table (if they exist)
+DROP POLICY IF EXISTS "Anyone can view listings" ON listings;
+DROP POLICY IF EXISTS "Authenticated users can create listings" ON listings;
+DROP POLICY IF EXISTS "Users can update their own listings" ON listings;
+DROP POLICY IF EXISTS "Users can delete their own listings" ON listings;
 
 -- Drop existing policies for listing_images table (if they exist)
 DROP POLICY IF EXISTS "Anyone can view listing images" ON listing_images;
@@ -19,10 +19,9 @@ DROP POLICY IF EXISTS "Authenticated users can upload listing images" ON storage
 DROP POLICY IF EXISTS "Users can update their own listing images" ON storage.objects;
 DROP POLICY IF EXISTS "Users can delete their own listing images" ON storage.objects;
 
--- Create listing_images table if it doesn't exist
 CREATE TABLE IF NOT EXISTS listing_images (
   id SERIAL PRIMARY KEY,
-  listing_id INTEGER NOT NULL REFERENCES listing(id) ON DELETE CASCADE,
+  listing_id INTEGER NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
   image_url TEXT NOT NULL,
   order_index INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -36,17 +35,17 @@ CREATE INDEX IF NOT EXISTS idx_listing_images_order ON listing_images(listing_id
 -- Enable RLS for listing_images
 ALTER TABLE listing_images ENABLE ROW LEVEL SECURITY;
 
--- Create policies for listing table
-CREATE POLICY "Anyone can view listings" ON listing
+-- Create policies for listings table
+CREATE POLICY "Anyone can view listings" ON listings
   FOR SELECT USING (true);
 
-CREATE POLICY "Authenticated users can create listings" ON listing
+CREATE POLICY "Authenticated users can create listings" ON listings
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
-CREATE POLICY "Users can update their own listings" ON listing
+CREATE POLICY "Users can update their own listings" ON listings
   FOR UPDATE USING (auth.uid() = owner_id);
 
-CREATE POLICY "Users can delete their own listings" ON listing
+CREATE POLICY "Users can delete their own listings" ON listings
   FOR DELETE USING (auth.uid() = owner_id);
 
 -- Create policies for listing_images table
@@ -57,27 +56,27 @@ CREATE POLICY "Users can add images to their own listings" ON listing_images
   FOR INSERT WITH CHECK (
     auth.uid() IS NOT NULL AND
     EXISTS (
-      SELECT 1 FROM listing 
-      WHERE listing.id = listing_images.listing_id 
-      AND listing.owner_id = auth.uid()
+      SELECT 1 FROM listings
+      WHERE listings.id = listing_images.listing_id
+      AND listings.owner_id = auth.uid()
     )
   );
 
 CREATE POLICY "Users can update images for their own listings" ON listing_images
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM listing 
-      WHERE listing.id = listing_images.listing_id 
-      AND listing.owner_id = auth.uid()
+      SELECT 1 FROM listings
+      WHERE listings.id = listing_images.listing_id
+      AND listings.owner_id = auth.uid()
     )
   );
 
 CREATE POLICY "Users can delete images from their own listings" ON listing_images
   FOR DELETE USING (
     EXISTS (
-      SELECT 1 FROM listing 
-      WHERE listing.id = listing_images.listing_id 
-      AND listing.owner_id = auth.uid()
+      SELECT 1 FROM listings
+      WHERE listings.id = listing_images.listing_id
+      AND listings.owner_id = auth.uid()
     )
   );
 

@@ -106,17 +106,17 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       // First check if table exists by doing a simple count query
       const { count, error: countError } = await supabase
-        .from("listing")
+        .from("listings")
         .select("*", { count: "exact", head: true });
 
       if (countError) {
         console.error("Table access error:", countError.message);
         if (
           countError.message.includes(
-            'relation "public.listing" does not exist',
+            'relation "public.listings" does not exist',
           )
         ) {
-          console.log("Listing table does not exist, using mock data");
+          console.log("Listings table does not exist, using mock data");
           setListings(getMockListings());
           return;
         }
@@ -124,7 +124,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       // If table exists, proceed with full query
       const { data, error } = await supabase
-        .from("listing")
+        .from("listings")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -351,7 +351,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     try {
       console.log("Adding listing to Supabase...");
       const { data, error } = await supabase
-        .from("listing")
+        .from("listings")
         .insert({
           host_id: listingData.hostId,
           host_name: listingData.hostName,
@@ -467,7 +467,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       }
 
       const { error } = await supabase
-        .from("listing")
+        .from("listings")
         .update(updateData)
         .eq("id", id);
 
@@ -498,7 +498,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
   const deleteListing = async (id: string) => {
     try {
-      const { error } = await supabase.from("listing").delete().eq("id", id);
+      const { error } = await supabase.from("listings").delete().eq("id", id);
 
       if (error) {
         console.error("Error deleting listing:", error);

@@ -3,7 +3,6 @@ import { SearchSection } from "@/components/SearchSection";
 import { FeaturedListings } from "@/components/FeaturedListings";
 import { HowItWorks } from "@/components/HowItWorks";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { SupabaseTest } from "@/components/SupabaseTest";
 import { Plane, Shield, Clock, Users } from "lucide-react";
 
 export default function Index() {
@@ -172,12 +171,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Supabase Test Component (for debugging) */}
-      <div className="bg-gray-100 py-8">
-        <div className="container">
-          <SupabaseTest />
-        </div>
-      </div>
+      {/* Debug component removed */}
     </div>
   );
 }

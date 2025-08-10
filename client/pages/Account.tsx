@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useListings } from "@/contexts/ListingsContext";
+import { useListings, LuggageListing } from "@/contexts/ListingsContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,10 +25,15 @@ import {
 
 export default function Account() {
   const { user, isAuthenticated, logout } = useAuth();
-  const { listings, userListings } = useListings();
+  const { listings, userListings, updateListing } = useListings();
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [managementModalOpen, setManagementModalOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<any>(null);
+  const [localListings, setLocalListings] = useState<LuggageListing[]>(userListings);
+
+  useEffect(() => {
+    setLocalListings(userListings);
+  }, [userListings]);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
@@ -41,7 +46,7 @@ export default function Account() {
   console.log('Account: Listings with matching hostId:', listings.filter(l => l.hostId === user.id));
 
   // Mock earnings data
-  const totalEarnings = userListings.length * 450; // Mock calculation
+  const totalEarnings = localListings.length * 450; // Mock calculation
   const monthlyEarnings = [120, 380, 290, 450, 670, 820]; // Mock data for last 6 months
 
   const getInitials = (firstName: string, lastName: string) => {
@@ -55,17 +60,8 @@ export default function Account() {
 
   const handleDeleteListing = async (listingId: string) => {
     try {
-      // Update local state instead of reloading
-      const updatedListings = listings.map(listing => 
-        listing.id === listingId 
-          ? { ...listing, isDeleted: true }
-          : listing
-      );
-      
-      // Here you would also update the context
-      console.log('Deleting listing:', listingId);
-      
-      // Close modal without page reload
+      updateListing(listingId, { isDeleted: true });
+      setLocalListings(prev => prev.filter(listing => listing.id !== listingId));
       setManagementModalOpen(false);
     } catch (error) {
       console.error('Error deleting listing:', error);
@@ -214,7 +210,7 @@ export default function Account() {
           </TabsContent>
 
           <TabsContent value="listings" className="space-y-6">
-            {userListings.length > 0 ? (
+            {localListings.length > 0 ? (
               <>
                 {/* Earnings Dashboard */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -226,9 +222,9 @@ export default function Account() {
                       <Package className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">
-                        {userListings.length}
-                      </div>
+                                             <div className="text-2xl font-bold">
+                         {localListings.length}
+                       </div>
                       <p className="text-xs text-muted-foreground">
                         All listings active
                       </p>
@@ -303,7 +299,7 @@ export default function Account() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Your Listings</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {userListings.map((listing) => (
+                    {localListings.map((listing) => (
                       <Card 
                         key={listing.id} 
                         className={`cursor-pointer hover:shadow-lg transition-shadow ${

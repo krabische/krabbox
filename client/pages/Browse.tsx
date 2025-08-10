@@ -95,6 +95,8 @@ export default function Browse() {
   };
 
   const filteredListings = listings.filter((listing) => {
+    if (listing.isDeleted || !listing.availability.available) return false;
+
     // Category filter
     if (selectedCategory !== "all" && listing.category !== selectedCategory)
       return false;

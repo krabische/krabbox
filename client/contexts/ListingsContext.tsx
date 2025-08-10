@@ -50,9 +50,9 @@ export interface LuggageListing {
 interface ListingsContextType {
   listings: LuggageListing[];
   userListings: LuggageListing[];
-  addListing: (listing: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => Promise<void>;
-  updateListing: (id: string, updates: Partial<LuggageListing>) => Promise<void>;
-  deleteListing: (id: string) => Promise<void>;
+      addListing: (listing: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => Promise<void>;
+    updateListing: (id: string, updates: Partial<LuggageListing>) => Promise<void>;
+    deleteListing: (id: string) => Promise<void>;
   getListingById: (id: string) => LuggageListing | undefined;
   searchListings: (filters: SearchFilters) => LuggageListing[];
 }

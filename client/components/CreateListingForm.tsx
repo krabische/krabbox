@@ -94,25 +94,27 @@ export function CreateListingForm() {
     }));
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = event.target.files;
     if (files) {
       try {
         const uploadedUrls = [];
-        
+
         for (const file of Array.from(files)) {
           // Create a unique filename
-          const fileExt = file.name.split('.').pop();
+          const fileExt = file.name.split(".").pop();
           const fileName = `${Math.random()}.${fileExt}`;
           const filePath = `listings/${fileName}`;
-          
+
           // Upload to Supabase Storage
           const { data, error } = await supabase.storage
-            .from('listings')
+            .from("listings")
             .upload(filePath, file);
-          
+
           if (error) {
-            console.error('Error uploading image:', error);
+            console.error("Error uploading image:", error);
             toast({
               title: "Upload Error",
               description: "Failed to upload image. Please try again.",
@@ -120,23 +122,23 @@ export function CreateListingForm() {
             });
             continue;
           }
-          
+
           // Get public URL
-          const { data: { publicUrl } } = supabase.storage
-            .from('listings')
-            .getPublicUrl(filePath);
-          
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("listings").getPublicUrl(filePath);
+
           uploadedUrls.push(publicUrl);
         }
-        
+
         setImages((prev) => [...prev, ...uploadedUrls].slice(0, 5)); // Max 5 images
-        
+
         toast({
           title: "Images Uploaded",
           description: `${uploadedUrls.length} image(s) uploaded successfully.`,
         });
       } catch (error) {
-        console.error('Error uploading images:', error);
+        console.error("Error uploading images:", error);
         toast({
           title: "Upload Error",
           description: "Failed to upload images. Please try again.",
@@ -239,8 +241,9 @@ export function CreateListingForm() {
       setImages([]);
       setCurrentStep(1);
     } catch (error: any) {
-      console.error('CreateListingForm error:', error);
-      const errorMessage = error?.message || 'Failed to create listing. Please try again.';
+      console.error("CreateListingForm error:", error);
+      const errorMessage =
+        error?.message || "Failed to create listing. Please try again.";
       toast({
         title: "Error",
         description: errorMessage,
@@ -553,7 +556,9 @@ export function CreateListingForm() {
                       handleInputChange("isForRent", checked)
                     }
                   />
-                  <Label htmlFor="forRent">{t("listing.availableForRent")}</Label>
+                  <Label htmlFor="forRent">
+                    {t("listing.availableForRent")}
+                  </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -563,7 +568,9 @@ export function CreateListingForm() {
                       handleInputChange("isForSale", checked)
                     }
                   />
-                  <Label htmlFor="forSale">{t("listing.availableForSale")}</Label>
+                  <Label htmlFor="forSale">
+                    {t("listing.availableForSale")}
+                  </Label>
                 </div>
               </div>
             </div>
@@ -598,7 +605,9 @@ export function CreateListingForm() {
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">{t("listing.monthlyRate")}</Label>
+                    <Label className="text-sm">
+                      {t("listing.monthlyRate")}
+                    </Label>
                     <Input
                       type="number"
                       placeholder="250.00"
@@ -613,7 +622,9 @@ export function CreateListingForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <Label className="text-sm">{t("listing.securityDeposit")} *</Label>
+                    <Label className="text-sm">
+                      {t("listing.securityDeposit")} *
+                    </Label>
                     <Input
                       type="number"
                       placeholder="100.00"
@@ -626,7 +637,9 @@ export function CreateListingForm() {
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">{t("listing.minRentalDays")}</Label>
+                    <Label className="text-sm">
+                      {t("listing.minRentalDays")}
+                    </Label>
                     <Input
                       type="number"
                       value={formData.minRentalDays}
@@ -636,7 +649,9 @@ export function CreateListingForm() {
                     />
                   </div>
                   <div>
-                    <Label className="text-sm">{t("listing.maxRentalDays")}</Label>
+                    <Label className="text-sm">
+                      {t("listing.maxRentalDays")}
+                    </Label>
                     <Input
                       type="number"
                       value={formData.maxRentalDays}

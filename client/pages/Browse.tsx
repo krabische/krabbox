@@ -30,13 +30,13 @@ import {
 export default function Browse() {
   const { listings, searchListings } = useListings();
   const { t } = useLanguage();
-  
+
   // Debug: Log listings count
   useEffect(() => {
-    console.log('Browse: Listings count:', listings.length);
-    console.log('Browse: Listings:', listings);
+    console.log("Browse: Listings count:", listings.length);
+    console.log("Browse: Listings:", listings);
   }, [listings]);
-  
+
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -55,11 +55,11 @@ export default function Browse() {
 
   // Set initial values from URL params
   useEffect(() => {
-    const location = searchParams.get('location');
-    const category = searchParams.get('category');
-    const start = searchParams.get('startDate');
-    const end = searchParams.get('endDate');
-    
+    const location = searchParams.get("location");
+    const category = searchParams.get("category");
+    const start = searchParams.get("startDate");
+    const end = searchParams.get("endDate");
+
     if (location) setSearchTerm(location);
     if (category) setSelectedCategory(category);
     if (start) setStartDate(start);
@@ -69,11 +69,11 @@ export default function Browse() {
   const calculateSquareMeters = (
     height: number,
     width: number,
-    unit: 'cm' | 'inches',
+    unit: "cm" | "inches",
   ) => {
     // Convert to meters if needed
-    const heightInM = unit === 'cm' ? height / 100 : height * 0.0254;
-    const widthInM = unit === 'cm' ? width / 100 : width * 0.0254;
+    const heightInM = unit === "cm" ? height / 100 : height * 0.0254;
+    const widthInM = unit === "cm" ? width / 100 : width * 0.0254;
     const squareMeters = heightInM * widthInM;
     return Math.round(squareMeters * 10) / 10; // Round to 1 decimal place
   };
@@ -111,10 +111,7 @@ export default function Browse() {
       listing.size.width,
       listing.size.unit,
     );
-    if (
-      squareMeters < sizeRangeSlider[0] ||
-      squareMeters > sizeRangeSlider[1]
-    )
+    if (squareMeters < sizeRangeSlider[0] || squareMeters > sizeRangeSlider[1])
       return false;
 
     if (priceRange !== "all") {
@@ -169,7 +166,7 @@ export default function Browse() {
       {/* Search Header */}
       <div className="bg-white border-b">
         <div className="container py-6">
-          <h1 className="text-3xl font-bold mb-6">{t('browse.title')}</h1>
+          <h1 className="text-3xl font-bold mb-6">{t("browse.title")}</h1>
 
           {/* Search Bar */}
           <div className="space-y-6">
@@ -177,23 +174,23 @@ export default function Browse() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder={t('browse.searchPlaceholder')}
+                  placeholder={t("browse.searchPlaceholder")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
               <div className="flex gap-2">
-                <Input 
-                  type="date" 
-                  placeholder="Start date" 
+                <Input
+                  type="date"
+                  placeholder="Start date"
                   className="w-40"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
-                <Input 
-                  type="date" 
-                  placeholder="End date" 
+                <Input
+                  type="date"
+                  placeholder="End date"
                   className="w-40"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
@@ -205,18 +202,25 @@ export default function Browse() {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-4 mt-6">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('browse.allCategories')}</SelectItem>
-                <SelectItem value="garage">{t('category.garage')}</SelectItem>
-                <SelectItem value="shed">{t('category.shed')}</SelectItem>
-                <SelectItem value="pantry">{t('category.pantry')}</SelectItem>
-                <SelectItem value="cell">{t('category.cell')}</SelectItem>
-                <SelectItem value="container">{t('category.container')}</SelectItem>
-                <SelectItem value="large-space">{t('category.largeSpace')}</SelectItem>
+                <SelectItem value="all">{t("browse.allCategories")}</SelectItem>
+                <SelectItem value="garage">{t("category.garage")}</SelectItem>
+                <SelectItem value="shed">{t("category.shed")}</SelectItem>
+                <SelectItem value="pantry">{t("category.pantry")}</SelectItem>
+                <SelectItem value="cell">{t("category.cell")}</SelectItem>
+                <SelectItem value="container">
+                  {t("category.container")}
+                </SelectItem>
+                <SelectItem value="large-space">
+                  {t("category.largeSpace")}
+                </SelectItem>
               </SelectContent>
             </Select>
 
@@ -235,12 +239,12 @@ export default function Browse() {
 
             <Select value={saleRentType} onValueChange={setSaleRentType}>
               <SelectTrigger className="w-48">
-                <SelectValue placeholder={t('search.saleRentType')} />
+                <SelectValue placeholder={t("search.saleRentType")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="both">{t('search.both')}</SelectItem>
-                <SelectItem value="rent">{t('search.forRent')}</SelectItem>
-                <SelectItem value="sale">{t('search.forSale')}</SelectItem>
+                <SelectItem value="both">{t("search.both")}</SelectItem>
+                <SelectItem value="rent">{t("search.forRent")}</SelectItem>
+                <SelectItem value="sale">{t("search.forSale")}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -267,7 +271,8 @@ export default function Browse() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t">
             <div className="space-y-3">
               <label className="text-sm font-medium">
-                {t('browse.priceRange')}: ${priceRangeSlider[0]} - ${priceRangeSlider[1]} {t('browse.perDay')}
+                {t("browse.priceRange")}: ${priceRangeSlider[0]} - $
+                {priceRangeSlider[1]} {t("browse.perDay")}
               </label>
               <Slider
                 value={priceRangeSlider}
@@ -280,7 +285,8 @@ export default function Browse() {
             </div>
             <div className="space-y-3">
               <label className="text-sm font-medium">
-                {t('browse.sizeRange')}: {sizeRangeSlider[0]} - {sizeRangeSlider[1]} m²
+                {t("browse.sizeRange")}: {sizeRangeSlider[0]} -{" "}
+                {sizeRangeSlider[1]} m²
               </label>
               <Slider
                 value={sizeRangeSlider}
@@ -299,7 +305,7 @@ export default function Browse() {
       <div className="container py-8">
         <div className="flex justify-between items-center mb-6">
           <p className="text-muted-foreground">
-            {sortedListings.length} {t('browse.optionsAvailable')}
+            {sortedListings.length} {t("browse.optionsAvailable")}
           </p>
         </div>
 
@@ -317,18 +323,27 @@ export default function Browse() {
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 right-3 flex flex-col gap-2">
-                    <Badge variant="secondary" className="bg-white/90 text-gray-800">
+                    <Badge
+                      variant="secondary"
+                      className="bg-white/90 text-gray-800"
+                    >
                       ${listing.pricing.dailyRate}/day
                     </Badge>
                     {listing.pricing.isForSale && listing.pricing.sellPrice && (
-                      <Badge variant="outline" className="bg-white/90 text-green-700 border-green-300">
-                        {t('search.forSale')}: ${listing.pricing.sellPrice}
+                      <Badge
+                        variant="outline"
+                        className="bg-white/90 text-green-700 border-green-300"
+                      >
+                        {t("search.forSale")}: ${listing.pricing.sellPrice}
                       </Badge>
                     )}
                   </div>
                   <div className="absolute top-3 left-3">
-                    <Badge variant="outline" className="bg-white/90 text-gray-800 capitalize">
-                      {listing.category.replace('-', ' ')}
+                    <Badge
+                      variant="outline"
+                      className="bg-white/90 text-gray-800 capitalize"
+                    >
+                      {listing.category.replace("-", " ")}
                     </Badge>
                   </div>
                 </div>
@@ -347,7 +362,11 @@ export default function Browse() {
 
                     <div className="flex flex-wrap gap-1">
                       {listing.features.slice(0, 3).map((feature) => (
-                        <Badge key={feature} variant="outline" className="text-xs">
+                        <Badge
+                          key={feature}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {feature}
                         </Badge>
                       ))}
@@ -362,7 +381,9 @@ export default function Browse() {
                       <div className="flex items-center space-x-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="text-sm font-medium">
-                          {listing.rating > 0 ? listing.rating.toFixed(1) : t('common.new')}
+                          {listing.rating > 0
+                            ? listing.rating.toFixed(1)
+                            : t("common.new")}
                         </span>
                         {listing.reviewCount > 0 && (
                           <span className="text-sm text-muted-foreground">
@@ -371,7 +392,9 @@ export default function Browse() {
                         )}
                       </div>
                       <Badge
-                        variant={listing.condition === "new" ? "default" : "secondary"}
+                        variant={
+                          listing.condition === "new" ? "default" : "secondary"
+                        }
                         className="text-xs"
                       >
                         {t(`common.${listing.condition}`)}
@@ -381,14 +404,22 @@ export default function Browse() {
                     <div className="pt-2 border-t">
                       <div className="flex items-center justify-between mb-1">
                         <div className="text-sm text-muted-foreground">
-                          <span className="font-medium">{listing.hostName}</span>
+                          <span className="font-medium">
+                            {listing.hostName}
+                          </span>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {listing.size.height}×{listing.size.width}×{listing.size.depth} {listing.size.unit}
+                          {listing.size.height}×{listing.size.width}×
+                          {listing.size.depth} {listing.size.unit}
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground text-right">
-                        {calculateSquareMeters(listing.size.height, listing.size.width, listing.size.unit)} m²
+                        {calculateSquareMeters(
+                          listing.size.height,
+                          listing.size.width,
+                          listing.size.unit,
+                        )}{" "}
+                        m²
                       </div>
                     </div>
 
@@ -400,18 +431,20 @@ export default function Browse() {
                           onClick={() => handleBookListing(listing)}
                         >
                           <Calendar className="h-3 w-3 mr-1" />
-                          {t('common.rent')}
+                          {t("common.rent")}
                         </Button>
                       )}
                       {listing.pricing.isForSale && (
                         <Button
-                          variant={listing.pricing.isForRent ? "outline" : "default"}
+                          variant={
+                            listing.pricing.isForRent ? "outline" : "default"
+                          }
                           className="flex-1"
                           size="sm"
                           onClick={() => handleContactSeller(listing)}
                         >
                           <Users className="h-3 w-3 mr-1" />
-                          {t('common.buy')}
+                          {t("common.buy")}
                         </Button>
                       )}
                     </div>
@@ -425,7 +458,8 @@ export default function Browse() {
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">No listings found</h3>
             <p className="text-muted-foreground mb-6">
-              Try adjusting your search criteria or check back later for new listings.
+              Try adjusting your search criteria or check back later for new
+              listings.
             </p>
             <Button variant="outline">Clear Filters</Button>
           </div>

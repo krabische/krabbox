@@ -1,60 +1,65 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
 
 export function SupabaseDebugTest() {
-  const [status, setStatus] = useState('Testing...');
+  const [status, setStatus] = useState("Testing...");
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<any[]>([]);
 
   const testConnection = async () => {
-    setStatus('Testing Supabase connection...');
+    setStatus("Testing Supabase connection...");
     setError(null);
     setResults([]);
 
     try {
       // Test 1: Basic connection
-      console.log('Test 1: Basic Supabase connection');
+      console.log("Test 1: Basic Supabase connection");
       const { data: healthData, error: healthError } = await supabase
-        .from('listing')
-        .select('*', { count: 'exact', head: true });
+        .from("listing")
+        .select("*", { count: "exact", head: true });
 
       if (healthError) {
-        console.error('Health check error:', healthError);
+        console.error("Health check error:", healthError);
         setError(`Connection Error: ${healthError.message}`);
-        setStatus('Connection failed');
-        
+        setStatus("Connection failed");
+
         // Check if it's a table not found error
-        if (healthError.message.includes('relation "public.listing" does not exist')) {
-          setStatus('Table "listing" does not exist - this is expected if database is not set up');
+        if (
+          healthError.message.includes(
+            'relation "public.listing" does not exist',
+          )
+        ) {
+          setStatus(
+            'Table "listing" does not exist - this is expected if database is not set up',
+          );
         }
         return;
       }
 
-      console.log('Health check successful');
-      setStatus('Connection successful');
+      console.log("Health check successful");
+      setStatus("Connection successful");
 
       // Test 2: Try to fetch data
-      console.log('Test 2: Fetching data');
+      console.log("Test 2: Fetching data");
       const { data, error } = await supabase
-        .from('listing')
-        .select('*')
+        .from("listing")
+        .select("*")
         .limit(5);
 
       if (error) {
-        console.error('Data fetch error:', error);
+        console.error("Data fetch error:", error);
         setError(`Data Error: ${error.message}`);
       } else {
-        console.log('Data fetch successful:', data);
+        console.log("Data fetch successful:", data);
         setResults(data || []);
         setStatus(`Success: Found ${data?.length || 0} listings`);
       }
-
     } catch (err) {
-      console.error('Unexpected error:', err);
+      console.error("Unexpected error:", err);
       setError(`Unexpected Error: ${err}`);
-      setStatus('Test failed');
+      setStatus("Test failed");
     }
   };
 
@@ -71,7 +76,7 @@ export function SupabaseDebugTest() {
         <div>
           <strong>Status:</strong> {status}
         </div>
-        
+
         {error && (
           <div className="text-red-600 bg-red-50 p-3 rounded">
             <strong>Error:</strong> {error}

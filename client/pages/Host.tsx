@@ -15,7 +15,7 @@ import {
   Star,
   Package,
   Calculator,
-  Plus
+  Plus,
 } from "lucide-react";
 
 export default function Host() {
@@ -36,18 +36,19 @@ export default function Host() {
                   Earn Money by Sharing Your Luggage
                 </h1>
                 <p className="text-xl text-muted-foreground mb-8">
-                  Turn your unused luggage into a profitable asset. Join thousands of hosts earning extra income on LugSpace.
+                  Turn your unused luggage into a profitable asset. Join
+                  thousands of hosts earning extra income on LugSpace.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     onClick={() => setAuthModalOpen(true)}
                     className="text-lg px-8 py-3 h-auto"
                   >
                     Start Hosting Today
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="lg"
                     className="text-lg px-8 py-3 h-auto"
                   >
@@ -61,26 +62,42 @@ export default function Host() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
                 <Card className="text-center">
                   <CardContent className="p-6">
-                    <div className="text-3xl font-bold text-primary mb-2">$500+</div>
-                    <div className="text-sm text-muted-foreground">Average Monthly Earnings</div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      $500+
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Average Monthly Earnings
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="text-center">
                   <CardContent className="p-6">
-                    <div className="text-3xl font-bold text-primary mb-2">85%</div>
-                    <div className="text-sm text-muted-foreground">Average Occupancy Rate</div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      85%
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Average Occupancy Rate
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="text-center">
                   <CardContent className="p-6">
-                    <div className="text-3xl font-bold text-primary mb-2">15min</div>
-                    <div className="text-sm text-muted-foreground">Average Response Time</div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      15min
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Average Response Time
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="text-center">
                   <CardContent className="p-6">
-                    <div className="text-3xl font-bold text-primary mb-2">4.8★</div>
-                    <div className="text-sm text-muted-foreground">Average Host Rating</div>
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      4.8★
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Average Host Rating
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -101,9 +118,12 @@ export default function Host() {
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <TrendingUp className="h-8 w-8 text-green-600" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Earn Extra Income</h3>
+                  <h3 className="text-xl font-semibold mb-3">
+                    Earn Extra Income
+                  </h3>
                   <p className="text-muted-foreground">
-                    Make money from luggage you already own. Our top hosts earn over $1,000 per month.
+                    Make money from luggage you already own. Our top hosts earn
+                    over $1,000 per month.
                   </p>
                 </div>
 
@@ -111,9 +131,12 @@ export default function Host() {
                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Shield className="h-8 w-8 text-blue-600" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Fully Protected</h3>
+                  <h3 className="text-xl font-semibold mb-3">
+                    Fully Protected
+                  </h3>
                   <p className="text-muted-foreground">
-                    All rentals are fully insured. We handle payments, disputes, and provide 24/7 support.
+                    All rentals are fully insured. We handle payments, disputes,
+                    and provide 24/7 support.
                   </p>
                 </div>
 
@@ -121,9 +144,12 @@ export default function Host() {
                   <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Clock className="h-8 w-8 text-purple-600" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Set Your Schedule</h3>
+                  <h3 className="text-xl font-semibold mb-3">
+                    Set Your Schedule
+                  </h3>
                   <p className="text-muted-foreground">
-                    Complete control over when your luggage is available. Block dates when you need it.
+                    Complete control over when your luggage is available. Block
+                    dates when you need it.
                   </p>
                 </div>
               </div>
@@ -144,9 +170,12 @@ export default function Host() {
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
                     1
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">List Your Luggage</h3>
+                  <h3 className="text-xl font-semibold mb-3">
+                    List Your Luggage
+                  </h3>
                   <p className="text-muted-foreground">
-                    Create listings with photos, descriptions, and pricing. It takes less than 10 minutes.
+                    Create listings with photos, descriptions, and pricing. It
+                    takes less than 10 minutes.
                   </p>
                 </div>
 
@@ -154,9 +183,12 @@ export default function Host() {
                   <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold">
                     2
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">Accept Bookings</h3>
+                  <h3 className="text-xl font-semibold mb-3">
+                    Accept Bookings
+                  </h3>
                   <p className="text-muted-foreground">
-                    Receive booking requests and approve renters. Set your own availability and rules.
+                    Receive booking requests and approve renters. Set your own
+                    availability and rules.
                   </p>
                 </div>
 
@@ -166,7 +198,8 @@ export default function Host() {
                   </div>
                   <h3 className="text-xl font-semibold mb-3">Get Paid</h3>
                   <p className="text-muted-foreground">
-                    Earn money automatically. Payments are processed securely and deposited to your account.
+                    Earn money automatically. Payments are processed securely
+                    and deposited to your account.
                   </p>
                 </div>
               </div>
@@ -182,8 +215,8 @@ export default function Host() {
               <p className="text-xl mb-8 text-white/90">
                 Join LugSpace today and turn your luggage into profit.
               </p>
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 variant="secondary"
                 onClick={() => setAuthModalOpen(true)}
                 className="text-lg px-8 py-3 h-auto"
@@ -194,8 +227,8 @@ export default function Host() {
           </section>
         </div>
 
-        <AuthModal 
-          isOpen={authModalOpen} 
+        <AuthModal
+          isOpen={authModalOpen}
           onClose={() => setAuthModalOpen(false)}
           defaultTab="signup"
         />
@@ -221,7 +254,9 @@ export default function Host() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Active Listings
+              </CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -231,10 +266,12 @@ export default function Host() {
               </p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Earnings
+              </CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -252,9 +289,7 @@ export default function Host() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">
-                All time bookings
-              </p>
+              <p className="text-xs text-muted-foreground">All time bookings</p>
             </CardContent>
           </Card>
 
@@ -265,9 +300,7 @@ export default function Host() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">-</div>
-              <p className="text-xs text-muted-foreground">
-                No ratings yet
-              </p>
+              <p className="text-xs text-muted-foreground">No ratings yet</p>
             </CardContent>
           </Card>
         </div>
@@ -278,9 +311,12 @@ export default function Host() {
             <Card>
               <CardContent className="p-12 text-center">
                 <Package className="h-16 w-16 text-muted-foreground mx-auto mb-6" />
-                <h3 className="text-2xl font-bold mb-4">Create Your First Listing</h3>
+                <h3 className="text-2xl font-bold mb-4">
+                  Create Your First Listing
+                </h3>
                 <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                  Start earning money by listing your storage space for rent. It only takes a few minutes to create your first listing.
+                  Start earning money by listing your storage space for rent. It
+                  only takes a few minutes to create your first listing.
                 </p>
                 <Button
                   size="lg"

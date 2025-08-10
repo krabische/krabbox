@@ -49,9 +49,12 @@ export function UserListings() {
             <Card>
               <CardContent className="text-center py-12">
                 <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">{t("listing.noListings")}</h3>
+                <h3 className="text-xl font-semibold mb-2">
+                  {t("listing.noListings")}
+                </h3>
                 <p className="text-muted-foreground mb-6">
-                  You haven't created any listings yet. Start by creating your first storage listing.
+                  You haven't created any listings yet. Start by creating your
+                  first storage listing.
                 </p>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
@@ -78,7 +81,9 @@ export function UserListings() {
             <Card>
               <CardContent className="text-center py-12">
                 <Archive className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">{t("listing.archivedListings")}</h3>
+                <h3 className="text-xl font-semibold mb-2">
+                  {t("listing.archivedListings")}
+                </h3>
                 <p className="text-muted-foreground">
                   You don't have any archived listings.
                 </p>

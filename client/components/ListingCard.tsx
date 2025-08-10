@@ -39,7 +39,11 @@ interface ListingCardProps {
   showArchived?: boolean;
 }
 
-export function ListingCard({ listing, isOwner = false, showArchived = false }: ListingCardProps) {
+export function ListingCard({
+  listing,
+  isOwner = false,
+  showArchived = false,
+}: ListingCardProps) {
   const { deleteListing, archiveListing, unarchiveListing } = useListings();
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -78,7 +82,8 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
         await archiveListing(listing.id);
         toast({
           title: t("listing.archive"),
-          description: "Listing has been archived and is no longer visible in search.",
+          description:
+            "Listing has been archived and is no longer visible in search.",
         });
       }
     } catch (error) {
@@ -93,17 +98,19 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(price);
   };
 
   return (
-    <Card className={`overflow-hidden ${listing.isArchived ? 'opacity-60' : ''}`}>
+    <Card
+      className={`overflow-hidden ${listing.isArchived ? "opacity-60" : ""}`}
+    >
       <div className="relative">
         <img
-          src={listing.images[0] || '/placeholder.svg'}
+          src={listing.images[0] || "/placeholder.svg"}
           alt={listing.title}
           className="w-full h-48 object-cover"
         />
@@ -130,7 +137,7 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
                   {t("common.edit")}
                 </DropdownMenuItem>
               </EditListingModal>
-              
+
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
@@ -150,13 +157,14 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      {listing.isArchived ? t("listing.unarchive") : t("listing.archive")}
+                      {listing.isArchived
+                        ? t("listing.unarchive")
+                        : t("listing.archive")}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      {listing.isArchived 
+                      {listing.isArchived
                         ? "This will make your listing visible in search results again."
-                        : t("listing.confirmArchive")
-                      }
+                        : t("listing.confirmArchive")}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -173,7 +181,7 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
 
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onSelect={(e) => e.preventDefault()}
                     className="text-red-600 focus:text-red-600"
                   >
@@ -208,7 +216,9 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
       <CardContent className="p-4">
         <div className="space-y-2">
           <div className="flex items-start justify-between">
-            <h3 className="font-semibold text-lg line-clamp-2">{listing.title}</h3>
+            <h3 className="font-semibold text-lg line-clamp-2">
+              {listing.title}
+            </h3>
             <div className="flex gap-1">
               {listing.pricing.isForSale && (
                 <Badge variant="outline" className="text-xs">
@@ -222,12 +232,16 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
               )}
             </div>
           </div>
-          
-          <p className="text-sm text-gray-600 line-clamp-2">{listing.description}</p>
-          
+
+          <p className="text-sm text-gray-600 line-clamp-2">
+            {listing.description}
+          </p>
+
           <div className="flex items-center gap-1 text-sm text-gray-500">
             <MapPin className="h-4 w-4" />
-            <span>{listing.location.city}, {listing.location.state}</span>
+            <span>
+              {listing.location.city}, {listing.location.state}
+            </span>
           </div>
 
           <div className="flex items-center gap-1 text-sm">
@@ -236,9 +250,13 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
               {listing.pricing.isForRent && (
                 <span>{formatPrice(listing.pricing.dailyRate)}/day</span>
               )}
-              {listing.pricing.isForSale && listing.pricing.isForRent && <span> | </span>}
+              {listing.pricing.isForSale && listing.pricing.isForRent && (
+                <span> | </span>
+              )}
               {listing.pricing.isForSale && listing.pricing.sellPrice && (
-                <span>{formatPrice(listing.pricing.sellPrice)} {t("search.forSale")}</span>
+                <span>
+                  {formatPrice(listing.pricing.sellPrice)} {t("search.forSale")}
+                </span>
               )}
             </span>
           </div>
@@ -258,12 +276,13 @@ export function ListingCard({ listing, isOwner = false, showArchived = false }: 
         <CardFooter className="p-4 pt-0">
           <div className="flex gap-2 w-full">
             {listing.pricing.isForRent && (
-              <Button className="flex-1">
-                {t("common.rent")}
-              </Button>
+              <Button className="flex-1">{t("common.rent")}</Button>
             )}
             {listing.pricing.isForSale && (
-              <Button variant={listing.pricing.isForRent ? "outline" : "default"} className="flex-1">
+              <Button
+                variant={listing.pricing.isForRent ? "outline" : "default"}
+                className="flex-1"
+              >
                 {t("common.buy")}
               </Button>
             )}

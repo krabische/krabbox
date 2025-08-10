@@ -11,15 +11,15 @@ export function SearchSection() {
   const [searchData, setSearchData] = useState({
     location: "",
     startDate: "",
-    endDate: ""
+    endDate: "",
   });
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (searchData.location) params.append('location', searchData.location);
-    if (searchData.startDate) params.append('startDate', searchData.startDate);
-    if (searchData.endDate) params.append('endDate', searchData.endDate);
-    
+    if (searchData.location) params.append("location", searchData.location);
+    if (searchData.startDate) params.append("startDate", searchData.startDate);
+    if (searchData.endDate) params.append("endDate", searchData.endDate);
+
     navigate(`/browse?${params.toString()}`);
   };
 
@@ -31,12 +31,14 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <MapPin className="h-4 w-4 mr-2" />
-              {t('search.where')}
+              {t("search.where")}
             </label>
             <Input
-              placeholder={t('search.placeholder')}
+              placeholder={t("search.placeholder")}
               value={searchData.location}
-              onChange={(e) => setSearchData(prev => ({ ...prev, location: e.target.value }))}
+              onChange={(e) =>
+                setSearchData((prev) => ({ ...prev, location: e.target.value }))
+              }
               className="border-gray-200 focus:border-primary"
             />
           </div>
@@ -45,12 +47,17 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <CalendarDays className="h-4 w-4 mr-2" />
-              {t('search.startDate')}
+              {t("search.startDate")}
             </label>
             <Input
               type="date"
               value={searchData.startDate}
-              onChange={(e) => setSearchData(prev => ({ ...prev, startDate: e.target.value }))}
+              onChange={(e) =>
+                setSearchData((prev) => ({
+                  ...prev,
+                  startDate: e.target.value,
+                }))
+              }
               className="border-gray-200 focus:border-primary"
             />
           </div>
@@ -59,12 +66,14 @@ export function SearchSection() {
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center">
               <CalendarDays className="h-4 w-4 mr-2" />
-              {t('search.endDate')}
+              {t("search.endDate")}
             </label>
             <Input
               type="date"
               value={searchData.endDate}
-              onChange={(e) => setSearchData(prev => ({ ...prev, endDate: e.target.value }))}
+              onChange={(e) =>
+                setSearchData((prev) => ({ ...prev, endDate: e.target.value }))
+              }
               className="border-gray-200 focus:border-primary"
             />
           </div>
@@ -72,29 +81,31 @@ export function SearchSection() {
           {/* Search Button */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 opacity-0">
-              {t('search.search')}
+              {t("search.search")}
             </label>
-            <Button 
+            <Button
               onClick={handleSearch}
               className="w-full h-10 bg-primary hover:bg-primary/90"
             >
               <Search className="h-4 w-4 mr-2" />
-              {t('search.search')}
+              {t("search.search")}
             </Button>
           </div>
         </div>
 
         {/* Quick filters */}
         <div className="mt-6 pt-6 border-t">
-          <p className="text-sm font-medium text-gray-700 mb-3">{t('filters.popularTypes')}</p>
+          <p className="text-sm font-medium text-gray-700 mb-3">
+            {t("filters.popularTypes")}
+          </p>
           <div className="flex flex-wrap gap-2">
             {[
-              { key: 'garage', label: t('category.garage') },
-              { key: 'shed', label: t('category.shed') },
-              { key: 'pantry', label: t('category.pantry') },
-              { key: 'cell', label: t('category.cell') },
-              { key: 'container', label: t('category.container') },
-              { key: 'largeSpace', label: t('category.largeSpace') }
+              { key: "garage", label: t("category.garage") },
+              { key: "shed", label: t("category.shed") },
+              { key: "pantry", label: t("category.pantry") },
+              { key: "cell", label: t("category.cell") },
+              { key: "container", label: t("category.container") },
+              { key: "largeSpace", label: t("category.largeSpace") },
             ].map((type) => (
               <Button
                 key={type.key}
@@ -102,7 +113,7 @@ export function SearchSection() {
                 size="sm"
                 onClick={() => {
                   const params = new URLSearchParams();
-                  params.append('category', type.key);
+                  params.append("category", type.key);
                   navigate(`/browse?${params.toString()}`);
                 }}
                 className="rounded-full border-gray-200 hover:border-primary hover:text-primary"

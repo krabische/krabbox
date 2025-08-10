@@ -103,23 +103,25 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
     }));
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = event.target.files;
     if (files) {
       try {
         const uploadedUrls = [];
-        
+
         for (const file of Array.from(files)) {
-          const fileExt = file.name.split('.').pop();
+          const fileExt = file.name.split(".").pop();
           const fileName = `${Math.random()}.${fileExt}`;
           const filePath = `listings/${fileName}`;
-          
+
           const { data, error } = await supabase.storage
-            .from('listings')
+            .from("listings")
             .upload(filePath, file);
-          
+
           if (error) {
-            console.error('Error uploading image:', error);
+            console.error("Error uploading image:", error);
             toast({
               title: "Upload Error",
               description: "Failed to upload image. Please try again.",
@@ -127,22 +129,22 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
             });
             continue;
           }
-          
-          const { data: { publicUrl } } = supabase.storage
-            .from('listings')
-            .getPublicUrl(filePath);
-          
+
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("listings").getPublicUrl(filePath);
+
           uploadedUrls.push(publicUrl);
         }
-        
+
         setImages((prev) => [...prev, ...uploadedUrls].slice(0, 5));
-        
+
         toast({
           title: "Images Uploaded",
           description: `${uploadedUrls.length} image(s) uploaded successfully.`,
         });
       } catch (error) {
-        console.error('Error uploading images:', error);
+        console.error("Error uploading images:", error);
         toast({
           title: "Upload Error",
           description: "Failed to upload images. Please try again.",
@@ -159,7 +161,7 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       const updates: Partial<LuggageListing> = {
         title: formData.title,
@@ -190,10 +192,16 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
         },
         pricing: {
           dailyRate: parseFloat(formData.dailyRate),
-          weeklyRate: formData.weeklyRate ? parseFloat(formData.weeklyRate) : undefined,
-          monthlyRate: formData.monthlyRate ? parseFloat(formData.monthlyRate) : undefined,
+          weeklyRate: formData.weeklyRate
+            ? parseFloat(formData.weeklyRate)
+            : undefined,
+          monthlyRate: formData.monthlyRate
+            ? parseFloat(formData.monthlyRate)
+            : undefined,
           securityDeposit: parseFloat(formData.securityDeposit),
-          sellPrice: formData.sellPrice ? parseFloat(formData.sellPrice) : undefined,
+          sellPrice: formData.sellPrice
+            ? parseFloat(formData.sellPrice)
+            : undefined,
           isForSale: formData.isForSale,
           isForRent: formData.isForRent,
         },
@@ -209,8 +217,9 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
       setOpen(false);
       setCurrentStep(1);
     } catch (error: any) {
-      console.error('EditListingModal error:', error);
-      const errorMessage = error?.message || 'Failed to update listing. Please try again.';
+      console.error("EditListingModal error:", error);
+      const errorMessage =
+        error?.message || "Failed to update listing. Please try again.";
       toast({
         title: "Error",
         description: errorMessage,
@@ -235,7 +244,7 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
         <DialogHeader>
           <DialogTitle>{t("listing.edit")}</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Progress indicator */}
           <div className="flex items-center justify-center space-x-2 mb-6">
@@ -280,11 +289,15 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">{t("listing.description")} *</Label>
+                  <Label htmlFor="description">
+                    {t("listing.description")} *
+                  </Label>
                   <Textarea
                     id="description"
                     value={formData.description}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("description", e.target.value)
+                    }
                     rows={4}
                     required
                   />
@@ -295,18 +308,32 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                     <Label>{t("listing.category")} *</Label>
                     <Select
                       value={formData.category}
-                      onValueChange={(value) => handleInputChange("category", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("category", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="garage">{t("category.garage")}</SelectItem>
-                        <SelectItem value="shed">{t("category.shed")}</SelectItem>
-                        <SelectItem value="pantry">{t("category.pantry")}</SelectItem>
-                        <SelectItem value="cell">{t("category.cell")}</SelectItem>
-                        <SelectItem value="container">{t("category.container")}</SelectItem>
-                        <SelectItem value="large-space">{t("category.largeSpace")}</SelectItem>
+                        <SelectItem value="garage">
+                          {t("category.garage")}
+                        </SelectItem>
+                        <SelectItem value="shed">
+                          {t("category.shed")}
+                        </SelectItem>
+                        <SelectItem value="pantry">
+                          {t("category.pantry")}
+                        </SelectItem>
+                        <SelectItem value="cell">
+                          {t("category.cell")}
+                        </SelectItem>
+                        <SelectItem value="container">
+                          {t("category.container")}
+                        </SelectItem>
+                        <SelectItem value="large-space">
+                          {t("category.largeSpace")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -315,7 +342,9 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                     <Label>{t("listing.type")} *</Label>
                     <Select
                       value={formData.type}
-                      onValueChange={(value) => handleInputChange("type", value)}
+                      onValueChange={(value) =>
+                        handleInputChange("type", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -333,7 +362,9 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                   <Label>{t("listing.condition")} *</Label>
                   <RadioGroup
                     value={formData.condition}
-                    onValueChange={(value) => handleInputChange("condition", value)}
+                    onValueChange={(value) =>
+                      handleInputChange("condition", value)
+                    }
                     className="flex flex-wrap gap-4"
                   >
                     <div className="flex items-center space-x-2">
@@ -374,7 +405,9 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                     type="number"
                     step="0.1"
                     value={formData.squareMeters}
-                    onChange={(e) => handleInputChange("squareMeters", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("squareMeters", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -383,7 +416,10 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                   <Label>{t("listing.features")}</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {availableFeatures.map((feature) => (
-                      <div key={feature} className="flex items-center space-x-2">
+                      <div
+                        key={feature}
+                        className="flex items-center space-x-2"
+                      >
                         <Checkbox
                           id={feature}
                           checked={formData.features.includes(feature)}
@@ -446,7 +482,9 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                           className="cursor-pointer flex flex-col items-center gap-2"
                         >
                           <Upload className="h-8 w-8 text-gray-400" />
-                          <span className="text-sm text-gray-600">{t("listing.addPhotos")}</span>
+                          <span className="text-sm text-gray-600">
+                            {t("listing.addPhotos")}
+                          </span>
                         </Label>
                       </div>
                     )}
@@ -462,38 +500,50 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                     <Input
                       placeholder={t("listing.streetAddress")}
                       value={formData.address}
-                      onChange={(e) => handleInputChange("address", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("address", e.target.value)
+                      }
                       required
                     />
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       <Input
                         placeholder={t("listing.city")}
                         value={formData.city}
-                        onChange={(e) => handleInputChange("city", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("city", e.target.value)
+                        }
                         required
                       />
                       <Input
                         placeholder={t("listing.state")}
                         value={formData.state}
-                        onChange={(e) => handleInputChange("state", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("state", e.target.value)
+                        }
                         required
                       />
                       <Input
                         placeholder={t("listing.zipCode")}
                         value={formData.zipCode}
-                        onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("zipCode", e.target.value)
+                        }
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phoneNumber">{t("listing.contactPhone")} *</Label>
+                    <Label htmlFor="phoneNumber">
+                      {t("listing.contactPhone")} *
+                    </Label>
                     <Input
                       id="phoneNumber"
                       type="tel"
                       value={formData.phoneNumber}
-                      onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("phoneNumber", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -519,17 +569,25 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                       <Checkbox
                         id="forRent"
                         checked={formData.isForRent}
-                        onCheckedChange={(checked) => handleInputChange("isForRent", checked)}
+                        onCheckedChange={(checked) =>
+                          handleInputChange("isForRent", checked)
+                        }
                       />
-                      <Label htmlFor="forRent">{t("listing.availableForRent")}</Label>
+                      <Label htmlFor="forRent">
+                        {t("listing.availableForRent")}
+                      </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="forSale"
                         checked={formData.isForSale}
-                        onCheckedChange={(checked) => handleInputChange("isForSale", checked)}
+                        onCheckedChange={(checked) =>
+                          handleInputChange("isForSale", checked)
+                        }
                       />
-                      <Label htmlFor="forSale">{t("listing.availableForSale")}</Label>
+                      <Label htmlFor="forSale">
+                        {t("listing.availableForSale")}
+                      </Label>
                     </div>
                   </div>
                 </div>
@@ -539,60 +597,84 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
                     <Label>{t("listing.rentalPricing")} *</Label>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <Label className="text-sm">{t("listing.dailyRate")}</Label>
+                        <Label className="text-sm">
+                          {t("listing.dailyRate")}
+                        </Label>
                         <Input
                           type="number"
                           step="0.01"
                           value={formData.dailyRate}
-                          onChange={(e) => handleInputChange("dailyRate", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("dailyRate", e.target.value)
+                          }
                           required={formData.isForRent}
                         />
                       </div>
                       <div>
-                        <Label className="text-sm">{t("listing.weeklyRate")}</Label>
+                        <Label className="text-sm">
+                          {t("listing.weeklyRate")}
+                        </Label>
                         <Input
                           type="number"
                           step="0.01"
                           value={formData.weeklyRate}
-                          onChange={(e) => handleInputChange("weeklyRate", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("weeklyRate", e.target.value)
+                          }
                         />
                       </div>
                       <div>
-                        <Label className="text-sm">{t("listing.monthlyRate")}</Label>
+                        <Label className="text-sm">
+                          {t("listing.monthlyRate")}
+                        </Label>
                         <Input
                           type="number"
                           step="0.01"
                           value={formData.monthlyRate}
-                          onChange={(e) => handleInputChange("monthlyRate", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("monthlyRate", e.target.value)
+                          }
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <Label className="text-sm">{t("listing.securityDeposit")} *</Label>
+                        <Label className="text-sm">
+                          {t("listing.securityDeposit")} *
+                        </Label>
                         <Input
                           type="number"
                           step="0.01"
                           value={formData.securityDeposit}
-                          onChange={(e) => handleInputChange("securityDeposit", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("securityDeposit", e.target.value)
+                          }
                           required={formData.isForRent}
                         />
                       </div>
                       <div>
-                        <Label className="text-sm">{t("listing.minRentalDays")}</Label>
+                        <Label className="text-sm">
+                          {t("listing.minRentalDays")}
+                        </Label>
                         <Input
                           type="number"
                           value={formData.minRentalDays}
-                          onChange={(e) => handleInputChange("minRentalDays", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("minRentalDays", e.target.value)
+                          }
                         />
                       </div>
                       <div>
-                        <Label className="text-sm">{t("listing.maxRentalDays")}</Label>
+                        <Label className="text-sm">
+                          {t("listing.maxRentalDays")}
+                        </Label>
                         <Input
                           type="number"
                           value={formData.maxRentalDays}
-                          onChange={(e) => handleInputChange("maxRentalDays", e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("maxRentalDays", e.target.value)
+                          }
                         />
                       </div>
                     </div>
@@ -601,13 +683,17 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
 
                 {formData.isForSale && (
                   <div className="space-y-2">
-                    <Label htmlFor="sellPrice">{t("listing.salePrice")} *</Label>
+                    <Label htmlFor="sellPrice">
+                      {t("listing.salePrice")} *
+                    </Label>
                     <Input
                       id="sellPrice"
                       type="number"
                       step="0.01"
                       value={formData.sellPrice}
-                      onChange={(e) => handleInputChange("sellPrice", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("sellPrice", e.target.value)
+                      }
                       required={formData.isForSale}
                     />
                   </div>
@@ -637,7 +723,9 @@ export function EditListingModal({ listing, children }: EditListingModalProps) {
             ) : (
               <Button
                 type="submit"
-                disabled={isSubmitting || (!formData.isForRent && !formData.isForSale)}
+                disabled={
+                  isSubmitting || (!formData.isForRent && !formData.isForSale)
+                }
               >
                 {isSubmitting ? (
                   <>

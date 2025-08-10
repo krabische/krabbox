@@ -26,7 +26,6 @@ import {
   Users,
   Package,
 } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 export default function Browse() {
@@ -55,7 +54,7 @@ export default function Browse() {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [selectedType, setSelectedType] = useState("all");
   const [selectedCondition, setSelectedCondition] = useState("all");
-  const [selectedListingType, setSelectedListingType] = useState("rent"); // Default to rent
+  const [selectedListingType, setSelectedListingType] = useState("all"); // Default to show all listings
   const [minRentalDays, setMinRentalDays] = useState("");
   const [maxRentalDays, setMaxRentalDays] = useState("");
   const [securityDepositRange, setSecurityDepositRange] = useState([0, 200]);
@@ -130,9 +129,13 @@ export default function Browse() {
     if (selectedCondition !== "all" && listing.condition !== selectedCondition)
       return false;
 
-    // Listing type filter - mandatory
-    if (selectedListingType === "rent" && !listing.pricing.isForRent) return false;
-    if (selectedListingType === "sale" && !listing.pricing.isForSale) return false;
+    // Listing type filter
+    if (selectedListingType !== "all") {
+      if (selectedListingType === "rent" && !listing.pricing.isForRent)
+        return false;
+      if (selectedListingType === "sale" && !listing.pricing.isForSale)
+        return false;
+    }
 
     // Min rental days filter
     if (minRentalDays && listing.availability.minRentalDays < parseInt(minRentalDays))
@@ -304,30 +307,23 @@ export default function Browse() {
             </Button>
           </div>
 
-          {/* Listing Type Toggle */}
+          {/* Listing Type Filter */}
           <div className="mt-4 pt-4 border-t">
-            <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Listing Type</Label>
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="browse-rent"
-                      checked={selectedListingType === "rent"}
-                      onCheckedChange={(checked) => setSelectedListingType(checked ? "rent" : "sale")}
-                    />
-                    <Label htmlFor="browse-rent" className="text-sm">For Rent</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="browse-sale"
-                      checked={selectedListingType === "sale"}
-                      onCheckedChange={(checked) => setSelectedListingType(checked ? "sale" : "rent")}
-                    />
-                    <Label htmlFor="browse-sale" className="text-sm">For Sale</Label>
-                  </div>
-                </div>
-              </div>
+            <div className="space-y-2 w-48">
+              <Label className="text-sm font-medium text-gray-700">Listing Type</Label>
+              <Select
+                value={selectedListingType}
+                onValueChange={setSelectedListingType}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="All Listings" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Listings</SelectItem>
+                  <SelectItem value="rent">For Rent</SelectItem>
+                  <SelectItem value="sale">For Sale</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -401,10 +397,10 @@ export default function Browse() {
                   <label className="text-sm font-medium">Listing Type</label>
                   <Select value={selectedListingType} onValueChange={setSelectedListingType}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Types" />
+                      <SelectValue placeholder="All Listings" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="all">All Listings</SelectItem>
                       <SelectItem value="rent">For Rent</SelectItem>
                       <SelectItem value="sale">For Sale</SelectItem>
                     </SelectContent>

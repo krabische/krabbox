@@ -168,15 +168,15 @@ export function ListingDetailModal({ isOpen, onClose, listing }: ListingDetailMo
                     <span className="text-muted-foreground">Condition:</span>
                     <span className="ml-2 capitalize">{listing.condition}</span>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground">Area:</span>
-                    <span className="ml-2">
-                      {listing.size && !isNaN(listing.size.height)
-                        ? `${listing.size.height} m²`
-                        : 'Not specified'
-                      }
-                    </span>
-                  </div>
+                                     <div>
+                     <span className="text-muted-foreground">Area:</span>
+                     <span className="ml-2">
+                       {listing.area && !isNaN(listing.area)
+                         ? `${listing.area} m²`
+                         : 'Not specified'
+                       }
+                     </span>
+                   </div>
                 </div>
               </div>
             </div>

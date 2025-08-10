@@ -115,12 +115,12 @@ export default function Browse() {
       return false;
 
     // Size range filter (square meters)
-    const squareMeters = calculateSquareMeters(
+    const area = listing.area ?? calculateSquareMeters(
       listing.size.height,
       listing.size.width,
       listing.size.unit,
     );
-    if (squareMeters < sizeRangeSlider[0] || squareMeters > sizeRangeSlider[1])
+    if (area < sizeRangeSlider[0] || area > sizeRangeSlider[1])
       return false;
 
     // Type filter
@@ -563,12 +563,12 @@ export default function Browse() {
                             {listing.hostName}
                           </span>
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          {listing.size && !isNaN(listing.size.height)
-                            ? `${listing.size.height} m²`
-                            : 'Area not specified'
-                          }
-                        </div>
+                                                 <div className="text-sm text-muted-foreground">
+                           {listing.area && !isNaN(listing.area)
+                             ? `${listing.area} m²`
+                             : 'Area not specified'
+                           }
+                         </div>
                       </div>
                     </div>
 

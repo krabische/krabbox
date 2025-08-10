@@ -6,6 +6,7 @@ export interface LuggageListing {
   id: string;
   hostId: string;
   hostName: string;
+  contactNumber: string;
   title: string;
   description: string;
   images: string[];
@@ -17,6 +18,7 @@ export interface LuggageListing {
     depth: number;
     unit: 'cm' | 'inches' | 'sqm';
   };
+  area: number;
   features: string[];
   condition: 'new' | 'excellent' | 'good' | 'fair';
   location: {
@@ -142,10 +144,19 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           // Get square meters - try different possible field names
           const squareMeters = item.square_meters || item.square_meters || item.area || 1;
 
+          const sizeData = item.size || {
+            height: parseFloat(squareMeters) || 1,
+            width: 1,
+            depth: 1,
+            unit: 'sqm'
+          };
+          const area = parseFloat(item.square_meters) || (sizeData.unit === 'sqm' ? sizeData.height : 0);
+
           return {
             id: item.id.toString(),
             hostId: item.owner_id,
             hostName: hostName,
+            contactNumber: item.contact_number || '',
             // Debug info
             _debug: {
               owner_id: item.owner_id,
@@ -157,12 +168,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
             images: images,
             category: item.category || 'carry-on',
             type: item.type || 'hardside',
-            size: { 
-              height: parseFloat(squareMeters) || 1, 
-              width: parseFloat(squareMeters) || 1, 
-              depth: 1, 
-              unit: 'sqm' 
-            },
+            size: sizeData,
+            area,
             features: item.features || [],
             condition: item.condition || 'excellent',
             location: {
@@ -237,13 +244,14 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         image_url: listingData.images[0] || '/placeholder.svg', // Keep main image for backward compatibility
         owner_id: listingData.hostId,
         host_name: listingData.hostName,
-        square_meters: listingData.size.height,
+        square_meters: listingData.area,
+        size: listingData.size,
         // Add all new fields
         category: listingData.category,
         type: listingData.type,
         condition: listingData.condition,
         features: listingData.features,
-        contact_number: listingData.hostName, // You might want to get this from user profile
+        contact_number: listingData.contactNumber,
         listing_type: listingData.pricing.isForSale ? 'sale' : 'rent',
         weekly_rate: listingData.pricing.weeklyRate,
         monthly_rate: listingData.pricing.monthlyRate,

@@ -167,10 +167,12 @@ export function CreateListingForm() {
         type: formData.type as any,
         size: {
           height: parseFloat(formData.squareMeters) || 1,
-          width: parseFloat(formData.squareMeters) || 1,
+          width: 1,
           depth: 1,
           unit: "sqm",
         },
+        area: parseFloat(formData.squareMeters) || 1,
+        contactNumber: formData.phoneNumber,
         features: formData.features,
         condition: formData.condition as any,
         location: {

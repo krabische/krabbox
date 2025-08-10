@@ -44,6 +44,7 @@ export default function Browse() {
   const [sortBy, setSortBy] = useState("featured");
   const [priceRangeSlider, setPriceRangeSlider] = useState([0, 100]);
   const [sizeRangeSlider, setSizeRangeSlider] = useState([0, 1.0]);
+  const [saleRentType, setSaleRentType] = useState("both");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedListing, setSelectedListing] = useState<LuggageListing | null>(
@@ -83,6 +84,9 @@ export default function Browse() {
   };
 
   const filteredListings = listings.filter((listing) => {
+    // Exclude archived listings
+    if (listing.isArchived) return false;
+
     if (selectedCategory !== "all" && listing.category !== selectedCategory)
       return false;
     if (
@@ -91,6 +95,10 @@ export default function Browse() {
       !listing.location.city.toLowerCase().includes(searchTerm.toLowerCase())
     )
       return false;
+
+    // Sale/Rent type filter
+    if (saleRentType === "sale" && !listing.pricing.isForSale) return false;
+    if (saleRentType === "rent" && !listing.pricing.isForRent) return false;
 
     // Price range filter
     const price = listing.pricing.dailyRate;
@@ -225,6 +233,17 @@ export default function Browse() {
               </SelectContent>
             </Select>
 
+            <Select value={saleRentType} onValueChange={setSaleRentType}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder={t('search.saleRentType')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="both">{t('search.both')}</SelectItem>
+                <SelectItem value="rent">{t('search.forRent')}</SelectItem>
+                <SelectItem value="sale">{t('search.forSale')}</SelectItem>
+              </SelectContent>
+            </Select>
+
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Sort by" />
@@ -301,9 +320,9 @@ export default function Browse() {
                     <Badge variant="secondary" className="bg-white/90 text-gray-800">
                       ${listing.pricing.dailyRate}/day
                     </Badge>
-                    {listing.pricing.isForSale && (
+                    {listing.pricing.isForSale && listing.pricing.sellPrice && (
                       <Badge variant="outline" className="bg-white/90 text-green-700 border-green-300">
-                        For Sale: ${listing.pricing.sellPrice}
+                        {t('search.forSale')}: ${listing.pricing.sellPrice}
                       </Badge>
                     )}
                   </div>
@@ -381,18 +400,18 @@ export default function Browse() {
                           onClick={() => handleBookListing(listing)}
                         >
                           <Calendar className="h-3 w-3 mr-1" />
-                          {t('common.book')}
+                          {t('common.rent')}
                         </Button>
                       )}
                       {listing.pricing.isForSale && (
                         <Button
-                          variant="outline"
+                          variant={listing.pricing.isForRent ? "outline" : "default"}
                           className="flex-1"
                           size="sm"
                           onClick={() => handleContactSeller(listing)}
                         >
                           <Users className="h-3 w-3 mr-1" />
-                          {t('common.contact')}
+                          {t('common.buy')}
                         </Button>
                       )}
                     </div>

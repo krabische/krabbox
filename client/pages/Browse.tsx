@@ -28,9 +28,11 @@ import {
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Browse() {
   const { listings, searchListings } = useListings();
+  const { t } = useLanguage();
   
   // Debug: Log listings count
   useEffect(() => {
@@ -204,7 +206,7 @@ export default function Browse() {
       {/* Search Header */}
       <div className="bg-white border-b">
         <div className="container py-6">
-          <h1 className="text-3xl font-bold mb-6">Browse Luggage</h1>
+          <h1 className="text-3xl font-bold mb-6">{t('header.browseLuggage')}</h1>
 
           {/* Search Bar */}
           <div className="space-y-6">
@@ -212,7 +214,7 @@ export default function Browse() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Search by storage type, location, or features..."
+                  placeholder={t('browse.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -221,7 +223,7 @@ export default function Browse() {
               <div className="flex gap-4 items-end">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
-                    Start Date
+                    {t('browse.startDate')}
                   </label>
                   <Input
                     type="date"
@@ -232,7 +234,7 @@ export default function Browse() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
-                    End Date
+                    {t('browse.endDate')}
                   </label>
                   <Input
                     type="date"
@@ -243,7 +245,7 @@ export default function Browse() {
                 </div>
                 <Button onClick={handleSearch} className="h-10 bg-primary hover:bg-primary/90">
                   <Search className="h-4 w-4 mr-2" />
-                  Search
+                  {t('browse.search')}
                 </Button>
               </div>
             </div>
@@ -256,51 +258,51 @@ export default function Browse() {
               onValueChange={setSelectedCategory}
             >
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder={t('browse.category')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="garage">Garage</SelectItem>
-                <SelectItem value="shed">Shed</SelectItem>
-                <SelectItem value="pantry">Pantry</SelectItem>
-                <SelectItem value="cell">Storage Cell</SelectItem>
-                <SelectItem value="container">Container</SelectItem>
-                <SelectItem value="large-space">Large Space</SelectItem>
+                <SelectItem value="all">{t('browse.allCategories')}</SelectItem>
+                <SelectItem value="garage">{t('category.garage')}</SelectItem>
+                <SelectItem value="shed">{t('category.shed')}</SelectItem>
+                <SelectItem value="pantry">{t('category.pantry')}</SelectItem>
+                <SelectItem value="cell">{t('category.cell')}</SelectItem>
+                <SelectItem value="container">{t('category.container')}</SelectItem>
+                <SelectItem value="large-space">{t('category.largeSpace')}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={priceRange} onValueChange={setPriceRange}>
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Price Range" />
+                <SelectValue placeholder={t('browse.priceRange')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Prices</SelectItem>
-                <SelectItem value="under-10">Under $10/day</SelectItem>
-                <SelectItem value="10-20">$10-20/day</SelectItem>
-                <SelectItem value="20-50">$20-50/day</SelectItem>
-                <SelectItem value="over-50">Over $50/day</SelectItem>
+                <SelectItem value="all">{t('browse.allPrices')}</SelectItem>
+                <SelectItem value="under-10">{t('browse.under10')}</SelectItem>
+                <SelectItem value="10-20">{t('browse.tenToTwenty')}</SelectItem>
+                <SelectItem value="20-50">{t('browse.twentyToFifty')}</SelectItem>
+                <SelectItem value="over-50">{t('browse.over50')}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder={t('browse.sortBy')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="featured">Featured</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Highest Rated</SelectItem>
-                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="featured">{t('browse.featured')}</SelectItem>
+                <SelectItem value="price-low">{t('browse.priceLowHigh')}</SelectItem>
+                <SelectItem value="price-high">{t('browse.priceHighLow')}</SelectItem>
+                <SelectItem value="rating">{t('browse.highestRated')}</SelectItem>
+                <SelectItem value="newest">{t('browse.newestFirst')}</SelectItem>
               </SelectContent>
             </Select>
 
-            <Button 
+            <Button
               variant="outline"
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
             >
               <SlidersHorizontal className="h-4 w-4 mr-2" />
-              More Filters
+              {t('browse.moreFilters')}
             </Button>
           </div>
 
@@ -308,7 +310,7 @@ export default function Browse() {
           <div className="mt-4 pt-4 border-t">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Listing Type</Label>
+                <Label className="text-sm font-medium text-gray-700">{t('browse.listingType')}</Label>
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -316,7 +318,7 @@ export default function Browse() {
                       checked={selectedListingType === "rent"}
                       onCheckedChange={(checked) => setSelectedListingType(checked ? "rent" : "sale")}
                     />
-                    <Label htmlFor="browse-rent" className="text-sm">For Rent</Label>
+                    <Label htmlFor="browse-rent" className="text-sm">{t('browse.forRent')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -324,7 +326,7 @@ export default function Browse() {
                       checked={selectedListingType === "sale"}
                       onCheckedChange={(checked) => setSelectedListingType(checked ? "sale" : "rent")}
                     />
-                    <Label htmlFor="browse-sale" className="text-sm">For Sale</Label>
+                    <Label htmlFor="browse-sale" className="text-sm">{t('browse.forSale')}</Label>
                   </div>
                 </div>
               </div>
@@ -335,8 +337,7 @@ export default function Browse() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t">
             <div className="space-y-3">
               <label className="text-sm font-medium">
-                Price Range: ${priceRangeSlider[0]} - ${priceRangeSlider[1]} per
-                day
+                {t('browse.priceRangeLabel')}: ${priceRangeSlider[0]} - ${priceRangeSlider[1]} {t('browse.perDay')}
               </label>
               <Slider
                 value={priceRangeSlider}
@@ -349,7 +350,7 @@ export default function Browse() {
             </div>
             <div className="space-y-3">
               <label className="text-sm font-medium">
-                Size Range: {sizeRangeSlider[0]} - {sizeRangeSlider[1]} m²
+                {t('browse.sizeRange')}: {sizeRangeSlider[0]} - {sizeRangeSlider[1]} m²
               </label>
               <Slider
                 value={sizeRangeSlider}
@@ -367,46 +368,46 @@ export default function Browse() {
             <div className="mt-6 pt-6 border-t space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Type</label>
+                  <label className="text-sm font-medium">{t('browse.type')}</label>
                   <Select value={selectedType} onValueChange={setSelectedType}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Types" />
+                      <SelectValue placeholder={t('browse.allTypes')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="hardside">Hardside</SelectItem>
-                      <SelectItem value="softside">Softside</SelectItem>
-                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                      <SelectItem value="all">{t('browse.allTypes')}</SelectItem>
+                      <SelectItem value="hardside">{t('browse.hardside')}</SelectItem>
+                      <SelectItem value="softside">{t('browse.softside')}</SelectItem>
+                      <SelectItem value="hybrid">{t('browse.hybrid')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Condition</label>
+                  <label className="text-sm font-medium">{t('browse.condition')}</label>
                   <Select value={selectedCondition} onValueChange={setSelectedCondition}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Conditions" />
+                      <SelectValue placeholder={t('browse.allConditions')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Conditions</SelectItem>
-                      <SelectItem value="new">New</SelectItem>
-                      <SelectItem value="excellent">Excellent</SelectItem>
-                      <SelectItem value="good">Good</SelectItem>
-                      <SelectItem value="fair">Fair</SelectItem>
+                      <SelectItem value="all">{t('browse.allConditions')}</SelectItem>
+                      <SelectItem value="new">{t('browse.new')}</SelectItem>
+                      <SelectItem value="excellent">{t('browse.excellent')}</SelectItem>
+                      <SelectItem value="good">{t('browse.good')}</SelectItem>
+                      <SelectItem value="fair">{t('browse.fair')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Listing Type</label>
+                  <label className="text-sm font-medium">{t('browse.listingType')}</label>
                   <Select value={selectedListingType} onValueChange={setSelectedListingType}>
                     <SelectTrigger>
-                      <SelectValue placeholder="All Types" />
+                      <SelectValue placeholder={t('browse.allTypes')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="rent">For Rent</SelectItem>
-                      <SelectItem value="sale">For Sale</SelectItem>
+                      <SelectItem value="all">{t('browse.allTypes')}</SelectItem>
+                      <SelectItem value="rent">{t('browse.forRent')}</SelectItem>
+                      <SelectItem value="sale">{t('browse.forSale')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -414,7 +415,7 @@ export default function Browse() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Min Rental Days</label>
+                  <label className="text-sm font-medium">{t('browse.minRentalDays')}</label>
                   <Input
                     type="number"
                     placeholder="1"
@@ -423,7 +424,7 @@ export default function Browse() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Max Rental Days</label>
+                  <label className="text-sm font-medium">{t('browse.maxRentalDays')}</label>
                   <Input
                     type="number"
                     placeholder="30"
@@ -435,7 +436,7 @@ export default function Browse() {
 
               <div className="space-y-3">
                 <label className="text-sm font-medium">
-                  Security Deposit: ${securityDepositRange[0]} - ${securityDepositRange[1]}
+                  {t('browse.securityDeposit')}: ${securityDepositRange[0]} - ${securityDepositRange[1]}
                 </label>
                 <Slider
                   value={securityDepositRange}
@@ -455,7 +456,7 @@ export default function Browse() {
       <div className="container py-8">
         <div className="flex justify-between items-center mb-6">
           <p className="text-muted-foreground">
-            {sortedListings.length} luggage options available
+            {sortedListings.length} {t('browse.optionsAvailable')}
           </p>
         </div>
 
@@ -485,7 +486,7 @@ export default function Browse() {
                         variant="outline"
                         className="bg-white/90 text-green-700 border-green-300"
                       >
-                        For Sale: ${listing.pricing.sellPrice}
+                        {t('browse.forSale')}: ${listing.pricing.sellPrice}
                       </Badge>
                     )}
                   </div>
@@ -494,7 +495,7 @@ export default function Browse() {
                       variant="outline"
                       className="bg-white/90 text-gray-800 capitalize"
                     >
-                      {listing.category.replace("-", " ")}
+                      {t(`luggageCategory.${listing.category}`)}
                     </Badge>
                   </div>
                 </div>
@@ -537,7 +538,7 @@ export default function Browse() {
                         <span className="text-sm font-medium">
                           {listing.rating > 0
                             ? listing.rating.toFixed(1)
-                            : "New"}
+                            : t('browse.new')}
                         </span>
                         {listing.reviewCount > 0 && (
                           <span className="text-sm text-muted-foreground">
@@ -551,7 +552,7 @@ export default function Browse() {
                         }
                         className="text-xs"
                       >
-                        {listing.condition}
+                        {t(`browse.${listing.condition}`)}
                       </Badge>
                     </div>
 
@@ -565,10 +566,10 @@ export default function Browse() {
                                                  <div className="text-sm text-muted-foreground">
                            {listing.area && !isNaN(listing.area)
                              ? `${listing.area} m²`
-                             : 'Area not specified'
+                             : t('browse.areaNotSpecified')
                            }
-                         </div>
                       </div>
+                    </div>
                     </div>
 
                     <div className="flex gap-2">
@@ -582,7 +583,7 @@ export default function Browse() {
                           }}
                         >
                           <Calendar className="h-3 w-3 mr-1" />
-                          Book
+                          {t('common.book')}
                         </Button>
                       )}
                       {listing.pricing.isForSale && (
@@ -596,7 +597,7 @@ export default function Browse() {
                           }}
                         >
                           <Users className="h-3 w-3 mr-1" />
-                          Contact
+                          {t('common.contact')}
                         </Button>
                       )}
                     </div>
@@ -608,12 +609,11 @@ export default function Browse() {
         ) : (
           <div className="text-center py-12">
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No listings found</h3>
+            <h3 className="text-xl font-semibold mb-2">{t('browse.noResults')}</h3>
             <p className="text-muted-foreground mb-6">
-              Try adjusting your search criteria or check back later for new
-              listings.
+              {t('browse.adjustSearch')}
             </p>
-            <Button variant="outline">Clear Filters</Button>
+            <Button variant="outline">{t('browse.clearFilters')}</Button>
           </div>
         )}
       </div>

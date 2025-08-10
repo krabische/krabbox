@@ -17,6 +17,8 @@ export interface LuggageListing {
     depth: number;
     unit: 'cm' | 'inches';
   };
+  area?: number;
+  contactNumber?: string;
   features: string[];
   condition: 'new' | 'excellent' | 'good' | 'fair';
   location: {
@@ -42,6 +44,8 @@ export interface LuggageListing {
   };
   rating: number;
   reviewCount: number;
+  isArchived?: boolean;
+  archivedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -49,9 +53,12 @@ export interface LuggageListing {
 interface ListingsContextType {
   listings: LuggageListing[];
   userListings: LuggageListing[];
+  archivedListings: LuggageListing[];
   addListing: (listing: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => Promise<void>;
   updateListing: (id: string, updates: Partial<LuggageListing>) => Promise<void>;
   deleteListing: (id: string) => Promise<void>;
+  archiveListing: (id: string) => Promise<void>;
+  unarchiveListing: (id: string) => Promise<void>;
   getListingById: (id: string) => LuggageListing | undefined;
   searchListings: (filters: SearchFilters) => LuggageListing[];
   refreshListings: () => Promise<void>;
@@ -65,6 +72,7 @@ interface SearchFilters {
   maxPrice?: number;
   dateRange?: { start: string; end: string };
   features?: string[];
+  type?: 'sale' | 'rent' | 'both';
 }
 
 const ListingsContext = createContext<ListingsContextType | undefined>(undefined);
@@ -117,6 +125,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       depth: data.size_depth || 250,
       unit: data.size_unit || 'cm'
     },
+    area: data.area,
+    contactNumber: data.contact_number,
     features: data.features || [],
     condition: data.condition || 'good',
     location: {
@@ -141,6 +151,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     },
     rating: data.rating || 0,
     reviewCount: data.review_count || 0,
+    isArchived: data.is_archived || false,
+    archivedAt: data.archived_at,
     createdAt: data.created_at,
     updatedAt: data.updated_at
   });
@@ -283,6 +295,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           size_width: listingData.size.width,
           size_depth: listingData.size.depth,
           size_unit: listingData.size.unit,
+          area: listingData.area,
+          contact_number: listingData.contactNumber,
           features: listingData.features,
           condition: listingData.condition,
           location_address: listingData.location.address,
@@ -329,14 +343,53 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
   const updateListing = async (id: string, updates: Partial<LuggageListing>) => {
     try {
+      const updateData: any = {
+        updated_at: new Date().toISOString()
+      };
+
+      if (updates.title) updateData.title = updates.title;
+      if (updates.description) updateData.description = updates.description;
+      if (updates.category) updateData.category = updates.category;
+      if (updates.type) updateData.type = updates.type;
+      if (updates.condition) updateData.condition = updates.condition;
+      if (updates.features) updateData.features = updates.features;
+      if (updates.images) updateData.images = updates.images;
+      if (updates.area) updateData.area = updates.area;
+      if (updates.contactNumber) updateData.contact_number = updates.contactNumber;
+
+      if (updates.size) {
+        updateData.size_height = updates.size.height;
+        updateData.size_width = updates.size.width;
+        updateData.size_depth = updates.size.depth;
+        updateData.size_unit = updates.size.unit;
+      }
+
+      if (updates.location) {
+        updateData.location_address = updates.location.address;
+        updateData.location_city = updates.location.city;
+        updateData.location_state = updates.location.state;
+        updateData.location_zip_code = updates.location.zipCode;
+      }
+
+      if (updates.availability) {
+        updateData.available = updates.availability.available;
+        updateData.min_rental_days = updates.availability.minRentalDays;
+        updateData.max_rental_days = updates.availability.maxRentalDays;
+      }
+
+      if (updates.pricing) {
+        updateData.daily_rate = updates.pricing.dailyRate;
+        updateData.weekly_rate = updates.pricing.weeklyRate;
+        updateData.monthly_rate = updates.pricing.monthlyRate;
+        updateData.security_deposit = updates.pricing.securityDeposit;
+        updateData.sell_price = updates.pricing.sellPrice;
+        updateData.is_for_sale = updates.pricing.isForSale;
+        updateData.is_for_rent = updates.pricing.isForRent;
+      }
+
       const { error } = await supabase
         .from('listings')
-        .update({
-          title: updates.title,
-          description: updates.description,
-          // Add other fields as needed
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', id);
 
       if (error) {
@@ -384,16 +437,104 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const archiveListing = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .rpc('archive_listing', { listing_id: id });
+
+      if (error) {
+        console.error('Error archiving listing:', error);
+        throw error;
+      }
+
+      setListings(prev =>
+        prev.map(listing =>
+          listing.id === id
+            ? {
+                ...listing,
+                isArchived: true,
+                archivedAt: new Date().toISOString(),
+                availability: { ...listing.availability, available: false }
+              }
+            : listing
+        )
+      );
+    } catch (error) {
+      console.error('Error archiving listing:', error);
+      // Fallback to local state update
+      setListings(prev =>
+        prev.map(listing =>
+          listing.id === id
+            ? {
+                ...listing,
+                isArchived: true,
+                archivedAt: new Date().toISOString(),
+                availability: { ...listing.availability, available: false }
+              }
+            : listing
+        )
+      );
+    }
+  };
+
+  const unarchiveListing = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .rpc('unarchive_listing', { listing_id: id });
+
+      if (error) {
+        console.error('Error unarchiving listing:', error);
+        throw error;
+      }
+
+      setListings(prev =>
+        prev.map(listing =>
+          listing.id === id
+            ? {
+                ...listing,
+                isArchived: false,
+                archivedAt: undefined,
+                availability: { ...listing.availability, available: true }
+              }
+            : listing
+        )
+      );
+    } catch (error) {
+      console.error('Error unarchiving listing:', error);
+      // Fallback to local state update
+      setListings(prev =>
+        prev.map(listing =>
+          listing.id === id
+            ? {
+                ...listing,
+                isArchived: false,
+                archivedAt: undefined,
+                availability: { ...listing.availability, available: true }
+              }
+            : listing
+        )
+      );
+    }
+  };
+
   const getListingById = (id: string): LuggageListing | undefined => {
     return listings.find(listing => listing.id === id);
   };
 
   const searchListings = (filters: SearchFilters): LuggageListing[] => {
     return listings.filter(listing => {
+      // Exclude archived listings from search results
+      if (listing.isArchived) return false;
+
       if (filters.category && listing.category !== filters.category) return false;
       if (filters.location && !listing.location.city.toLowerCase().includes(filters.location.toLowerCase())) return false;
       if (filters.minPrice && listing.pricing.dailyRate < filters.minPrice) return false;
       if (filters.maxPrice && listing.pricing.dailyRate > filters.maxPrice) return false;
+
+      // Filter by sale/rent type
+      if (filters.type === 'sale' && !listing.pricing.isForSale) return false;
+      if (filters.type === 'rent' && !listing.pricing.isForRent) return false;
+
       return true;
     });
   };
@@ -402,15 +543,21 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
     await loadListings();
   };
 
-  // Get user-specific listings
-  const userListings = user ? getUserListings(user.id) : [];
+  // Get user-specific listings (excluding archived)
+  const userListings = user ? getUserListings(user.id).filter(listing => !listing.isArchived) : [];
+
+  // Get user's archived listings
+  const archivedListings = user ? getUserListings(user.id).filter(listing => listing.isArchived) : [];
 
   const value = {
     listings,
     userListings,
+    archivedListings,
     addListing,
     updateListing,
     deleteListing,
+    archiveListing,
+    unarchiveListing,
     getListingById,
     searchListings,
     refreshListings,

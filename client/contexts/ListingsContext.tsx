@@ -144,8 +144,41 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           data?.length || 0,
           "listings",
         );
+
+        // Load images from listing_images and build a map
+        const { data: imagesRows, error: imagesError } = await supabase
+          .from("listing_images")
+          .select("listing_id,image_url,order_index")
+          .order("order_index", { ascending: true });
+
+        if (imagesError) {
+          console.warn("Could not load listing_images:", imagesError.message);
+        }
+
+        const imagesMap = new Map<string, string[]>();
+        if (imagesRows) {
+          for (const row of imagesRows as any[]) {
+            const key = String(row.listing_id);
+            if (!imagesMap.has(key)) imagesMap.set(key, []);
+            imagesMap.get(key)!.push(row.image_url);
+          }
+        }
+
         // Transform Supabase data to our interface
-        const transformedListings = data?.map(transformSupabaseListing) || [];
+        const transformedListings = (data || [])
+          .filter((row: any) => row.is_deleted !== true) // exclude deleted
+          .map((row: any) => {
+            const idStr = String(row.id);
+            const imagesFromMap = imagesMap.get(idStr);
+            const images = imagesFromMap && imagesFromMap.length > 0
+              ? imagesFromMap
+              : row.image_url
+                ? [row.image_url]
+                : Array.isArray(row.images) && row.images.length > 0
+                  ? row.images
+                  : ["/placeholder.svg"];
+            return transformSupabaseListing(row, images);
+          });
         setListings(transformedListings);
       }
     } catch (error) {
@@ -160,13 +193,13 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   };
 
   // Transform Supabase listing to our interface
-  const transformSupabaseListing = (data: any): LuggageListing => ({
-    id: data.id,
-    hostId: data.host_id,
-    hostName: data.host_name || "Anonymous Host",
+  const transformSupabaseListing = (data: any, images: string[] = []): LuggageListing => ({
+    id: String(data.id),
+    hostId: data.host_id || data.owner_id,
+    hostName: data.host_name || data.owner_name || "Anonymous Host",
     title: data.title,
     description: data.description || "",
-    images: data.images || ["/placeholder.svg"],
+    images,
     category: data.category || "garage",
     type: data.type || "hardside",
     size: {
@@ -175,29 +208,29 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       depth: data.size_depth || 250,
       unit: data.size_unit || "cm",
     },
-    area: data.area,
+    area: data.area ?? (data.square_meters ? Number(data.square_meters) : undefined),
     contactNumber: data.contact_number,
-    features: data.features || [],
+    features: Array.isArray(data.features) ? data.features : [],
     condition: data.condition || "good",
     location: {
-      address: data.location_address || "",
-      city: data.location_city || "",
-      state: data.location_state || "",
-      zipCode: data.location_zip_code || "",
+      address: data.location_address || data.address || "",
+      city: data.location_city || data.location || "",
+      state: data.location_state || data.state || "",
+      zipCode: data.location_zip_code || data.zip_code || "",
     },
     availability: {
-      available: data.available !== false,
+      available: data.available !== false && data.is_available !== false,
       minRentalDays: data.min_rental_days || 1,
       maxRentalDays: data.max_rental_days || 365,
     },
     pricing: {
-      dailyRate: data.daily_rate || 10,
+      dailyRate: data.daily_rate ?? (data.price ? Number(data.price) : 10),
       weeklyRate: data.weekly_rate,
       monthlyRate: data.monthly_rate,
-      securityDeposit: data.security_deposit || 50,
+      securityDeposit: data.security_deposit ?? 50,
       sellPrice: data.sell_price,
-      isForSale: data.is_for_sale || false,
-      isForRent: data.is_for_rent !== false,
+      isForSale: data.is_for_sale ?? (data.listing_type === "sale"),
+      isForRent: data.is_for_rent ?? (data.listing_type !== "sale"),
     },
     rating: data.rating || 0,
     reviewCount: data.review_count || 0,
@@ -357,7 +390,6 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           host_name: listingData.hostName,
           title: listingData.title,
           description: listingData.description,
-          images: listingData.images,
           category: listingData.category,
           type: listingData.type,
           size_height: listingData.size.height,
@@ -397,7 +429,23 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
       if (data) {
         console.log("Successfully added listing to Supabase");
-        const newListing = transformSupabaseListing(data);
+
+        // Save images to listing_images table with order
+        if (Array.isArray(listingData.images) && listingData.images.length > 0) {
+          const imageRecords = listingData.images.map((url, index) => ({
+            listing_id: data.id,
+            image_url: url,
+            order_index: index,
+          }));
+          const { error: imagesInsertError } = await supabase
+            .from("listing_images")
+            .insert(imageRecords);
+          if (imagesInsertError) {
+            console.warn("Failed to insert listing images:", imagesInsertError.message);
+          }
+        }
+
+        const newListing = transformSupabaseListing(data, listingData.images);
         setListings((prev) => [newListing, ...prev]);
       }
     } catch (error) {
@@ -431,7 +479,7 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       if (updates.type) updateData.type = updates.type;
       if (updates.condition) updateData.condition = updates.condition;
       if (updates.features) updateData.features = updates.features;
-      if (updates.images) updateData.images = updates.images;
+      // images are stored in listing_images table; handle below
       if (updates.area) updateData.area = updates.area;
       if (updates.contactNumber)
         updateData.contact_number = updates.contactNumber;
@@ -476,6 +524,30 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         throw error;
       }
 
+      // If images provided, replace in listing_images table
+      if (updates.images) {
+        const { error: delErr } = await supabase
+          .from("listing_images")
+          .delete()
+          .eq("listing_id", id);
+        if (delErr) {
+          console.warn("Failed to delete old images:", delErr.message);
+        }
+        if (updates.images.length > 0) {
+          const imageRecords = updates.images.map((url, index) => ({
+            listing_id: id,
+            image_url: url,
+            order_index: index,
+          }));
+          const { error: insErr } = await supabase
+            .from("listing_images")
+            .insert(imageRecords);
+          if (insErr) {
+            console.warn("Failed to insert new images:", insErr.message);
+          }
+        }
+      }
+
       setListings((prev) =>
         prev.map((listing) =>
           listing.id === id
@@ -498,26 +570,52 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
   const deleteListing = async (id: string) => {
     try {
-      const { error } = await supabase.from("listing").delete().eq("id", id);
+      // Soft delete: mark as is_deleted and set available to false
+      const { error } = await supabase
+        .from("listing")
+        .update({ is_deleted: true, available: false })
+        .eq("id", id);
 
       if (error) {
         console.error("Error deleting listing:", error);
         throw error;
       }
 
-      setListings((prev) => prev.filter((listing) => listing.id !== id));
+      setListings((prev) =>
+        prev.map((listing) =>
+          listing.id === id
+            ? {
+                ...listing,
+                availability: { ...listing.availability, available: false },
+                // treat as archived/deleted in UI
+                isArchived: true,
+              }
+            : listing,
+        ),
+      );
     } catch (error) {
       console.error("Error deleting listing:", error);
       // Fallback to local state update
-      setListings((prev) => prev.filter((listing) => listing.id !== id));
+      setListings((prev) =>
+        prev.map((listing) =>
+          listing.id === id
+            ? {
+                ...listing,
+                availability: { ...listing.availability, available: false },
+                isArchived: true,
+              }
+            : listing,
+        ),
+      );
     }
   };
 
   const archiveListing = async (id: string) => {
     try {
-      const { error } = await supabase.rpc("archive_listing", {
-        listing_id: id,
-      });
+      const { error } = await supabase
+        .from("listing")
+        .update({ is_archived: true, archived_at: new Date().toISOString(), available: false })
+        .eq("id", id);
 
       if (error) {
         console.error("Error archiving listing:", error);
@@ -556,9 +654,10 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
 
   const unarchiveListing = async (id: string) => {
     try {
-      const { error } = await supabase.rpc("unarchive_listing", {
-        listing_id: id,
-      });
+      const { error } = await supabase
+        .from("listing")
+        .update({ is_archived: false, archived_at: null, available: true })
+        .eq("id", id);
 
       if (error) {
         console.error("Error unarchiving listing:", error);

@@ -151,7 +151,7 @@ export default function Index() {
       {/* Supabase Test Component (for debugging) */}
       <div className="bg-gray-100 py-8">
         <div className="container">
-          <SupabaseTest />
+          <SupabaseDebugTest />
         </div>
       </div>
     </div>

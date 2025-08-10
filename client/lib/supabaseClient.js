@@ -5,6 +5,11 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIU
 
 console.log('Supabase URL:', supabaseUrl)
 console.log('Supabase Key exists:', !!supabaseAnonKey)
+console.log('Environment check:', {
+  hasViteSupabaseUrl: !!import.meta.env.VITE_SUPABASE_URL,
+  hasViteSupabaseKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+  mode: import.meta.env.MODE
+})
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -17,4 +22,4 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       eventsPerSecond: 10
     }
   }
-}) 
+})

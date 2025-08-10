@@ -79,7 +79,7 @@ export function Header() {
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/host">
                     <User className="h-4 w-4 mr-2" />
-                    Host
+                    {t('header.host')}
                   </Link>
                 </Button>
                 
@@ -106,25 +106,25 @@ export function Header() {
                     <DropdownMenuItem asChild>
                       <Link to="/account" className="flex items-center">
                         <User className="mr-2 h-4 w-4" />
-                        <span>Account</span>
+                        <span>{t('header.account')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/account" className="flex items-center">
                         <Calendar className="mr-2 h-4 w-4" />
-                        <span>My Bookings</span>
+                        <span>{t('header.myBookings')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link to="/account" className="flex items-center">
                         <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
+                        <span>{t('header.settings')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={logout}>
                       <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
+                      <span>{t('header.logout')}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -224,7 +224,7 @@ export function Header() {
                     <Button variant="outline" className="w-full" asChild>
                       <Link to="/account" onClick={() => setIsMenuOpen(false)}>
                         <User className="h-4 w-4 mr-2" />
-                        My Account
+                        {t('header.myAccount')}
                       </Link>
                     </Button>
                     <Button 
@@ -236,7 +236,7 @@ export function Header() {
                       }}
                     >
                       <LogOut className="h-4 w-4 mr-2" />
-                      Log out
+                      {t('header.logout')}
                     </Button>
                   </>
                 ) : (

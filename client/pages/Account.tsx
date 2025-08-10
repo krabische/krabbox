@@ -22,10 +22,12 @@ import {
   Shield,
   DollarSign,
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Account() {
   const { user, isAuthenticated, logout } = useAuth();
   const { listings, userListings, updateListing } = useListings();
+  const { t } = useLanguage();
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [managementModalOpen, setManagementModalOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<any>(null);
@@ -110,7 +112,7 @@ export default function Account() {
                 {user.firstName} {user.lastName}
               </h1>
               <p className="text-white/80 mb-2">
-                Member since {new Date(user.joinDate).getFullYear()}
+                {t('account.memberSince')} {new Date(user.joinDate).getFullYear()}
               </p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
@@ -118,7 +120,7 @@ export default function Account() {
                   <span>4.9 rating</span>
                 </div>
                 <Badge variant="secondary" className="bg-white/20 text-white">
-                  {user.isHost ? "Host" : "Traveler"}
+                  {user.isHost ? t('account.host') : t('account.traveler')}
                 </Badge>
               </div>
             </div>
@@ -127,10 +129,10 @@ export default function Account() {
 
         <Tabs defaultValue="bookings" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="bookings">My Bookings</TabsTrigger>
-            <TabsTrigger value="listings">My Listings</TabsTrigger>
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="bookings">{t('account.myBookingsTab')}</TabsTrigger>
+            <TabsTrigger value="listings">{t('account.myListingsTab')}</TabsTrigger>
+            <TabsTrigger value="profile">{t('account.profileTab')}</TabsTrigger>
+            <TabsTrigger value="settings">{t('account.settingsTab')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="bookings" className="space-y-6">
@@ -138,7 +140,7 @@ export default function Account() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Bookings
+                    {t('account.totalBookings')}
                   </CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -153,7 +155,7 @@ export default function Account() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Next Trip
+                    {t('account.nextTrip')}
                   </CardTitle>
                   <MapPin className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
@@ -167,7 +169,7 @@ export default function Account() {
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Recent Bookings</h3>
+              <h3 className="text-lg font-semibold">{t('account.recentBookings')}</h3>
               {mockBookings.map((booking) => (
                 <Card key={booking.id}>
                   <CardContent className="p-6">
@@ -217,7 +219,7 @@ export default function Account() {
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
-                        Active Listings
+                        {t('account.activeListings')}
                       </CardTitle>
                       <Package className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
@@ -226,7 +228,7 @@ export default function Account() {
                          {localListings.length}
                        </div>
                       <p className="text-xs text-muted-foreground">
-                        All listings active
+                        {t('account.allListingsActive')}
                       </p>
                     </CardContent>
                   </Card>
@@ -234,7 +236,7 @@ export default function Account() {
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
-                        Monthly Earnings
+                        {t('account.monthlyEarnings')}
                       </CardTitle>
                       <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
@@ -251,14 +253,14 @@ export default function Account() {
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
-                        Total Earned
+                        {t('account.totalEarned')}
                       </CardTitle>
                       <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">${totalEarnings}</div>
                       <Button variant="outline" size="sm" className="mt-2">
-                        Withdraw
+                        {t('account.withdraw')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -267,7 +269,7 @@ export default function Account() {
                 {/* Earnings Graph */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Earnings Overview</CardTitle>
+                    <CardTitle>{t('account.earningsOverview')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-64 flex items-end justify-between gap-2">
@@ -297,7 +299,7 @@ export default function Account() {
 
                 {/* User's Listings */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Your Listings</h3>
+                  <h3 className="text-lg font-semibold">{t('account.yourListings')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {localListings.map((listing) => (
                       <Card 
@@ -336,14 +338,14 @@ export default function Account() {
                           </p>
                           <div className="flex items-center justify-between mt-3">
                             <Badge variant="outline" className="text-xs">
-                              {listing.condition}
+                              {t(`browse.${listing.condition}`)}
                             </Badge>
                             <div className="flex items-center">
                               <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 mr-1" />
                               <span className="text-xs">
                                 {listing.rating > 0
                                   ? listing.rating.toFixed(1)
-                                  : "New"}
+                                  : t('browse.new')}
                               </span>
                             </div>
                           </div>
@@ -358,13 +360,13 @@ export default function Account() {
                 <CardContent className="p-12 text-center">
                   <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">
-                    No Listings Yet
+                    {t('account.noListingsYet')}
                   </h3>
                   <p className="text-muted-foreground mb-6">
-                    Start earning money by listing your storage space for rent.
+                    {t('account.startEarning')}
                   </p>
                   <Button asChild>
-                    <Link to="/host">Create Your First Listing</Link>
+                    <Link to="/host">{t('account.createFirstListing')}</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -376,32 +378,32 @@ export default function Account() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Personal Information
+                  {t('account.personalInformation')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium">First Name</label>
+                    <label className="text-sm font-medium">{t('account.firstName')}</label>
                     <p className="text-muted-foreground">{user.firstName}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Last Name</label>
+                    <label className="text-sm font-medium">{t('account.lastName')}</label>
                     <p className="text-muted-foreground">{user.lastName}</p>
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Email</label>
+                  <label className="text-sm font-medium">{t('account.email')}</label>
                   <p className="text-muted-foreground">{user.email}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Mobile Number</label>
+                  <label className="text-sm font-medium">{t('account.mobileNumber')}</label>
                   <p className="text-muted-foreground">
                     {user.phoneNumber || "Not provided"}
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Member Since</label>
+                  <label className="text-sm font-medium">{t('account.memberSince')}</label>
                   <p className="text-muted-foreground">
                     {new Date(user.joinDate).toLocaleDateString()}
                   </p>
@@ -411,7 +413,7 @@ export default function Account() {
                   className="mt-4"
                   onClick={() => setEditProfileOpen(true)}
                 >
-                  Edit Profile
+                  {t('account.editProfile')}
                 </Button>
               </CardContent>
             </Card>
@@ -422,50 +424,50 @@ export default function Account() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />
-                  Account Settings
+                  {t('account.accountSettings')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium">Email Notifications</h4>
+                    <h4 className="font-medium">{t('account.emailNotifications')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      Receive booking confirmations and updates
+                      {t('account.receiveUpdates')}
                     </p>
                   </div>
                   <Button variant="outline" size="sm">
-                    Manage
+                    {t('account.manage')}
                   </Button>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium">Privacy Settings</h4>
+                    <h4 className="font-medium">{t('account.privacySettings')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      Control who can see your profile
+                      {t('account.controlProfile')}
                     </p>
                   </div>
                   <Button variant="outline" size="sm">
-                    Configure
+                    {t('account.configure')}
                   </Button>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium">Payment Methods</h4>
+                    <h4 className="font-medium">{t('account.paymentMethods')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      Manage your payment options
+                      {t('account.managePayments')}
                     </p>
                   </div>
                   <Button variant="outline" size="sm">
                     <CreditCard className="h-4 w-4 mr-2" />
-                    Manage
+                    {t('account.manage')}
                   </Button>
                 </div>
 
                 <div className="pt-6 border-t">
                   <Button variant="destructive" onClick={logout}>
-                    Sign Out
+                    {t('account.signOut')}
                   </Button>
                 </div>
               </CardContent>

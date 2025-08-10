@@ -50,9 +50,9 @@ export interface LuggageListing {
 interface ListingsContextType {
   listings: LuggageListing[];
   userListings: LuggageListing[];
-      addListing: (listing: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => Promise<void>;
-    updateListing: (id: string, updates: Partial<LuggageListing>) => Promise<void>;
-    deleteListing: (id: string) => Promise<void>;
+  addListing: (listing: Omit<LuggageListing, 'id' | 'createdAt' | 'updatedAt' | 'rating' | 'reviewCount'>) => Promise<void>;
+  updateListing: (id: string, updates: Partial<LuggageListing>) => Promise<void>;
+  deleteListing: (id: string) => Promise<void>;
   getListingById: (id: string) => LuggageListing | undefined;
   searchListings: (filters: SearchFilters) => LuggageListing[];
 }
@@ -74,13 +74,21 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [userListings, setUserListings] = useState<LuggageListing[]>([]);
 
-  // Load listings from Supabase
+  // Load listings from Supabase whenever the user changes
   useEffect(() => {
     loadListings();
-  }, []);
+  }, [user]);
 
-    const loadListings = async () => {
+  const loadListings = async () => {
     try {
+      // Ensure we have the latest session before fetching
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        console.error('Error getting session:', sessionError);
+      } else {
+        console.log('Using session for loadListings:', sessionData.session?.user?.id);
+      }
+
       // First, load all listings
       const { data: listingsData, error: listingsError } = await supabase
         .from('listing')

@@ -154,8 +154,8 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
               monthlyRate: item.monthly_rate,
               securityDeposit: item.security_deposit || 50,
               sellPrice: item.sell_price,
-              isForSale: false,
-              isForRent: true
+              isForSale: item.listing_type === 'sale',
+              isForRent: item.listing_type === 'rent'
             },
             rating: item.rating || 0,
             reviewCount: item.review_count || 0,
@@ -215,7 +215,11 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
         condition: listingData.condition,
         features: listingData.features,
         contact_number: listingData.contactNumber,
-        listing_type: listingData.pricing.isForSale ? 'sale' : 'rent',
+        listing_type: listingData.pricing.isForSale
+          ? 'sale'
+          : listingData.pricing.isForRent
+            ? 'rent'
+            : 'rent',
         weekly_rate: listingData.pricing.weeklyRate,
         monthly_rate: listingData.pricing.monthlyRate,
         security_deposit: listingData.pricing.securityDeposit,
@@ -332,7 +336,17 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
       if (updates.location?.state !== undefined) supabaseUpdates.state = updates.location.state;
       if (updates.location?.zipCode !== undefined) supabaseUpdates.zip_code = updates.location.zipCode;
       if (updates.availability?.available !== undefined) supabaseUpdates.available = updates.availability.available;
-      if (updates.pricing?.isForSale !== undefined) supabaseUpdates.listing_type = updates.pricing.isForSale ? 'sale' : 'rent';
+      if (
+        updates.pricing?.isForSale !== undefined ||
+        updates.pricing?.isForRent !== undefined
+      ) {
+        const listingType = updates.pricing?.isForSale
+          ? 'sale'
+          : updates.pricing?.isForRent
+            ? 'rent'
+            : undefined;
+        if (listingType) supabaseUpdates.listing_type = listingType;
+      }
       if (updates.size?.height !== undefined) supabaseUpdates.square_meters = updates.size.height;
 
       const { error } = await supabase

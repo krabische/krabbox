@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateListingForm } from "@/components/CreateListingForm";
 import { AuthModal } from "@/components/AuthModal";
+import { UserListings } from "@/components/UserListings";
+import { useListings } from "@/contexts/ListingsContext";
 import { useState } from "react";
 import {
   TrendingUp,
@@ -18,6 +20,7 @@ import {
 
 export default function Host() {
   const { isAuthenticated, user } = useAuth();
+  const { userListings } = useListings();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [showListingForm, setShowListingForm] = useState(false);
 
@@ -222,7 +225,7 @@ export default function Host() {
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">{userListings.length}</div>
               <p className="text-xs text-muted-foreground">
                 +0 from last month
               </p>
@@ -271,33 +274,37 @@ export default function Host() {
 
         {/* Main Content */}
         {!showListingForm ? (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-6" />
-              <h3 className="text-2xl font-bold mb-4">Create Your First Listing</h3>
-              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                Start earning money by listing your luggage for rent. It only takes a few minutes to create your first listing.
-              </p>
-              <Button 
-                size="lg"
-                onClick={() => setShowListingForm(true)}
-                className="text-lg px-8 py-3 h-auto"
-              >
-                <Plus className="mr-2 h-5 w-5" />
-                Create Listing
-              </Button>
-            </CardContent>
-          </Card>
+          userListings.length === 0 ? (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <Package className="h-16 w-16 text-muted-foreground mx-auto mb-6" />
+                <h3 className="text-2xl font-bold mb-4">Create Your First Listing</h3>
+                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                  Start earning money by listing your storage space for rent. It only takes a few minutes to create your first listing.
+                </p>
+                <Button
+                  size="lg"
+                  onClick={() => setShowListingForm(true)}
+                  className="text-lg px-8 py-3 h-auto"
+                >
+                  <Plus className="mr-2 h-5 w-5" />
+                  Create Listing
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <UserListings />
+          )
         ) : (
           <div>
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-bold">Create New Listing</h2>
                 <p className="text-muted-foreground">
-                  Add your luggage details to start earning money.
+                  Add your storage space details to start earning money.
                 </p>
               </div>
-              <Button 
+              <Button
                 variant="outline"
                 onClick={() => setShowListingForm(false)}
               >

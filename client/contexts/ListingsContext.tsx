@@ -76,31 +76,17 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [userListings, setUserListings] = useState<LuggageListing[]>([]);
 
-  // Load listings from Supabase whenever the user changes
+  // Load listings from Supabase
   useEffect(() => {
     loadListings();
-  }, [user]);
+  }, []);
 
   const loadListings = async () => {
     try {
-      // Ensure we have the latest session before fetching
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) {
-        console.error('Error getting session:', sessionError);
-      } else {
-        console.log('Using session for loadListings:', sessionData.session?.user?.id);
-      }
-
       // First, load all listings
       const { data: listingsData, error: listingsError } = await supabase
         .from('listing')
-        .select(`
-          *,
-          profiles:owner_id (
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (listingsError) {
@@ -130,48 +116,27 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
           });
         }
 
-        const formattedListings: LuggageListing[] = listingsData
-          // Exclude deleted or unavailable listings
-          .filter((item: any) => !item.is_deleted && item.available !== false)
-          .map((item: any) => {
+        const formattedListings: LuggageListing[] = listingsData.map((item: any) => {
           // Get images for this listing, fallback to main image_url if no images in listing_images
           const listingImages = imagesMap.get(item.id) || [];
           const images = listingImages.length > 0 ? listingImages : (item.image_url ? [item.image_url] : ['/placeholder.svg']);
 
-          // Get user info for host name
-          const hostName = item.profiles?.full_name || item.host_name || 'Unknown Host';
-          
-          // Get square meters - try different possible field names
-          const squareMeters = item.square_meters || item.square_meters || item.area || 1;
-
-          const sizeData = item.size || {
-            height: parseFloat(squareMeters) || 1,
-            width: 1,
-            depth: 1,
-            unit: 'sqm'
-          };
-          const area = parseFloat(item.square_meters) || (sizeData.unit === 'sqm' ? sizeData.height : 0);
+          const area = parseFloat(item.square_meters) || 1;
 
           return {
             id: item.id.toString(),
             hostId: item.owner_id,
-            hostName: hostName,
+            hostName: item.host_name || 'Unknown Host',
             contactNumber: item.contact_number || '',
-            // Debug info
-            _debug: {
-              owner_id: item.owner_id,
-              user_id: user?.id,
-              isOwner: item.owner_id === user?.id
-            },
             title: item.title,
             description: item.description,
             images: images,
-            category: item.category || 'carry-on',
-            type: item.type || 'hardside',
-            size: sizeData,
+            category: 'carry-on',
+            type: 'hardside',
+            size: { height: area, width: area, depth: 1, unit: 'sqm' },
             area,
-            features: item.features || [],
-            condition: item.condition || 'excellent',
+            features: [],
+            condition: 'excellent',
             location: {
               address: item.address || '',
               city: item.location,
@@ -179,9 +144,9 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
               zipCode: item.zip_code || ''
             },
             availability: {
-              available: item.available !== false,
-              minRentalDays: item.min_rental_days || 1,
-              maxRentalDays: item.max_rental_days || 30
+              available: true,
+              minRentalDays: 1,
+              maxRentalDays: 30
             },
             pricing: {
               dailyRate: item.price,
@@ -189,21 +154,18 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
               monthlyRate: item.monthly_rate,
               securityDeposit: item.security_deposit || 50,
               sellPrice: item.sell_price,
-              isForSale: item.listing_type === 'sale',
-              isForRent: item.listing_type !== 'sale'
+              isForSale: false,
+              isForRent: true
             },
             rating: item.rating || 0,
             reviewCount: item.review_count || 0,
             createdAt: item.created_at,
-            updatedAt: item.created_at,
-            isDeleted: item.is_deleted || false
+            updatedAt: item.created_at
           };
         });
 
         setListings(formattedListings);
         console.log('Loaded listings from Supabase:', formattedListings);
-        console.log('Total listings loaded:', formattedListings.length);
-        console.log('Available listings:', formattedListings.filter(l => !l.isDeleted && l.availability.available).length);
       }
     } catch (error) {
       console.error('Error loading listings:', error);
@@ -213,19 +175,12 @@ export function ListingsProvider({ children }: { children: ReactNode }) {
   };
 
   const getUserListings = (userId: string): LuggageListing[] => {
-    const userListings = listings.filter(listing => listing.hostId === userId && !listing.isDeleted);
-    console.log('getUserListings called for userId:', userId);
-    console.log('All listings:', listings.length);
-    console.log('User listings found:', userListings.length);
-    console.log('User listings:', userListings);
-    return userListings;
+    return listings.filter(listing => listing.hostId === userId);
   };
 
   useEffect(() => {
     if (user?.id) {
-      const userListings = getUserListings(user.id);
-      console.log('User listings:', userListings);
-      setUserListings(userListings);
+      setUserListings(getUserListings(user.id));
     } else {
       setUserListings([]);
     }

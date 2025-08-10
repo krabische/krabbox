@@ -1,20 +1,20 @@
--- Включить RLS для таблицы listing
-ALTER TABLE listing ENABLE ROW LEVEL SECURITY;
+-- Включить RLS для таблицы listings
+ALTER TABLE listings ENABLE ROW LEVEL SECURITY;
 
 -- Политика для просмотра всех объявлений
-CREATE POLICY "Anyone can view listings" ON listing
+CREATE POLICY "Anyone can view listings" ON listings
   FOR SELECT USING (true);
 
 -- Политика для создания объявлений (только аутентифицированные пользователи)
-CREATE POLICY "Authenticated users can create listings" ON listing
+CREATE POLICY "Authenticated users can create listings" ON listings
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
 -- Политика для обновления объявлений (только владелец)
-CREATE POLICY "Users can update their own listings" ON listing
+CREATE POLICY "Users can update their own listings" ON listings
   FOR UPDATE USING (auth.uid() = owner_id);
 
 -- Политика для удаления объявлений (только владелец)
-CREATE POLICY "Users can delete their own listings" ON listing
+CREATE POLICY "Users can delete their own listings" ON listings
   FOR DELETE USING (auth.uid() = owner_id); 
 
 -- Allow anyone to view images

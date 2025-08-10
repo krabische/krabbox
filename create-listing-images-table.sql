@@ -1,7 +1,7 @@
 -- Create listing_images table
 CREATE TABLE IF NOT EXISTS listing_images (
   id SERIAL PRIMARY KEY,
-  listing_id INTEGER NOT NULL REFERENCES listing(id) ON DELETE CASCADE,
+  listing_id INTEGER NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
   image_url TEXT NOT NULL,
   order_index INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -24,9 +24,9 @@ CREATE POLICY "Users can add images to their own listings" ON listing_images
   FOR INSERT WITH CHECK (
     auth.uid() IS NOT NULL AND
     EXISTS (
-      SELECT 1 FROM listing 
-      WHERE listing.id = listing_images.listing_id 
-      AND listing.owner_id = auth.uid()
+      SELECT 1 FROM listings
+      WHERE listings.id = listing_images.listing_id
+      AND listings.owner_id = auth.uid()
     )
   );
 
@@ -34,9 +34,9 @@ CREATE POLICY "Users can add images to their own listings" ON listing_images
 CREATE POLICY "Users can update images for their own listings" ON listing_images
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM listing 
-      WHERE listing.id = listing_images.listing_id 
-      AND listing.owner_id = auth.uid()
+      SELECT 1 FROM listings
+      WHERE listings.id = listing_images.listing_id
+      AND listings.owner_id = auth.uid()
     )
   );
 
@@ -44,9 +44,9 @@ CREATE POLICY "Users can update images for their own listings" ON listing_images
 CREATE POLICY "Users can delete images from their own listings" ON listing_images
   FOR DELETE USING (
     EXISTS (
-      SELECT 1 FROM listing 
-      WHERE listing.id = listing_images.listing_id 
-      AND listing.owner_id = auth.uid()
+      SELECT 1 FROM listings
+      WHERE listings.id = listing_images.listing_id
+      AND listings.owner_id = auth.uid()
     )
   );
 

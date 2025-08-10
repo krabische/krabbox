@@ -26,8 +26,8 @@ export function SupabaseDebugTest() {
         setStatus('Connection failed');
         
         // Check if it's a table not found error
-        if (healthError.message.includes('relation "public.listings" does not exist')) {
-          setStatus('Table "listings" does not exist - this is expected if database is not set up');
+        if (healthError.message.includes('relation "public.listing" does not exist')) {
+          setStatus('Table "listing" does not exist - this is expected if database is not set up');
         }
         return;
       }

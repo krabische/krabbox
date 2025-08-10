@@ -5,7 +5,8 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useAuth, User } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { User as UserIcon, Save, Loader2 } from "lucide-react";
+import { User as UserIcon, Save, Loader2, Lock } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -13,8 +14,9 @@ interface EditProfileModalProps {
 }
 
 export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -32,10 +34,14 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call to update profile
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Update user profile in Supabase
+      await updateUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+      });
 
-      // In a real app, this would update the user in the auth context
       toast({
         title: "Profile Updated!",
         description: "Your profile information has been successfully updated.",
@@ -50,6 +56,32 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!user?.email) return;
+    
+    setIsResettingPassword(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Password Reset Email Sent!",
+        description: "Check your email for password reset instructions.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send password reset email. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResettingPassword(false);
     }
   };
 
@@ -108,6 +140,28 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
               value={formData.phoneNumber}
               onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
             />
+          </div>
+
+          <div className="pt-4 border-t">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleResetPassword}
+              disabled={isResettingPassword}
+              className="w-full"
+            >
+              {isResettingPassword ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Lock className="mr-2 h-4 w-4" />
+                  Reset Password
+                </>
+              )}
+            </Button>
           </div>
 
           <div className="flex gap-3 pt-4">

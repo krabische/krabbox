@@ -25,7 +25,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
     confirmPassword: ""
   });
   
-  const { login, signup, isLoading } = useAuth();
+  const { login, signup, isLoading, error } = useAuth();
   const { toast } = useToast();
 
   const handleInputChange = (field: string, value: string) => {
@@ -48,10 +48,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
         password: "",
         confirmPassword: ""
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again.",
+        description: error.message || "Please check your credentials and try again.",
         variant: "destructive",
       });
     }
@@ -88,10 +88,10 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
         password: "",
         confirmPassword: ""
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Signup failed",
-        description: "Please try again or contact support.",
+        description: error.message || "Please try again or contact support.",
         variant: "destructive",
       });
     }
@@ -150,6 +150,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                 </div>
               </div>
 
+              {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
@@ -235,6 +236,7 @@ export function AuthModal({ isOpen, onClose, defaultTab = "login" }: AuthModalPr
                 />
               </div>
 
+              {error && <p className="text-sm text-destructive">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>

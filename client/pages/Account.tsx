@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useListings } from "@/contexts/ListingsContext";
+import { useListings, LuggageListing } from "@/contexts/ListingsContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Navigate, Link } from "react-router-dom";
 import { EditProfileModal } from "@/components/EditProfileModal";
+import { ListingManagementModal } from "@/components/ListingManagementModal";
 import {
   User,
   Settings,
@@ -19,26 +20,59 @@ import {
   Package,
   TrendingUp,
   Shield,
+  DollarSign,
 } from "lucide-react";
 
 export default function Account() {
   const { user, isAuthenticated, logout } = useAuth();
-  const { listings } = useListings();
+  const { listings, userListings, updateListing } = useListings();
   const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const [managementModalOpen, setManagementModalOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<any>(null);
+  const [localListings, setLocalListings] = useState<LuggageListing[]>(userListings);
+
+  useEffect(() => {
+    setLocalListings(userListings);
+  }, [userListings]);
 
   if (!isAuthenticated || !user) {
     return <Navigate to="/" replace />;
   }
 
-  // Get user's listings
-  const userListings = listings.filter((listing) => listing.hostId === user.id);
+  // Use userListings from context instead of filtering locally
+  console.log('Account: User listings from context:', userListings);
+  console.log('Account: User ID:', user.id);
+  console.log('Account: All listings:', listings);
+  console.log('Account: Listings with matching hostId:', listings.filter(l => l.hostId === user.id));
 
   // Mock earnings data
-  const totalEarnings = userListings.length * 450; // Mock calculation
+  const totalEarnings = localListings.length * 450; // Mock calculation
   const monthlyEarnings = [120, 380, 290, 450, 670, 820]; // Mock data for last 6 months
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
+  const handleListingClick = (listing: any) => {
+    setSelectedListing(listing);
+    setManagementModalOpen(true);
+  };
+
+  const handleDeleteListing = async (listingId: string) => {
+    try {
+      updateListing(listingId, { isDeleted: true });
+      setLocalListings(prev => prev.filter(listing => listing.id !== listingId));
+      setManagementModalOpen(false);
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+    }
+  };
+
+  const handleEditListing = (listing: any) => {
+    // Navigate to edit page or open edit modal
+    console.log('Editing listing:', listing);
+    // Close modal without page reload
+    setManagementModalOpen(false);
   };
 
   const mockBookings = [
@@ -176,7 +210,7 @@ export default function Account() {
           </TabsContent>
 
           <TabsContent value="listings" className="space-y-6">
-            {userListings.length > 0 ? (
+            {localListings.length > 0 ? (
               <>
                 {/* Earnings Dashboard */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -188,9 +222,9 @@ export default function Account() {
                       <Package className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">
-                        {userListings.length}
-                      </div>
+                                             <div className="text-2xl font-bold">
+                         {localListings.length}
+                       </div>
                       <p className="text-xs text-muted-foreground">
                         All listings active
                       </p>
@@ -265,8 +299,14 @@ export default function Account() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Your Listings</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {userListings.map((listing) => (
-                      <Card key={listing.id}>
+                    {localListings.map((listing) => (
+                      <Card 
+                        key={listing.id} 
+                        className={`cursor-pointer hover:shadow-lg transition-shadow ${
+                          listing.isDeleted ? 'opacity-50 grayscale' : ''
+                        }`}
+                        onClick={() => handleListingClick(listing)}
+                      >
                         <div className="relative">
                           <img
                             src={listing.images[0]}
@@ -279,6 +319,13 @@ export default function Account() {
                           >
                             ${listing.pricing.dailyRate}/day
                           </Badge>
+                          {listing.isDeleted && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                              <Badge variant="destructive" className="text-white bg-red-600">
+                                DELETED
+                              </Badge>
+                            </div>
+                          )}
                         </div>
                         <CardContent className="p-4">
                           <h4 className="font-semibold line-clamp-1">
@@ -431,6 +478,15 @@ export default function Account() {
       <EditProfileModal
         isOpen={editProfileOpen}
         onClose={() => setEditProfileOpen(false)}
+      />
+
+      {/* Listing Management Modal */}
+      <ListingManagementModal
+        isOpen={managementModalOpen}
+        onClose={() => setManagementModalOpen(false)}
+        listing={selectedListing}
+        onDelete={handleDeleteListing}
+        onEdit={handleEditListing}
       />
     </div>
   );

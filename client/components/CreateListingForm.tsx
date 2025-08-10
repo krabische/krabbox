@@ -28,6 +28,7 @@ import {
   Camera,
   Loader2,
 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 export function CreateListingForm() {
   const { user } = useAuth();
@@ -42,10 +43,6 @@ export function CreateListingForm() {
     description: "",
     category: "",
     type: "",
-    height: "",
-    width: "",
-    depth: "",
-    unit: "cm" as "cm" | "inches" | "sqm",
     squareMeters: "",
     condition: "",
     features: [] as string[],
@@ -95,15 +92,55 @@ export function CreateListingForm() {
     }));
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      // In a real app, you'd upload to a file service here
-      // For now, we'll use placeholder URLs
-      const newImages = Array.from(files).map(
-        () => `/placeholder.svg?${Math.random()}`,
-      );
-      setImages((prev) => [...prev, ...newImages].slice(0, 5)); // Max 5 images
+      try {
+        const uploadedUrls = [];
+        
+        for (const file of Array.from(files)) {
+          // Create a unique filename
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `listings/${fileName}`;
+          
+          // Upload to Supabase Storage
+          const { data, error } = await supabase.storage
+            .from('listings')
+            .upload(filePath, file);
+          
+          if (error) {
+            console.error('Error uploading image:', error);
+            toast({
+              title: "Upload Error",
+              description: "Failed to upload image. Please try again.",
+              variant: "destructive",
+            });
+            continue;
+          }
+          
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('listings')
+            .getPublicUrl(filePath);
+          
+          uploadedUrls.push(publicUrl);
+        }
+        
+        setImages((prev) => [...prev, ...uploadedUrls].slice(0, 5)); // Max 5 images
+        
+        toast({
+          title: "Images Uploaded",
+          description: `${uploadedUrls.length} image(s) uploaded successfully.`,
+        });
+      } catch (error) {
+        console.error('Error uploading images:', error);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload images. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -129,11 +166,13 @@ export function CreateListingForm() {
         category: formData.category as any,
         type: formData.type as any,
         size: {
-          height: parseFloat(formData.height),
-          width: parseFloat(formData.width),
-          depth: parseFloat(formData.depth),
-          unit: formData.unit,
+          height: parseFloat(formData.squareMeters) || 1,
+          width: 1,
+          depth: 1,
+          unit: "sqm",
         },
+        area: parseFloat(formData.squareMeters) || 1,
+        contactNumber: formData.phoneNumber,
         features: formData.features,
         condition: formData.condition as any,
         location: {
@@ -164,7 +203,7 @@ export function CreateListingForm() {
         },
       };
 
-      addListing(listingData);
+      await addListing(listingData);
 
       toast({
         title: "Listing Created!",
@@ -177,10 +216,6 @@ export function CreateListingForm() {
         description: "",
         category: "",
         type: "",
-        height: "",
-        width: "",
-        depth: "",
-        unit: "cm",
         squareMeters: "",
         condition: "",
         features: [],
@@ -201,10 +236,12 @@ export function CreateListingForm() {
       });
       setImages([]);
       setCurrentStep(1);
-    } catch (error) {
+    } catch (error: any) {
+      console.error('CreateListingForm error:', error);
+      const errorMessage = error?.message || 'Failed to create listing. Please try again.';
       toast({
         title: "Error",
-        description: "Failed to create listing. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -352,81 +389,17 @@ export function CreateListingForm() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <Label>Dimensions *</Label>
-              <div className="space-y-4">
-                <Select
-                  value={formData.unit}
-                  onValueChange={(value) => handleInputChange("unit", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select measurement type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cm">
-                      Height x Width x Depth (cm)
-                    </SelectItem>
-                    <SelectItem value="inches">
-                      Height x Width x Depth (inches)
-                    </SelectItem>
-                    <SelectItem value="sqm">Square Meters</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {formData.unit === "sqm" ? (
-                  <div>
-                    <Label className="text-sm">Total Square Meters</Label>
-                    <Input
-                      type="number"
-                      placeholder="25.5"
-                      step="0.1"
-                      value={formData.squareMeters}
-                      onChange={(e) =>
-                        handleInputChange("squareMeters", e.target.value)
-                      }
-                      required
-                    />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <Label className="text-sm">Height</Label>
-                      <Input
-                        type="number"
-                        placeholder="56"
-                        value={formData.height}
-                        onChange={(e) =>
-                          handleInputChange("height", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-sm">Width</Label>
-                      <Input
-                        type="number"
-                        placeholder="35"
-                        value={formData.width}
-                        onChange={(e) =>
-                          handleInputChange("width", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-sm">Depth</Label>
-                      <Input
-                        type="number"
-                        placeholder="23"
-                        value={formData.depth}
-                        onChange={(e) =>
-                          handleInputChange("depth", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Label>Area (Square Meters) *</Label>
+              <Input
+                type="number"
+                placeholder="25.5"
+                step="0.1"
+                value={formData.squareMeters}
+                onChange={(e) =>
+                  handleInputChange("squareMeters", e.target.value)
+                }
+                required
+              />
             </div>
 
             <div className="space-y-3">
@@ -716,10 +689,7 @@ export function CreateListingForm() {
                   !formData.category ||
                   !formData.type ||
                   !formData.condition)) ||
-              (currentStep === 2 &&
-                (formData.unit === "sqm"
-                  ? !formData.squareMeters
-                  : !formData.height || !formData.width || !formData.depth)) ||
+              (currentStep === 2 && !formData.squareMeters) ||
               (currentStep === 3 &&
                 (!formData.address ||
                   !formData.city ||

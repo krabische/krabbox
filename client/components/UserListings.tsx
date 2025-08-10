@@ -16,7 +16,10 @@ export function UserListings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t("listing.myListings")}</h2>
-        <Button>
+        <Button onClick={() => {
+          const createBtn = document.getElementById('open-create-listing');
+          if (createBtn) (createBtn as HTMLButtonElement).click();
+        }}>
           <Plus className="h-4 w-4 mr-2" />
           Create New Listing
         </Button>
@@ -56,7 +59,10 @@ export function UserListings() {
                   You haven't created any listings yet. Start by creating your
                   first storage listing.
                 </p>
-                <Button>
+                <Button onClick={() => {
+                  const createBtn = document.getElementById('open-create-listing');
+                  if (createBtn) (createBtn as HTMLButtonElement).click();
+                }}>
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Listing
                 </Button>

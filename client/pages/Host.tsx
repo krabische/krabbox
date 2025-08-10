@@ -322,6 +322,7 @@ export default function Host() {
                   size="lg"
                   onClick={() => setShowListingForm(true)}
                   className="text-lg px-8 py-3 h-auto"
+                  id="open-create-listing"
                 >
                   <Plus className="mr-2 h-5 w-5" />
                   Create Listing

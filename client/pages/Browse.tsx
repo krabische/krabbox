@@ -43,7 +43,8 @@ export default function Browse() {
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
   const [priceRangeSlider, setPriceRangeSlider] = useState([0, 100]);
-  const [sizeRangeSlider, setSizeRangeSlider] = useState([0, 1.0]);
+  // Broader default so listings with realistic sizes are not filtered out
+  const [sizeRangeSlider, setSizeRangeSlider] = useState([0, 1000]);
   const [saleRentType, setSaleRentType] = useState("both");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -291,9 +292,9 @@ export default function Browse() {
               <Slider
                 value={sizeRangeSlider}
                 onValueChange={setSizeRangeSlider}
-                max={1.0}
+                max={1000}
                 min={0}
-                step={0.1}
+                step={1}
                 className="w-full"
               />
             </div>

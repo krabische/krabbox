@@ -17,7 +17,7 @@ export function SupabaseDebugTest() {
       // Test 1: Basic connection
       console.log("Test 1: Basic Supabase connection");
       const { data: healthData, error: healthError } = await supabase
-        .from("listing")
+        .from("listings")
         .select("*", { count: "exact", head: true });
 
       if (healthError) {
@@ -28,11 +28,11 @@ export function SupabaseDebugTest() {
         // Check if it's a table not found error
         if (
           healthError.message.includes(
-            'relation "public.listing" does not exist',
+            'relation "public.listings" does not exist',
           )
         ) {
           setStatus(
-            'Table "listing" does not exist - this is expected if database is not set up',
+            'Table "listings" does not exist - this is expected if database is not set up',
           );
         }
         return;
@@ -44,7 +44,7 @@ export function SupabaseDebugTest() {
       // Test 2: Try to fetch data
       console.log("Test 2: Fetching data");
       const { data, error } = await supabase
-        .from("listing")
+        .from("listings")
         .select("*")
         .limit(5);
 

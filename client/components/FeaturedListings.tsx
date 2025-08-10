@@ -82,35 +82,20 @@ export function FeaturedListings() {
     // Convert mock listing to LuggageListing format
     const convertedListing: LuggageListing = {
       id: listing.id.toString(),
-      hostId: 'mock-host',
-      hostName: listing.host,
+      ownerId: 'mock-owner',
+      ownerName: listing.host,
       title: listing.title,
       description: `Premium ${listing.title.toLowerCase()} available for rent`,
+      imageUrl: listing.image,
       images: [listing.image],
-      category: listing.tags[0].toLowerCase().replace(' ', '-') as any,
-             type: 'hardside' as any,
-       size: { ...listing.size, unit: 'cm' as const },
-       area: calculateSquareMeters(listing.size.height, listing.size.width),
-       contactNumber: '',
-       features: listing.tags,
-      condition: 'excellent' as any,
-      location: {
-        address: listing.location,
-        city: listing.location.split(' ')[0],
-        state: 'NY',
-        zipCode: '10001'
-      },
-      availability: {
-        available: true,
-        minRentalDays: 1,
-        maxRentalDays: 30
-      },
-      pricing: {
-        dailyRate: listing.price,
-        securityDeposit: listing.price * 5,
-        isForSale: false,
-        isForRent: true
-      },
+      squareMeters: calculateSquareMeters(
+        listing.size.height,
+        listing.size.width
+      ),
+      address: listing.location,
+      state: 'NY',
+      zipCode: '10001',
+      isAvailable: true,
       rating: listing.rating,
       reviewCount: listing.reviews,
       createdAt: new Date().toISOString(),

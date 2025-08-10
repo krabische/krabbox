@@ -162,49 +162,17 @@ export function CreateListingForm() {
         LuggageListing,
         "id" | "createdAt" | "updatedAt" | "rating" | "reviewCount"
       > = {
-        hostId: user.id,
-        hostName: `${user.firstName} ${user.lastName}`,
+        ownerId: user.id,
+        ownerName: `${user.firstName} ${user.lastName}`,
         title: formData.title,
         description: formData.description,
+        imageUrl: images[0] || "/placeholder.svg",
         images: images.length > 0 ? images : ["/placeholder.svg"],
-        category: formData.category as any,
-        type: formData.type as any,
-        size: {
-          height: parseFloat(formData.squareMeters) || 1,
-          width: 1,
-          depth: 1,
-          unit: "sqm",
-        },
-        area: parseFloat(formData.squareMeters) || 1,
-        contactNumber: formData.phoneNumber,
-        features: formData.features,
-        condition: formData.condition as any,
-        location: {
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          zipCode: formData.zipCode,
-        },
-        availability: {
-          available: true,
-          minRentalDays: parseInt(formData.minRentalDays),
-          maxRentalDays: parseInt(formData.maxRentalDays),
-        },
-        pricing: {
-          dailyRate: parseFloat(formData.dailyRate),
-          weeklyRate: formData.weeklyRate
-            ? parseFloat(formData.weeklyRate)
-            : undefined,
-          monthlyRate: formData.monthlyRate
-            ? parseFloat(formData.monthlyRate)
-            : undefined,
-          securityDeposit: parseFloat(formData.securityDeposit),
-          sellPrice: formData.sellPrice
-            ? parseFloat(formData.sellPrice)
-            : undefined,
-          isForSale: formData.isForSale,
-          isForRent: formData.isForRent,
-        },
+        squareMeters: parseFloat(formData.squareMeters) || 0,
+        address: formData.address,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        isAvailable: true,
       };
 
       await addListing(listingData);

@@ -15,9 +15,9 @@ SELECT COUNT(*) as total_listings FROM listing;
 SELECT * FROM listing LIMIT 1; 
 
 -- Add missing columns to listing table
-ALTER TABLE listing ADD COLUMN IF NOT EXISTS host_name TEXT;
+ALTER TABLE listing ADD COLUMN IF NOT EXISTS owner_name TEXT;
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS square_meters DECIMAL(10,2);
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT FALSE;
 
--- Update existing records to set host_name based on owner_id
--- (This will be populated when new listings are created) 
+-- Update existing records to set owner_name based on owner_id
+-- (This will be populated when new listings are created)

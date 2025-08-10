@@ -15,8 +15,7 @@ import {
   Star,
   MapPin,
   Package,
-  Loader2,
-  DollarSign
+  Loader2
 } from "lucide-react";
 
 interface ContactSellerModalProps {
@@ -52,14 +51,14 @@ export function ContactSellerModal({ isOpen, onClose, listing }: ContactSellerMo
       // In a real app, this would send a message through your messaging system
       console.log("Message to seller:", {
         from: user.email,
-        to: listing.hostId,
+        to: listing.ownerId,
         listing: listing.id,
         message: message
       });
       
       toast({
         title: "Message Sent!",
-        description: `Your message has been sent to ${listing.hostName}. They will receive it via email.`,
+        description: `Your message has been sent to ${listing.ownerName}. They will receive it via email.`,
       });
       
       setMessage("");
@@ -99,16 +98,8 @@ export function ContactSellerModal({ isOpen, onClose, listing }: ContactSellerMo
                   <h3 className="font-semibold line-clamp-2 text-sm">{listing.title}</h3>
                   <div className="flex items-center text-xs text-muted-foreground mt-1">
                     <MapPin className="h-3 w-3 mr-1" />
-                    {listing.location.city}, {listing.location.state}
+                    {listing.address}, {listing.state}
                   </div>
-                  {listing.pricing.isForSale && (
-                    <div className="flex items-center mt-1">
-                      <DollarSign className="h-3 w-3 mr-1 text-green-600" />
-                      <span className="text-sm font-semibold text-green-600">
-                        ${listing.pricing.sellPrice}
-                      </span>
-                    </div>
-                  )}
                 </div>
               </div>
             </CardContent>
@@ -119,10 +110,10 @@ export function ContactSellerModal({ isOpen, onClose, listing }: ContactSellerMo
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                  {listing.hostName.charAt(0)}
+                  {listing.ownerName.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold">{listing.hostName}</h4>
+                  <h4 className="font-semibold">{listing.ownerName}</h4>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Star className="h-3 w-3 mr-1 fill-yellow-400 text-yellow-400" />
                     <span>
@@ -147,7 +138,7 @@ export function ContactSellerModal({ isOpen, onClose, listing }: ContactSellerMo
               <Label htmlFor="message">Your Message</Label>
               <Textarea
                 id="message"
-                placeholder={`Hi ${listing.hostName.split(' ')[0]}, I'm interested in purchasing your ${listing.title}. Could you provide more details about...`}
+                placeholder={`Hi ${listing.ownerName.split(' ')[0]}, I'm interested in your ${listing.title}. Could you provide more details about...`}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={5}

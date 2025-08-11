@@ -14,15 +14,15 @@ ALTER TABLE listing ADD COLUMN IF NOT EXISTS is_for_sale BOOLEAN DEFAULT FALSE;
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS is_for_rent BOOLEAN DEFAULT TRUE;
 
 -- Add missing availability columns
-ALTER TABLE listing ADD COLUMN IF NOT EXISTS available BOOLEAN DEFAULT TRUE;
+ALTER TABLE listing ADD COLUMN IF NOT EXISTS is_available BOOLEAN DEFAULT TRUE;
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS min_rental_days INTEGER DEFAULT 1;
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS max_rental_days INTEGER DEFAULT 365;
 
 -- Add missing location columns
-ALTER TABLE listing ADD COLUMN IF NOT EXISTS location_address TEXT;
-ALTER TABLE listing ADD COLUMN IF NOT EXISTS location_city TEXT;
-ALTER TABLE listing ADD COLUMN IF NOT EXISTS location_state TEXT;
-ALTER TABLE listing ADD COLUMN IF NOT EXISTS location_zip_code TEXT;
+ALTER TABLE listing ADD COLUMN IF NOT EXISTS address TEXT;
+ALTER TABLE listing ADD COLUMN IF NOT EXISTS city TEXT;
+ALTER TABLE listing ADD COLUMN IF NOT EXISTS state TEXT;
+ALTER TABLE listing ADD COLUMN IF NOT EXISTS zip_code TEXT;
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS location_coordinates JSONB;
 
 -- Add missing size columns
@@ -36,14 +36,14 @@ ALTER TABLE listing ADD COLUMN IF NOT EXISTS condition TEXT;
 ALTER TABLE listing ADD COLUMN IF NOT EXISTS host_name TEXT;
 
 -- Update RLS policies to exclude archived listings from public view
-DROP POLICY IF EXISTS "Anyone can view available listings" ON listing;
-CREATE POLICY "Anyone can view available listings" ON listing
+DROP POLICY IF EXISTS "Anyone can view is_available listings" ON listing;
+CREATE POLICY "Anyone can view is_available listings" ON listing
   FOR SELECT USING (is_available = TRUE AND is_archived = FALSE);
 
--- Allow hosts to view their archived listings
-DROP POLICY IF EXISTS "Hosts can view their own listings" ON listing;
-CREATE POLICY "Hosts can view their own listings" ON listing
-  FOR SELECT USING (auth.uid() = host_id);
+-- Allow owners to view their archived listings
+DROP POLICY IF EXISTS "Owners can view their own listings" ON listing;
+CREATE POLICY "Owners can view their own listings" ON listing
+  FOR SELECT USING (auth.uid() = owner_id);
 
 -- Add archive function
 CREATE OR REPLACE FUNCTION archive_listing(listing_id UUID)
@@ -53,7 +53,7 @@ BEGIN
   SET is_archived = TRUE,
       archived_at = NOW(),
       is_available = FALSE
-  WHERE id = listing_id AND host_id = auth.uid();
+  WHERE id = listing_id AND owner_id = auth.uid();
 
   RETURN FOUND;
 END;
@@ -67,7 +67,7 @@ BEGIN
   SET is_archived = FALSE,
       archived_at = NULL,
       is_available = TRUE
-  WHERE id = listing_id AND host_id = auth.uid();
+  WHERE id = listing_id AND owner_id = auth.uid();
 
   RETURN FOUND;
 END;
